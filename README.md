@@ -1,7 +1,6 @@
-<<<<<<< HEAD
-# project_dumangan
+# Project Dumangan
 
-A new Flutter project.
+An automated certificate generator created using flutter
 
 ## Getting Started
 
