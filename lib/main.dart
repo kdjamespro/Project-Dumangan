@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FluentApp(
-      theme: ThemeData(brightness: Brightness.dark),
+      theme: ThemeData(brightness: Brightness.light),
       debugShowCheckedModeBanner: false,
       title: 'Project Dumangan',
       home: MyHomePage(title: 'Project Dumangan'),
@@ -41,10 +41,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return NavigationView(
-      appBar: NavigationAppBar(
-        title: (Text(widget.title)),
-        automaticallyImplyLeading: false,
-      ),
+      // appBar: NavigationAppBar(
+      //   // title: (Text(widget.title)),
+      //   automaticallyImplyLeading: false,
+      // ),
+
       pane: NavigationPane(
         displayMode: PaneDisplayMode.compact,
         size: const NavigationPaneSize(
@@ -56,26 +57,25 @@ class _MyHomePageState extends State<MyHomePage> {
         onChanged: (i) => setState(() => index = i),
         items: [
           // It doesn't look good when resizing from compact to open
-          PaneItemHeader(header: Text('Controls')),
+          PaneItemHeader(
+              header: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Text('Controls'),
+          )),
+
           PaneItem(
-            icon: const Icon(FluentIcons.add_event),
-            title: const Text('Add Events'),
+            icon: const Icon(FluentIcons.reset),
+            title: const Text('Reset'),
           ),
+
           PaneItem(
-            icon: const Icon(FluentIcons.text_field),
-            title: const Text('Forms'),
+            icon: const Icon(FluentIcons.archive),
+            title: const Text('Generate'),
           ),
+
           PaneItem(
-            icon: const Icon(mt.Icons.add_comment),
-            title: const Text('Colors'),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.icon_sets_flag),
-            title: const Text('Icons'),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.plain_text),
-            title: const Text('Typography'),
+            icon: const Icon(FluentIcons.send),
+            title: const Text('Send'),
           ),
         ],
       ),
