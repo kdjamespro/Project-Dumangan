@@ -1,5 +1,5 @@
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart' as mt;
 
 import 'pages/cert_page.dart';
 import 'pages/data_page.dart';
@@ -7,8 +7,16 @@ import 'pages/editor_page.dart';
 import 'pages/event_page.dart';
 import 'pages/login_page.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
+  doWhenWindowReady(() {
+    final win = appWindow;
+    win.minSize = const Size(410, 540);
+    win.size = const Size(755, 545);
+    win.alignment = Alignment.center;
+    win.title = 'Project Dumangan';
+    win.show();
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -41,11 +49,15 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return NavigationView(
-      // appBar: NavigationAppBar(
-      //   // title: (Text(widget.title)),
-      //   automaticallyImplyLeading: false,
-      // ),
-
+      appBar: NavigationAppBar(
+        title: MoveWindow(
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(widget.title),
+          ),
+        ),
+        automaticallyImplyLeading: false,
+      ),
       pane: NavigationPane(
         displayMode: PaneDisplayMode.compact,
         size: const NavigationPaneSize(
@@ -85,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
               animation: animation,
             )),
         index: index,
-        children: const [
+        children: [
           EventPage(),
           CertPage(),
           DataPage(),
@@ -94,5 +106,55 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
+  }
+}
+
+class WindowButtons extends StatelessWidget {
+  const WindowButtons({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    assert(debugCheckHasFluentTheme(context));
+    assert(debugCheckHasFluentLocalizations(context));
+    final ThemeData theme = FluentTheme.of(context);
+    final buttonColors = WindowButtonColors(
+      iconNormal: theme.inactiveColor,
+      iconMouseDown: theme.inactiveColor,
+      iconMouseOver: theme.inactiveColor,
+      mouseOver: ButtonThemeData.buttonColor(
+          theme.brightness, {ButtonStates.hovering}),
+      mouseDown: ButtonThemeData.buttonColor(
+          theme.brightness, {ButtonStates.pressing}),
+    );
+    final closeButtonColors = WindowButtonColors(
+      mouseOver: Colors.red,
+      mouseDown: Colors.red.dark,
+      iconNormal: theme.inactiveColor,
+      iconMouseOver: Colors.red.basedOnLuminance(),
+      iconMouseDown: Colors.red.dark.basedOnLuminance(),
+    );
+    return Row(children: [
+      Tooltip(
+        message: FluentLocalizations.of(context).minimizeWindowTooltip,
+        child: MinimizeWindowButton(colors: buttonColors),
+      ),
+      Tooltip(
+        message: FluentLocalizations.of(context).restoreWindowTooltip,
+        child: WindowButton(
+          colors: buttonColors,
+          iconBuilder: (context) {
+            if (appWindow.isMaximized) {
+              return RestoreIcon(color: context.iconColor);
+            }
+            return MaximizeIcon(color: context.iconColor);
+          },
+          onPressed: appWindow.maximizeOrRestore,
+        ),
+      ),
+      Tooltip(
+        message: FluentLocalizations.of(context).closeWindowTooltip,
+        child: CloseWindowButton(colors: closeButtonColors),
+      ),
+    ]);
   }
 }
