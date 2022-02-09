@@ -12,7 +12,7 @@ void main() async {
   doWhenWindowReady(() {
     final win = appWindow;
     win.minSize = const Size(410, 540);
-    win.size = const Size(755, 545);
+    win.maximize();
     win.alignment = Alignment.center;
     win.title = 'Project Dumangan';
     win.show();

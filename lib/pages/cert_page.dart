@@ -3,31 +3,24 @@ import 'package:desktop_drop/desktop_drop.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
+import '../data/participants_data.dart';
 import '../services/file_handler.dart';
 
 class CertPage extends StatelessWidget {
   CertPage({Key? key}) : super(key: key);
   bool fileExists = false;
-  bool _crossCheck = false;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          // crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            PickerContainer(
-                caption:
-                    'Drop a csv or xlsx file or click to upload for Registration Form'),
-            PickerContainer(
-              caption:
-                  'Drop a csv or xlsx file or click to upload for Attedance Form',
-            )
-          ],
-        ),
-      ],
+    return ScaffoldPage(
+      content: ListView(
+        children: [
+          PickerPane(),
+          Table(),
+        ],
+      ),
     );
   }
 }
@@ -107,6 +100,72 @@ class _PickerContainerState extends State<PickerContainer> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class PickerPane extends StatefulWidget {
+  const PickerPane({Key? key}) : super(key: key);
+
+  @override
+  _PickerPaneState createState() => _PickerPaneState();
+}
+
+class _PickerPaneState extends State<PickerPane> {
+  bool _crossCheck = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ToggleSwitch(
+          checked: _crossCheck,
+          onChanged: (v) => setState(() => _crossCheck = v),
+          content: Text(_crossCheck ? 'Enable' : 'Disable'),
+        ),
+        Row(
+          // crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: _crossCheck
+              ? [
+                  PickerContainer(
+                      caption:
+                          'Drop a csv or xlsx file or click to upload for Registration Form'),
+                  PickerContainer(
+                    caption:
+                        'Drop a csv or xlsx file or click to upload for Attedance Form',
+                  ),
+                ]
+              : [
+                  PickerContainer(
+                      caption:
+                          'Drop a csv or xlsx file or click to upload for Attedance Form'),
+                ],
+        ),
+      ],
+    );
+  }
+}
+
+class Table extends StatefulWidget {
+  const Table({Key? key}) : super(key: key);
+
+  @override
+  _TableState createState() => _TableState();
+}
+
+class _TableState extends State<Table> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        child: SfDataGrid(
+          source: ParticipantsData(),
+          columns: ParticipantsData().getColumns(),
+          allowSorting: true,
+          columnWidthMode: ColumnWidthMode.fill,
         ),
       ),
     );

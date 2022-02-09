@@ -37,7 +37,7 @@ dependencies:
   excel: ^2.0.0-null-safety-2
   desktop_drop: ^0.3.2
   cross_file: ^0.3.2
-
+  syncfusion_flutter_datagrid: ^19.4.50
   dotted_border: ^2.0.0+2
 
 
