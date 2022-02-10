@@ -39,6 +39,9 @@ dependencies:
   cross_file: ^0.3.2
   syncfusion_flutter_datagrid: ^19.4.50
   dotted_border: ^2.0.0+2
+  file_icon: ^1.0.0
+  path: ^1.8.0
+  auto_size_text: ^3.0.0
 
 
   # The following adds the Cupertino Icons font to your application.

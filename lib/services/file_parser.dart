@@ -6,22 +6,16 @@ import 'package:csv/csv.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 
-class FileHandler {
-  bool valid = false;
-  var platform;
-  FileHandler({required this.platform});
-  Future<File> open_file() async {
-    final result = await platform
-        .pickFiles(type: FileType.custom, allowedExtensions: ['csv', 'xlsx']);
-    if (result == null) {
-      print('No Files Picked');
-      return File('');
+class FileParser {
+  void parseFile(PlatformFile file) {
+    if (file.extension == 'csv') {
+      _parse_csv(file);
+    } else if (file.extension == 'xslx') {
+      _parse_xlsx(file);
     }
-    final file = result.files.first;
-    return File(file.path);
   }
 
-  Future<List> _parsecsv(file) async {
+  Future<List> _parse_csv(file) async {
     final input = File(file.path).openRead();
     final fields = await input
         .transform(utf8.decoder)
@@ -30,7 +24,7 @@ class FileHandler {
     return fields;
   }
 
-  void _parse_excel(file) async {
+  void _parse_xlsx(file) async {
     var bytes = File(file.path).readAsBytesSync();
     var excel = Excel.decodeBytes(bytes);
     for (var table in excel.tables.keys) {
