@@ -17,7 +17,14 @@ class _EventPageState extends State<EventPage> {
       home: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Scaffold(
-          body: Container(),
+          body: Container(
+            child: Button(
+              child: Text('Add Event'),
+              onPressed: () async {
+                print('Got here');
+              },
+            ),
+          ),
         ),
       ),
     );

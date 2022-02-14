@@ -12,6 +12,7 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../data/participants_data.dart';
 import '../services/file_handler.dart';
+import '../services/file_parser.dart';
 import '../services/warning_message.dart';
 
 class CertPage extends StatelessWidget {
@@ -230,6 +231,7 @@ class PickerPane extends StatefulWidget {
 }
 
 class _PickerPaneState extends State<PickerPane> {
+  FileParser parser = FileParser();
   bool _crossCheck = false;
   PickerContainer filePicker1 = PickerContainer(
     caption: 'Drop a csv or xlsx file or click to upload for Attedance Form',
@@ -316,6 +318,7 @@ class _PickerPaneState extends State<PickerPane> {
                       return;
                     }
                     debugPrint('File Uploaded');
+                    parser.parseFile(filePicker1.getFile());
                   })
             ],
           ),

@@ -8,6 +8,7 @@ import 'pages/event_page.dart';
 import 'pages/login_page.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
   doWhenWindowReady(() {
     final win = appWindow;
@@ -56,6 +57,12 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text(widget.title),
           ),
         ),
+        actions: MoveWindow(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [Spacer(), WindowButtons()],
+          ),
+        ),
         automaticallyImplyLeading: false,
       ),
       pane: NavigationPane(
@@ -76,8 +83,13 @@ class _MyHomePageState extends State<MyHomePage> {
           )),
 
           PaneItem(
-            icon: const Icon(FluentIcons.reset),
-            title: const Text('Reset'),
+            icon: const Icon(FluentIcons.add_event),
+            title: const Text('Add Event'),
+          ),
+
+          PaneItem(
+            icon: const Icon(FluentIcons.edit_photo),
+            title: const Text('Editor'),
           ),
 
           PaneItem(
@@ -99,9 +111,10 @@ class _MyHomePageState extends State<MyHomePage> {
         index: index,
         children: [
           EventPage(),
+          EditorPage(),
           CertPage(),
           DataPage(),
-          EditorPage(),
+          EventPage(),
           LoginPage()
         ],
       ),
@@ -153,7 +166,10 @@ class WindowButtons extends StatelessWidget {
       ),
       Tooltip(
         message: FluentLocalizations.of(context).closeWindowTooltip,
-        child: CloseWindowButton(colors: closeButtonColors),
+        child: CloseWindowButton(
+          colors: closeButtonColors,
+          animate: false,
+        ),
       ),
     ]);
   }
