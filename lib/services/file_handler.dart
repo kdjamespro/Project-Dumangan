@@ -10,9 +10,20 @@ class FileHandler {
   bool valid = false;
   var platform;
   FileHandler({required this.platform});
-  Future<File> open_file() async {
+  Future<File> open_csv_file() async {
     final result = await platform
         .pickFiles(type: FileType.custom, allowedExtensions: ['csv', 'xlsx']);
+    if (result == null) {
+      print('No Files Picked');
+      return File('');
+    }
+    final file = result.files.first;
+    return File(file.path);
+  }
+
+  Future<File> open_image_file() async {
+    final result = await platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['jpg', 'png']);
     if (result == null) {
       print('No Files Picked');
       return File('');

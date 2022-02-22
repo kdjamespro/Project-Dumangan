@@ -5,9 +5,9 @@ import 'package:cross_file/cross_file.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_icon/file_icon.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:path/path.dart' as p;
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../data/participants_data.dart';
@@ -151,8 +151,8 @@ class _PickerContainerState extends State<PickerContainer> {
               onTap: widget._fileExists
                   ? null
                   : () async {
-                      final browse = FileHandler(platform: FilePicker.platform);
-                      widget._file = await browse.open_file();
+                      widget._file =
+                          await context.read<FileHandler>().open_csv_file();
                       _doFileExists(widget._file);
                     },
               child: DottedBorder(
