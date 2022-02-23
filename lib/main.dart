@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -89,6 +91,16 @@ class _MyHomePageState extends State<MyHomePage> {
             )),
 
             PaneItem(
+              icon: const Icon(FluentIcons.edit),
+              title: const Text('Edit'),
+            ),
+
+            PaneItem(
+              icon: const Icon(FluentIcons.archive),
+              title: const Text('Generate'),
+            ),
+
+            PaneItem(
               icon: const Icon(FluentIcons.add_event),
               title: const Text('Add Event'),
             ),
@@ -121,6 +133,13 @@ class _MyHomePageState extends State<MyHomePage> {
             )),
         index: index,
         children: [
+          //  EventPage(),
+          CertPage(),
+          EditorPage(),
+          DataPage(),
+
+          LoginPage(),
+
           EventPage(),
           EditorPage(),
           CertPage(),
