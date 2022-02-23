@@ -10,20 +10,26 @@ class FileHandler {
   bool valid = false;
   var platform;
   FileHandler({required this.platform});
-  void open_csv_file() async {
+  Future<File> open_csv_file() async {
     final result = await platform
         .pickFiles(type: FileType.custom, allowedExtensions: ['csv', 'xlsx']);
     if (result == null) {
       print('No Files Picked');
-      return;
+      return File('');
     }
     final file = result.files.first;
-    if (file.extension == 'csv') {
-      final fields = await _parsecsv(file);
-      print(fields);
-    } else {
-      _parse_excel(file);
+    return File(file.path);
+  }
+
+  Future<File> open_image_file() async {
+    final result = await platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['jpg', 'png']);
+    if (result == null) {
+      print('No Files Picked');
+      return File('');
     }
+    final file = result.files.first;
+    return File(file.path);
   }
 
   Future<List> _parsecsv(file) async {

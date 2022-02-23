@@ -18,41 +18,13 @@ class _EventPageState extends State<EventPage> {
         padding: const EdgeInsets.all(15.0),
         child: Scaffold(
           body: Container(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(),
-              Container(
-                child: Icon(
-                  FluentIcons.check_list,
-                  size: 200,
-                ),
-              ),
-              Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "Cross Check?",
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Text(
-                      "Matches two or or more .csv files (For example Attendace and Registration Data)"),
-                ),
-              ),
-              Container(
-                child: ToggleSwitch(
-                  checked: _checked,
-                  onChanged: (v) => setState(() => _checked = v),
-                  content: Text(_checked ? 'On' : 'Off'),
-                ),
-              ),
-            ],
-          )),
+            child: Button(
+              child: Text('Add Event'),
+              onPressed: () async {
+                print('Got here');
+              },
+            ),
+          ),
         ),
       ),
     );

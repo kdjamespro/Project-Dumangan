@@ -1,14 +1,23 @@
+import 'dart:core';
+
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:provider/provider.dart';
 
 import 'pages/cert_page.dart';
 import 'pages/data_page.dart';
 import 'pages/editor_page.dart';
 import 'pages/event_page.dart';
 import 'pages/login_page.dart';
+import 'services/file_handler.dart';
 
 void main() async {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(Provider(
+    create: (context) => FileHandler(platform: FilePicker.platform),
+    child: MyApp(),
+  ));
   doWhenWindowReady(() {
     final win = appWindow;
     win.minSize = const Size(410, 540);
@@ -56,46 +65,67 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text(widget.title),
           ),
         ),
+        actions: MoveWindow(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [Spacer(), WindowButtons()],
+          ),
+        ),
         automaticallyImplyLeading: false,
       ),
       pane: NavigationPane(
-        displayMode: PaneDisplayMode.compact,
-        size: const NavigationPaneSize(
-          openWidth: 180,
-          openMinWidth: 100,
-          openMaxWidth: 180,
-        ),
-        selected: index,
-        onChanged: (i) => setState(() => index = i),
-        items: [
-          // It doesn't look good when resizing from compact to open
-          PaneItemHeader(
-              header: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Text('Controls'),
-          )),
-
-          PaneItem(
-            icon: const Icon(FluentIcons.reset),
-            title: const Text('Reset'),
+          displayMode: PaneDisplayMode.compact,
+          size: const NavigationPaneSize(
+            openWidth: 180,
+            openMinWidth: 100,
+            openMaxWidth: 180,
           ),
+          selected: index,
+          onChanged: (i) => setState(() => index = i),
+          items: [
+            // It doesn't look good when resizing from compact to open
+            PaneItemHeader(
+                header: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text('Controls'),
+            )),
 
-          PaneItem(
-            icon: const Icon(FluentIcons.edit),
-            title: const Text('Edit'),
-          ),
+            PaneItem(
+              icon: const Icon(FluentIcons.edit),
+              title: const Text('Edit'),
+            ),
 
-          PaneItem(
-            icon: const Icon(FluentIcons.archive),
-            title: const Text('Generate'),
-          ),
+            PaneItem(
+              icon: const Icon(FluentIcons.archive),
+              title: const Text('Generate'),
+            ),
 
-          PaneItem(
-            icon: const Icon(FluentIcons.send),
-            title: const Text('Send'),
-          ),
-        ],
-      ),
+            PaneItem(
+              icon: const Icon(FluentIcons.add_event),
+              title: const Text('Add Event'),
+            ),
+
+            PaneItem(
+              icon: const Icon(FluentIcons.edit_photo),
+              title: const Text('Editor'),
+            ),
+
+            PaneItem(
+              icon: const Icon(FluentIcons.archive),
+              title: const Text('Generate'),
+            ),
+
+            PaneItem(
+              icon: const Icon(FluentIcons.send),
+              title: const Text('Send'),
+            ),
+          ],
+          footerItems: [
+            PaneItem(
+              icon: Icon(FluentIcons.signin),
+              title: const Text('Sign In'),
+            ),
+          ]),
       content: NavigationBody(
         transitionBuilder: ((child, animation) => EntrancePageTransition(
               child: child,
@@ -108,7 +138,13 @@ class _MyHomePageState extends State<MyHomePage> {
           EditorPage(),
           DataPage(),
 
-          LoginPage()
+          LoginPage(),
+
+          EventPage(),
+          EditorPage(),
+          CertPage(),
+          DataPage(),
+          LoginPage(),
         ],
       ),
     );
@@ -159,7 +195,10 @@ class WindowButtons extends StatelessWidget {
       ),
       Tooltip(
         message: FluentLocalizations.of(context).closeWindowTooltip,
-        child: CloseWindowButton(colors: closeButtonColors),
+        child: CloseWindowButton(
+          colors: closeButtonColors,
+          animate: false,
+        ),
       ),
     ]);
   }
