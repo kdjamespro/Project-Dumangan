@@ -3,9 +3,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 
-import 'pages/cert_page.dart';
 import 'pages/data_page.dart';
-import 'pages/editor_page.dart';
+import 'pages/data_upload/cert_page.dart';
+import 'pages/editor/editor_page.dart';
 import 'pages/event_page.dart';
 import 'pages/login_page.dart';
 import 'services/file_handler.dart';

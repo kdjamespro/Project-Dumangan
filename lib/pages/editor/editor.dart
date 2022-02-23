@@ -62,13 +62,19 @@ class _EditorState extends State<Editor> {
                 child: Text('Upload Image'),
                 onPressed: () async {
                   final picked =
-                      await context.read<FileHandler>().open_image_file();
+                      await context.read<FileHandler>().openImageFile();
                   if (picked.existsSync()) {
                     image = picked;
                   }
                   setState(() {
                     setImage(image);
                   });
+                },
+              ),
+              Button(
+                child: Text('Save Image'),
+                onPressed: () async {
+                  context.read<FileHandler>().saveFile();
                 },
               ),
             ]),

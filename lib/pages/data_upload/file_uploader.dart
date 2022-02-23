@@ -8,26 +8,112 @@ import 'package:file_icon/file_icon.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-import '../data/participants_data.dart';
-import '../services/file_handler.dart';
-import '../services/file_parser.dart';
-import '../services/warning_message.dart';
+import '../../services/file_handler.dart';
+import '../../services/file_parser.dart';
+import '../../services/warning_message.dart';
 
-class CertPage extends StatelessWidget {
-  CertPage({Key? key}) : super(key: key);
-  bool fileExists = false;
+class FileUploader extends StatefulWidget {
+  const FileUploader({Key? key}) : super(key: key);
+
+  @override
+  _FileUploaderState createState() => _FileUploaderState();
+}
+
+class _FileUploaderState extends State<FileUploader> {
+  FileParser parser = FileParser();
+  bool _crossCheck = false;
+  PickerContainer filePicker1 = PickerContainer(
+    caption: 'Drop a csv or xlsx file or click to upload for Attedance Form',
+  );
+  PickerContainer filePicker2 = PickerContainer(
+      caption:
+          'Drop a csv or xlsx file or click to upload for Registration Form');
+
+  bool isFileReady() {
+    if (_crossCheck) {
+      return filePicker1.containsFile() && filePicker2.containsFile();
+    } else {
+      return filePicker1.containsFile();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ScaffoldPage(
-      content: ListView(
-        children: [
-          PickerPane(),
-          Table(),
-        ],
-      ),
+    return Column(
+      children: [
+        Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Icon(
+                        FluentIcons.check_list,
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Cross Check?",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                      "Matches two or or more .csv files (For example Attendace and Registration Data)"),
+                ),
+              ),
+              ToggleSwitch(
+                checked: _crossCheck,
+                onChanged: (v) => setState(() {
+                  _crossCheck = v;
+                  filePicker2.removeFile();
+                }),
+                content: Text(_crossCheck ? 'Enable' : 'Disable'),
+              ),
+              Row(
+                // crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: _crossCheck
+                    ? [
+                        filePicker2,
+                        filePicker1,
+                      ]
+                    : [
+                        filePicker1,
+                      ],
+              ),
+              Button(
+                  child: Text('Upload Data'),
+                  onPressed: () {
+                    if (!isFileReady()) {
+                      showWarningMessage(
+                          context: context,
+                          title: 'Missing File',
+                          message:
+                              'Please select the file first before uploading');
+                      return;
+                    }
+                    debugPrint('File Uploaded');
+                    parser.parseFile(filePicker1.getFile());
+                  })
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -152,7 +238,7 @@ class _PickerContainerState extends State<PickerContainer> {
                   ? null
                   : () async {
                       widget._file =
-                          await context.read<FileHandler>().open_csv_file();
+                          await context.read<FileHandler>().openCsvFile();
                       _doFileExists(widget._file);
                     },
               child: DottedBorder(
@@ -217,135 +303,6 @@ class _PickerContainerState extends State<PickerContainer> {
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class PickerPane extends StatefulWidget {
-  const PickerPane({Key? key}) : super(key: key);
-
-  @override
-  _PickerPaneState createState() => _PickerPaneState();
-}
-
-class _PickerPaneState extends State<PickerPane> {
-  FileParser parser = FileParser();
-  bool _crossCheck = false;
-  PickerContainer filePicker1 = PickerContainer(
-    caption: 'Drop a csv or xlsx file or click to upload for Attedance Form',
-  );
-  PickerContainer filePicker2 = PickerContainer(
-      caption:
-          'Drop a csv or xlsx file or click to upload for Registration Form');
-
-  bool isFileReady() {
-    if (_crossCheck) {
-      return filePicker1.containsFile() && filePicker2.containsFile();
-    } else {
-      return filePicker1.containsFile();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Icon(
-                        FluentIcons.check_list,
-                        size: 30,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Cross Check?",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                      "Matches two or or more .csv files (For example Attendace and Registration Data)"),
-                ),
-              ),
-              ToggleSwitch(
-                checked: _crossCheck,
-                onChanged: (v) => setState(() {
-                  _crossCheck = v;
-                  filePicker2.removeFile();
-                }),
-                content: Text(_crossCheck ? 'Enable' : 'Disable'),
-              ),
-              Row(
-                // crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: _crossCheck
-                    ? [
-                        filePicker2,
-                        filePicker1,
-                      ]
-                    : [
-                        filePicker1,
-                      ],
-              ),
-              Button(
-                  child: Text('Upload Data'),
-                  onPressed: () {
-                    if (!isFileReady()) {
-                      showWarningMessage(
-                          context: context,
-                          title: 'Missing File',
-                          message:
-                              'Please select the file first before uploading');
-                      return;
-                    }
-                    debugPrint('File Uploaded');
-                    parser.parseFile(filePicker1.getFile());
-                  })
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class Table extends StatefulWidget {
-  const Table({Key? key}) : super(key: key);
-
-  @override
-  _TableState createState() => _TableState();
-}
-
-class _TableState extends State<Table> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Container(
-        child: SfDataGrid(
-          source: ParticipantsData(),
-          columns: ParticipantsData().getColumns(),
-          allowSorting: true,
-          columnWidthMode: ColumnWidthMode.fill,
         ),
       ),
     );
