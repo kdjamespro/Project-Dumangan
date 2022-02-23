@@ -81,6 +81,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
 
           PaneItem(
+            icon: const Icon(FluentIcons.edit),
+            title: const Text('Edit'),
+          ),
+
+          PaneItem(
             icon: const Icon(FluentIcons.archive),
             title: const Text('Generate'),
           ),
@@ -98,10 +103,11 @@ class _MyHomePageState extends State<MyHomePage> {
             )),
         index: index,
         children: [
-          EventPage(),
+          //  EventPage(),
           CertPage(),
-          DataPage(),
           EditorPage(),
+          DataPage(),
+
           LoginPage()
         ],
       ),
