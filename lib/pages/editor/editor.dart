@@ -40,13 +40,13 @@ class _EditorState extends State<Editor> {
                       child: AspectRatio(
                         aspectRatio: 1.6471 / 1,
                         child: Container(
-                          margin: EdgeInsets.all(16),
+                          margin: const EdgeInsets.all(16),
                           color: Colors.white,
                           child: setImage(image),
                         ),
                       ),
                     ),
-                    DraggableText(),
+                    const DraggableText(),
                   ],
                 ),
               ),
@@ -59,7 +59,7 @@ class _EditorState extends State<Editor> {
             color: Colors.white,
             child: Column(children: [
               Button(
-                child: Text('Upload Image'),
+                child: const Text('Upload Image'),
                 onPressed: () async {
                   final picked =
                       await context.read<FileHandler>().openImageFile();
@@ -72,7 +72,7 @@ class _EditorState extends State<Editor> {
                 },
               ),
               Button(
-                child: Text('Save Image'),
+                child: const Text('Save Image'),
                 onPressed: () async {
                   context.read<FileHandler>().saveFile();
                 },

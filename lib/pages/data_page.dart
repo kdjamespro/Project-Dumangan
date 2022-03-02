@@ -21,7 +21,7 @@ class _DataPageState extends State<DataPage> {
             crossAxisCount: 4,
             mainAxisSpacing: 20,
             crossAxisSpacing: 0,
-            children: [
+            children: const [
               CertificateCard(),
               CertificateCard(),
               CertificateCard(),
@@ -43,16 +43,17 @@ class _DataPageState extends State<DataPage> {
                 context: context,
                 builder: (context) {
                   return ContentDialog(
-                    title: Text('Send all?'),
-                    content: Text('Are you sure you want to send all content'),
+                    title: const Text('Send all?'),
+                    content:
+                        const Text('Are you sure you want to send all content'),
                     actions: [
                       Button(
-                          child: Text('Cancel'),
+                          child: const Text('Cancel'),
                           onPressed: () {
                             Navigator.pop(context);
                           }),
                       Button(
-                          child: Text('Send'),
+                          child: const Text('Send'),
                           onPressed: () {
                             Navigator.pop(context);
                           })
@@ -80,24 +81,25 @@ class CertificateCard extends fluent.StatelessWidget {
     return Stack(
       children: [
         Container(
-          margin: fluent.EdgeInsets.only(right: 20),
+          margin: const fluent.EdgeInsets.only(right: 20),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: <Color>[
-                Color.fromRGBO(255, 255, 255, 0.7647058823529411)
+                const Color.fromRGBO(255, 255, 255, 0.7647058823529411)
                     .withOpacity(1),
-                Color.fromRGBO(255, 255, 255, 1.0).withOpacity(1),
+                const Color.fromRGBO(255, 255, 255, 1.0).withOpacity(1),
               ],
             ),
             boxShadow: [
               BoxShadow(
-                color: Color.fromRGBO(203, 202, 202, 1.0).withOpacity(0.5),
+                color:
+                    const Color.fromRGBO(203, 202, 202, 1.0).withOpacity(0.5),
                 spreadRadius: 1,
                 blurRadius: 5,
-                offset: Offset(1, 3), // changes position of shadow
+                offset: const Offset(1, 3), // changes position of shadow
               ),
             ],
           ),
@@ -110,7 +112,7 @@ class CertificateCard extends fluent.StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      Align(
+                      const Align(
                         alignment: Alignment.bottomLeft,
                         child: Text(
                           "Name",
@@ -120,7 +122,7 @@ class CertificateCard extends fluent.StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Align(
+                          const Align(
                             alignment: Alignment.bottomLeft,
                             child: Text(
                               "email",
@@ -130,13 +132,13 @@ class CertificateCard extends fluent.StatelessWidget {
                           Row(
                             children: [
                               fluent.IconButton(
-                                icon: Icon(FluentIcons.download),
+                                icon: const Icon(FluentIcons.download),
                                 onPressed: () {
                                   print('pressed icon button');
                                 },
                               ),
                               fluent.IconButton(
-                                icon: Icon(FluentIcons.send),
+                                icon: const Icon(FluentIcons.send),
                                 onPressed: () {
                                   print('pressed icon button');
                                 },
