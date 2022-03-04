@@ -18,7 +18,7 @@ class _DataPageState extends State<DataPage> {
         padding: const EdgeInsets.all(15.0),
         child: Scaffold(
           body: GridView.count(
-            crossAxisCount: 4,
+            crossAxisCount: 5,
             mainAxisSpacing: 20,
             crossAxisSpacing: 0,
             children: [

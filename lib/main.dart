@@ -3,6 +3,7 @@ import 'dart:core';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:project_dumangan/pages/EditorSample.dart';
 import 'package:provider/provider.dart';
 
 import 'pages/data_page.dart';
@@ -119,6 +120,10 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: const Icon(FluentIcons.send),
               title: const Text('Send'),
             ),
+            PaneItem(
+              icon: const Icon(FluentIcons.send),
+              title: const Text('Send'),
+            ),
           ],
           footerItems: [
             PaneItem(
@@ -136,13 +141,9 @@ class _MyHomePageState extends State<MyHomePage> {
           //  EventPage(),
           CertPage(),
           EditorPage(),
-          DataPage(),
-
-          LoginPage(),
-
           EventPage(),
-          EditorPage(),
-          CertPage(),
+          LoginPage(),
+          EditorSample(),
           DataPage(),
           LoginPage(),
         ],
