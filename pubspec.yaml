@@ -55,6 +55,7 @@ dependencies:
   table_calendar: ^3.0.4
   sqlite3: ^1.5.1
   sqlite3_library_windows: ^2.1.0
+  data_table_2: ^2.2.1
 
   cupertino_icons: ^1.0.2
 

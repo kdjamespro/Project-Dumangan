@@ -5,17 +5,19 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:project_dumangan/database/database.dart';
+import 'package:project_dumangan/model/attribute_mapping.dart';
+import 'package:project_dumangan/services/file_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sqlite3/open.dart';
 import 'package:sqlite3_library_windows/sqlite3_library_windows.dart';
 
+import 'model/crosscheck_mapping.dart';
 import 'model/fontstyle_controller.dart';
 import 'pages/data_page.dart';
 import 'pages/data_upload/cert_page.dart';
 import 'pages/editor/editor_page.dart';
 import 'pages/event_page.dart';
 import 'pages/login_page.dart';
-import 'services/file_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +25,8 @@ void main() async {
   open.overrideFor(OperatingSystem.windows, openSQLiteOnWindows);
   runApp(MultiProvider(
     providers: [
+      Provider(create: (context) => AttributeMapping()),
+      Provider(create: (context) => CrossCheckMapping()),
       Provider(create: (context) => FileHandler(platform: FilePicker.platform)),
       ChangeNotifierProvider(create: (context) => FontStyleController()),
       Provider<MyDatabase>(

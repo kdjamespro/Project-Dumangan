@@ -7,13 +7,14 @@ import 'package:excel/excel.dart';
 import 'package:path/path.dart' as p;
 
 class FileParser {
-  Future<void> parseFile(File file) async {
+  Future<Map<String, List>> parseFile(File file) async {
     if (_isCsv(file)) {
-      await _parseCsv(file);
+      return await _parseCsv(file);
     }
+    return {};
   }
 
-  Future<List<dynamic>> _parseCsv(file) async {
+  Future<Map<String, List>> _parseCsv(file) async {
     List output = [];
     final input = File(file.path).openRead();
     final data = await input
@@ -25,11 +26,18 @@ class FileParser {
     List index = _getDataIndex(headers);
     // _getNeededFields(data, index);
     // print(data);
+    data.removeAt(0);
     output.add(headers);
     output.add(data);
-    data.removeAt(0);
-    print(output[1]);
-    return output;
+    Map<String, List> col = {};
+    for (int i = 0; i < headers.length; i++) {
+      List contents = [];
+      for (var row in data) {
+        contents.add(row[i]);
+      }
+      col.putIfAbsent(headers[i], () => contents);
+    }
+    return col;
   }
 
   void _parse_xlsx(file) async {
