@@ -8,9 +8,7 @@ class ParticipantsData extends DataGridSource {
     participants = participantList
         .map<DataGridRow>((e) => DataGridRow(cells: [
               DataGridCell<int>(columnName: 'id', value: e.id),
-              DataGridCell<String>(
-                  columnName: 'First Name', value: e.firstName),
-              DataGridCell<String>(columnName: 'Last Name', value: e.lastName),
+              DataGridCell<String>(columnName: 'Full Name', value: e.fullName),
               DataGridCell<String>(columnName: 'Email', value: e.email),
             ]))
         .toList();
@@ -21,18 +19,16 @@ class ParticipantsData extends DataGridSource {
     List<GridColumn> columns;
     columns = <GridColumn>[
       GridColumn(
-        label: Text('id'),
+        label: const Text('id'),
         columnName: 'id',
         width: double.nan,
       ),
       GridColumn(
-          label: Text('First Name'),
-          columnName: 'First Name',
+          label: const Text('Full Name'),
+          columnName: 'Full Name',
           width: double.nan),
       GridColumn(
-          label: Text('Last Name'), columnName: 'Last Name', width: double.nan),
-      GridColumn(
-          label: Text('Email'),
+          label: const Text('Email'),
           columnName: 'email',
           columnWidthMode: ColumnWidthMode.lastColumnFill),
     ];
@@ -47,7 +43,7 @@ class ParticipantsData extends DataGridSource {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((dataGridCell) {
       return Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Text(dataGridCell.value.toString()),
       );
     }).toList());

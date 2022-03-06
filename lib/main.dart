@@ -1,11 +1,22 @@
 import 'dart:core';
+import 'dart:ui';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:project_dumangan/pages/EditorSample.dart';
-import 'package:provider/provider.dart';
 
+import 'package:project_dumangan/pages/EditorSample.dart';
+
+import 'package:project_dumangan/database/database.dart';
+import 'package:project_dumangan/pages/archive_page.dart';
+import 'package:project_dumangan/pages/help_page.dart';
+import 'package:project_dumangan/pages/setting_page.dart';
+
+import 'package:provider/provider.dart';
+import 'package:sqlite3/open.dart';
+import 'package:sqlite3_library_windows/sqlite3_library_windows.dart';
+
+import 'model/fontstyle_controller.dart';
 import 'pages/data_page.dart';
 import 'pages/data_upload/cert_page.dart';
 import 'pages/editor/editor_page.dart';
@@ -15,13 +26,22 @@ import 'services/file_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(Provider(
-    create: (context) => FileHandler(platform: FilePicker.platform),
-    child: MyApp(),
+
+  open.overrideFor(OperatingSystem.windows, openSQLiteOnWindows);
+  runApp(MultiProvider(
+    providers: [
+      Provider(create: (context) => FileHandler(platform: FilePicker.platform)),
+      ChangeNotifierProvider(create: (context) => FontStyleController()),
+      Provider<MyDatabase>(
+        create: (context) => MyDatabase(),
+        dispose: (context, db) => db.close(),
+      ),
+    ],
+    child: const MyApp(),
   ));
   doWhenWindowReady(() {
     final win = appWindow;
-    win.minSize = const Size(410, 540);
+    win.minSize = Size(window.physicalSize.height, 540);
     win.maximize();
     win.alignment = Alignment.center;
     win.title = 'Project Dumangan';
@@ -36,10 +56,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FluentApp(
-      theme: ThemeData(brightness: Brightness.light),
+      theme: ThemeData(brightness: Brightness.light, accentColor: Colors.blue),
       debugShowCheckedModeBanner: false,
       title: 'Project Dumangan',
-      home: MyHomePage(title: 'Project Dumangan'),
+      home: const MyHomePage(title: 'Project Dumangan'),
     );
   }
 }
@@ -66,11 +86,9 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Text(widget.title),
           ),
         ),
-        actions: MoveWindow(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [Spacer(), WindowButtons()],
-          ),
+        actions: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [Spacer(), WindowButtons()],
         ),
         automaticallyImplyLeading: false,
       ),
@@ -86,48 +104,51 @@ class _MyHomePageState extends State<MyHomePage> {
           items: [
             // It doesn't look good when resizing from compact to open
             PaneItemHeader(
-                header: Padding(
-              padding: const EdgeInsets.all(12.0),
+                header: const Padding(
+              padding: EdgeInsets.all(12.0),
               child: Text('Controls'),
             )),
 
+            PaneItem(
+              icon: const Icon(FluentIcons.add_event),
+              title: const Text('Add Event'),
+            ),
+            PaneItem(
+              icon: const Icon(FluentIcons.check_mark),
+              title: const Text('Generate'),
+            ),
+            PaneItem(
+              icon: const Icon(FluentIcons.edit),
+              title: const Text('Edit'),
+            ),
             PaneItem(
               icon: const Icon(FluentIcons.edit),
               title: const Text('Edit'),
             ),
 
             PaneItem(
-              icon: const Icon(FluentIcons.archive),
-              title: const Text('Generate'),
+              icon: const Icon(FluentIcons.send),
+              title: const Text('Send'),
             ),
 
             PaneItem(
-              icon: const Icon(FluentIcons.add_event),
-              title: const Text('Add Event'),
-            ),
-
-            PaneItem(
-              icon: const Icon(FluentIcons.edit_photo),
-              title: const Text('Editor'),
+              icon: const Icon(FluentIcons.settings),
+              title: const Text('Settings'),
             ),
 
             PaneItem(
               icon: const Icon(FluentIcons.archive),
-              title: const Text('Generate'),
+              title: const Text('Archive'),
             ),
 
             PaneItem(
-              icon: const Icon(FluentIcons.send),
-              title: const Text('Send'),
-            ),
-            PaneItem(
-              icon: const Icon(FluentIcons.send),
-              title: const Text('Send'),
+              icon: const Icon(FluentIcons.help),
+              title: const Text('Help'),
             ),
           ],
           footerItems: [
             PaneItem(
-              icon: Icon(FluentIcons.signin),
+              icon: const Icon(FluentIcons.signin),
               title: const Text('Sign In'),
             ),
           ]),
@@ -138,13 +159,14 @@ class _MyHomePageState extends State<MyHomePage> {
             )),
         index: index,
         children: [
-          //  EventPage(),
+          EventPage(),
           CertPage(),
           EditorPage(),
-          EventPage(),
-          LoginPage(),
           EditorSample(),
           DataPage(),
+          Settigs_page(),
+          ArchivePage(),
+          HelpPage(),
           LoginPage(),
         ],
       ),

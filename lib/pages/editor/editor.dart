@@ -43,13 +43,13 @@ class _EditorState extends State<Editor> {
                       child: AspectRatio(
                         aspectRatio: 1.6471 / 1,
                         child: Container(
-                          margin: EdgeInsets.all(16),
+                          margin: const EdgeInsets.all(16),
                           color: Colors.white,
                           child: setImage(image),
                         ),
                       ),
                     ),
-                    DraggableText(),
+                    const DraggableText(),
                   ],
                 ),
               ),
@@ -109,35 +109,64 @@ class _EditorState extends State<Editor> {
                 ),
               ],
             ),
+
+            // child: Flexible(
+            //    flex: 1,
+            //    child: Container(
+            //      color: Colors.white,
+            //      child: Column(children: [
+            //        Button(
+            //          child: const Text('Upload Image'),
+            //          onPressed: () async {
+            //            final picked =
+            //                await context.read<FileHandler>().openImageFile();
+            //            if (picked.existsSync()) {
+            //              image = picked;
+            //            }
+            //            setState(() {
+            //              setImage(image);
+            //            });
+            //          },
+            //        ),
+            //        Button(
+            //          child: const Text('Save Image'),
+            //          onPressed: () async {
+            //            context.read<FileHandler>().saveFile();
+            //          },
+            //        ),
+            //      ]),
+            //
+            //    ),
+            //  ),
+            // Flexible(
+            //   flex: 1,
+            //   child: Container(
+            //     color: Colors.white,
+            //     child: Column(children: [
+            //       Button(
+            //         child: Text('Upload Image'),
+            //         onPressed: () async {
+            //           final picked =
+            //               await context.read<FileHandler>().openImageFile();
+            //           if (picked.existsSync()) {
+            //             image = picked;
+            //           }
+            //           setState(() {
+            //             setImage(image);
+            //           });
+            //         },
+            //       ),
+            //       Button(
+            //         child: Text('Save Image'),
+            //         onPressed: () async {
+            //           context.read<FileHandler>().saveFile();
+            //         },
+            //       ),
+            //     ]),
+            //   ),
+            // ),
           ),
         ),
-        // Flexible(
-        //   flex: 1,
-        //   child: Container(
-        //     color: Colors.white,
-        //     child: Column(children: [
-        //       Button(
-        //         child: Text('Upload Image'),
-        //         onPressed: () async {
-        //           final picked =
-        //               await context.read<FileHandler>().openImageFile();
-        //           if (picked.existsSync()) {
-        //             image = picked;
-        //           }
-        //           setState(() {
-        //             setImage(image);
-        //           });
-        //         },
-        //       ),
-        //       Button(
-        //         child: Text('Save Image'),
-        //         onPressed: () async {
-        //           context.read<FileHandler>().saveFile();
-        //         },
-        //       ),
-        //     ]),
-        //   ),
-        // ),
       ],
     );
   }

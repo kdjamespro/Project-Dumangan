@@ -1,16 +1,13 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
-import 'package:fluent_ui/fluent_ui.dart' as fluent;
-import 'package:project_dumangan/services/file_handler.dart';
-import 'package:provider/provider.dart';
-import 'dart:io';
 
 String fontSelector = "Calibri";
 String fontViewer = "";
-double _verticalSlider = 0;
-double _horizontalSlider = 0;
+double _verticalScroll = 0;
+double _horizontalScroll = 0;
 
 class EditorPage extends StatefulWidget {
   const EditorPage({Key? key}) : super(key: key);
@@ -20,17 +17,6 @@ class EditorPage extends StatefulWidget {
 }
 
 class _EditorPageState extends State<EditorPage> {
-  File image = File('');
-
-  Image? setImage(File image) {
-    return image.existsSync()
-        ? Image.file(
-            image,
-            fit: BoxFit.fill,
-          )
-        : null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return FluentApp(
@@ -47,18 +33,20 @@ class _EditorPageState extends State<EditorPage> {
                             .blueAccent, //remove color to make it transpatent
                         border: Border.all(
                             style: BorderStyle.solid, color: mat.Colors.white)),
-                    child: Center(
-                        child: Padding(
-                      padding: EdgeInsets.only(
-                          top: _verticalSlider, left: _horizontalSlider),
-                      child: Text(
-                        'Preview',
-                        style: TextStyle(
-                            fontFamily: "$fontViewer",
-                            color: mat.Colors.white,
-                            fontSize: 200),
-                      ),
-                    ))),
+                    child: Expanded(
+                      child: Center(
+                          child: Padding(
+                        padding: EdgeInsets.only(
+                            top: _verticalScroll, left: _horizontalScroll),
+                        child: Text(
+                          "Preview",
+                          style: TextStyle(
+                              fontFamily: "$fontViewer",
+                              color: mat.Colors.white,
+                              fontSize: 200),
+                        ),
+                      )),
+                    )),
               ),
               Container(
                 width: 300,
@@ -86,61 +74,24 @@ class _EditorPageState extends State<EditorPage> {
                         initiallyExpanded: false, // (false). Defaults to false
                       ),
                       // Text("$number"),
-
                       SizedBox(
-                        height: 40,
-                      ),
-                      SizedBox(
-                        child: Text("Vertical Slider"),
-                        height: 40,
-                      ),
-                      SizedBox(
-                        // The default width is 200.
-                        // The slider does not have its own widget, so you have to add it yourself.
-                        // The slider always try to be as big as possible
                         width: 200,
                         child: fluent.Slider(
                           max: 300,
-                          value: _verticalSlider,
-                          onChanged: (v) => setState(() => _verticalSlider = v),
-                          // Label is the text displayed above the slider when the user is interacting with it.
-                          label: '${_verticalSlider.toInt()}',
+                          value: _verticalScroll,
+                          onChanged: (v) => setState(() => _verticalScroll = v),
+                          label: '${_verticalScroll.toInt()}',
                         ),
                       ),
-
                       SizedBox(
-                        height: 40,
-                      ),
-                      SizedBox(
-                        child: Text("Horizontal Slider"),
-                        height: 40,
-                      ),
-                      SizedBox(
-                        // The default width is 200.
-                        // The slider does not have its own widget, so you have to add it yourself.
-                        // The slider always try to be as big as possible
                         width: 200,
                         child: fluent.Slider(
                           max: 300,
-                          value: _horizontalSlider,
+                          value: _horizontalScroll,
                           onChanged: (v) =>
-                              setState(() => _horizontalSlider = v),
-                          // Label is the text displayed above the slider when the user is interacting with it.
-                          label: '${_horizontalSlider.toInt()}',
+                              setState(() => _horizontalScroll = v),
+                          label: '${_horizontalScroll.toInt()}',
                         ),
-                      ),
-                      Button(
-                        child: Text('Upload Image'),
-                        onPressed: () async {
-                          final picked =
-                              await context.read<FileHandler>().openImageFile();
-                          if (picked.existsSync()) {
-                            image = picked;
-                          }
-                          setState(() {
-                            setImage(image);
-                          });
-                        },
                       ),
                     ],
                   ),

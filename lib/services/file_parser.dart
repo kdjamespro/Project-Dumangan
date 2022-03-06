@@ -7,22 +7,29 @@ import 'package:excel/excel.dart';
 import 'package:path/path.dart' as p;
 
 class FileParser {
-  void parseFile(File file) {
+  Future<void> parseFile(File file) async {
     if (_isCsv(file)) {
-      _parse_csv(file);
-    } else if (_isXlsx(file)) {
-      _parse_xlsx(file);
+      await _parseCsv(file);
     }
   }
 
-  Future<List> _parse_csv(file) async {
+  Future<List<dynamic>> _parseCsv(file) async {
+    List output = [];
     final input = File(file.path).openRead();
     final data = await input
         .transform(utf8.decoder)
         .transform(const CsvToListConverter())
         .toList();
-    print(data);
-    return data;
+    List headers = _getHeaders(data);
+    _removeBlankRows(data);
+    List index = _getDataIndex(headers);
+    // _getNeededFields(data, index);
+    // print(data);
+    output.add(headers);
+    output.add(data);
+    data.removeAt(0);
+    print(output[1]);
+    return output;
   }
 
   void _parse_xlsx(file) async {
@@ -47,7 +54,33 @@ class FileParser {
   List _getHeaders(List data) {
     return data[0];
   }
+
+  List _getDataIndex(List headers) {
+    List index = [];
+    for (int i = 0; i < headers.length; i++) {
+      if (_isNeeded(headers[i])) {
+        index.add(i);
+      }
+    }
+    return index;
+  }
+
+  void _removeBlankRows(List data) {
+    data.removeWhere((rows) => rows.every((field) => field == ''));
+  }
+
+  void _getNeededFields(List data, List columnIndex) {
+    for (var row in data) {
+      row.removeWhere((field) => !columnIndex.contains(row.indexOf(field)));
+    }
+  }
+
+  bool _isNeeded(String header) {
+    return header.contains(RegExp(r'first name', caseSensitive: false)) ||
+        header.contains(RegExp(r'last name', caseSensitive: false));
+  }
 }
+
 
 // get the headers
 // get the index of the columns needed for the data

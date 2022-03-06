@@ -12,10 +12,12 @@ void showWarningMessage(
         content: Text(message),
         actions: [
           Button(
-              child: Text('Ok'),
-              onPressed: () {
-                Navigator.pop(context);
-              })
+            child: Text('Ok'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            style: FluentTheme.of(context).buttonTheme.filledButtonStyle,
+          )
         ],
       );
     },

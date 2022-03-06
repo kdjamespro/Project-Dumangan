@@ -32,9 +32,9 @@ class _DraggableTextState extends State<DraggableText> {
         padding: const EdgeInsets.all(8.0),
         child: EditableText(
           onEditingComplete: (() {}),
-          cursorRadius: Radius.circular(2.0),
+          cursorRadius: const Radius.circular(2.0),
           textInputAction: TextInputAction.done,
-          scrollBehavior: ScrollBehavior().copyWith(scrollbars: false),
+          scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
           scrollPhysics: const NeverScrollableScrollPhysics(),
           scrollController: null,
           controller: _controller,
