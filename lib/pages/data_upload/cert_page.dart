@@ -1,8 +1,14 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project_dumangan/model/attribute_mapping.dart';
+import 'package:project_dumangan/widget/columns_table.dart';
+import 'package:project_dumangan/widget/crosschecking_table.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '/bloc/cross_checking_bloc.dart';
+import '/model/crosscheck_mapping.dart';
 import '/services/verify_message.dart';
 import '../../data/participants_data.dart';
 import 'file_uploader.dart';
@@ -18,17 +24,23 @@ class CertPage extends StatelessWidget {
       child: ScaffoldPage(
         content: BlocBuilder<CrossCheckingBloc, CrossCheckingState>(
             builder: (context, state) {
-          if (state is CrossCheckingStart) {
-            return Container(
-              child: const Center(
-                child: SizedBox(
-                  height: 200,
-                  width: 200,
-                  child: ProgressRing(
-                    strokeWidth: 15,
-                  ),
-                ),
+          if (state is CrossCheckingLoading) {
+            return const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 8,
               ),
+            );
+          } else if (state is CrossCheckingAttribute) {
+            return ColumnsTable(
+              data: state.data,
+              crossCheck: state.isEnabled,
+              file: state.crossCheckFile,
+            );
+          } else if (state is CrossCheckingMapping) {
+            return CrossCheckingTable(
+              data: state.data,
+              crossCheck: state.isEnabled,
+              crossCheckData: state.crossCheckingData,
             );
           } else if (state is CrossCheckingFinished) {
             return Container(
@@ -43,9 +55,13 @@ class CertPage extends StatelessWidget {
                             message:
                                 'Do you want to delete your existing data?');
                         if (proceed) {
+                          Provider.of<AttributeMapping>(context, listen: false)
+                              .removeAll();
+                          Provider.of<CrossCheckMapping>(context, listen: false)
+                              .removeAll();
                           context
                               .read<CrossCheckingBloc>()
-                              .add(CrossChekingEventInitialize());
+                              .add(CrossChekingInitialize());
                         }
                       }),
                   const Table(),

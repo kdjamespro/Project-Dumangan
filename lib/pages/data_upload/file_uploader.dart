@@ -26,11 +26,10 @@ class _FileUploaderState extends State<FileUploader> {
   FileParser parser = FileParser();
   bool _crossCheck = false;
   PickerContainer filePicker1 = PickerContainer(
-    caption: 'Drop a csv or xlsx file or click to upload for Attedance Form',
+    caption: 'Drop a csv file or click to upload for Attedance Form',
   );
   PickerContainer filePicker2 = PickerContainer(
-      caption:
-          'Drop a csv or xlsx file or click to upload for Registration Form');
+      caption: 'Drop a csv file or click to upload for Registration Form');
 
   bool isFileReady() {
     if (_crossCheck) {
@@ -85,11 +84,9 @@ class _FileUploaderState extends State<FileUploader> {
                   if (_crossCheck) {
                     context
                         .read<CrossCheckingBloc>()
-                        .add(CrossChekingEventDisable());
+                        .add(CrossChekingDisable());
                   } else {
-                    context
-                        .read<CrossCheckingBloc>()
-                        .add(CrossChekingEventEnable());
+                    context.read<CrossCheckingBloc>().add(CrossChekingEnable());
                   }
                   _crossCheck = v;
                   filePicker2.removeFile();
@@ -104,7 +101,7 @@ class _FileUploaderState extends State<FileUploader> {
                       );
                     } else if (state is CrossCheckingEnabled) {
                       return Row(
-                        children: [filePicker1, filePicker2],
+                        children: [filePicker2, filePicker1],
                       );
                     } else {
                       return Container();
@@ -122,11 +119,11 @@ class _FileUploaderState extends State<FileUploader> {
                               'Please select the file first before uploading');
                       return;
                     }
-                    context.read<CrossCheckingBloc>().add(
-                        CrossChekingEventStart(
-                            files: _crossCheck
-                                ? [filePicker1.getFile(), filePicker2.getFile()]
-                                : [filePicker1.getFile()]));
+                    context.read<CrossCheckingBloc>().add(CrossChekingStart(
+                        files: _crossCheck
+                            ? [filePicker1.getFile(), filePicker2.getFile()]
+                            : [filePicker1.getFile()],
+                        crossCheck: _crossCheck));
                     debugPrint('File Uploaded');
                   })
             ],
@@ -228,8 +225,7 @@ class _PickerContainerState extends State<PickerContainer> {
                   showWarningMessage(
                       context: context,
                       title: 'Invalid File Extension',
-                      message:
-                          'Please only select files with csv or xlsx format');
+                      message: 'Please only select files with csv format');
                   break;
                 }
               }
