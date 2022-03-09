@@ -3,6 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:project_dumangan/database/database.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/material.dart' as mat;
 
 class EventPage extends StatefulWidget {
   const EventPage({Key? key}) : super(key: key);
@@ -56,11 +57,11 @@ class _EventPageState extends State<EventPage> {
     return ScaffoldPage(
       header: Container(
         padding: const EdgeInsets.only(left: 16, bottom: 8, right: 16),
-        child: Column(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Events',
+              'Add Events',
               style: FluentTheme.of(context).typography.display,
             ),
             const Divider(
@@ -68,123 +69,137 @@ class _EventPageState extends State<EventPage> {
                 thickness: 2,
                 horizontalMargin: EdgeInsets.zero,
               ),
-            )
+            ),
           ],
         ),
       ),
-      content: Container(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Add Event',
-                  style: FluentTheme.of(context).typography.title,
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: const Divider(
-                    style: DividerThemeData(
-                      thickness: 2,
-                      horizontalMargin: EdgeInsets.zero,
+      content: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(16),
+            child: Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        TextFormBox(
+                          header: 'Event Title *',
+                          placeholder: 'Type the event\'s name',
+                          controller: eventsTitleController,
+                        ),
+                        TextBox(
+                          controller: eventsDescController,
+                          minHeight: 100,
+                          maxLines: null,
+                          keyboardType: TextInputType.multiline,
+                          header: 'Event Description',
+                          placeholder: 'Add brief description of the event',
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                TextFormBox(
-                  header: 'Event Title *',
-                  placeholder: 'Type the event\'s name',
-                  controller: eventsTitleController,
-                ),
-                TextBox(
-                  controller: eventsDescController,
-                  minHeight: 100,
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  header: 'Event Description',
-                  placeholder: 'Add brief description of the event',
-                ),
-                TextFormBox(
-                  controller: locationController,
-                  header: 'Location / Meeting Room',
-                  placeholder: 'Type the event\'s location',
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 240,
-                      child: TextBox(
-                        keyboardType: TextInputType.datetime,
-                        controller: dateController,
-                        header: 'Date',
-                        placeholder: 'Type event\'s date',
-                      ),
+                  SizedBox(
+                    width: 30,
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        TextFormBox(
+                          controller: locationController,
+                          header: 'Location / Meeting Room',
+                          placeholder: 'Type the event\'s location',
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextBox(
+                                keyboardType: TextInputType.datetime,
+                                controller: dateController,
+                                header: 'Date',
+                                placeholder: 'Type event\'s date',
+                              ),
+                            ),
+                            SizedBox(
+                              width: 30,
+                            ),
+                            Expanded(
+                              child: TimePicker(
+                                header: 'Starts At',
+                                selected: date,
+                                onChanged: (selectedDate) =>
+                                    setState(() => date = selectedDate),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                          width: 630,
+                          child: FilledButton(
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Text('Add New Event'),
+                              ),
+                              onPressed: () async {
+                                MyDatabase db = Provider.of<MyDatabase>(context,
+                                    listen: false);
+                                String name = eventsTitleController.text;
+                                String desc = eventsDescController.text;
+                                await db.addEvent(EventsTableCompanion(
+                                  name: drift.Value(name),
+                                  description: drift.Value(desc),
+                                  date: drift.Value(date),
+                                  absentees: const drift.Value(0),
+                                  participants: const drift.Value(0),
+                                ));
+                                print('Added to db');
+                                clearController();
+                              }),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      width: 240,
-                      child: TimePicker(
-                        header: 'Starts At',
-                        selected: date,
-                        onChanged: (selectedDate) =>
-                            setState(() => date = selectedDate),
-                      ),
-                    ),
-                  ],
-                ),
-                FilledButton(
-                    child: Text('Add New Event'),
-                    onPressed: () async {
-                      MyDatabase db =
-                          Provider.of<MyDatabase>(context, listen: false);
-                      String name = eventsTitleController.text;
-                      String desc = eventsDescController.text;
-                      await db.addEvent(EventsTableCompanion(
-                        name: drift.Value(name),
-                        description: drift.Value(desc),
-                        date: drift.Value(date),
-                        absentees: const drift.Value(0),
-                        participants: const drift.Value(0),
-                      ));
-                      print('Added to db');
-                      clearController();
-                    }),
-              ],
-            ),
-            Flexible(
-              flex: 1,
-              child: Container(
-                child: StreamBuilder(
-                  stream: Provider.of<MyDatabase>(context, listen: false)
-                      .getEvents(),
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.active:
-                        List<EventsTableData> events =
-                            snapshot.data as List<EventsTableData>;
-                        print(events.length);
-                        return Row(
-                          children: events
-                              .map((event) => GestureDetector(
-                                    onTap: () {
-                                      print(event.id);
-                                    },
-                                    child: Column(children: [
-                                      Text(event.name),
-                                      Text(event.date.toString())
-                                    ]),
-                                  ))
-                              .toList(),
-                        );
-                    }
-                    return Container();
-                  },
-                ),
+                  ),
+                ],
               ),
-            )
-          ],
-        ),
+            ),
+          ),
+          Flexible(
+            flex: 1,
+            child: Container(
+              child: StreamBuilder(
+                stream:
+                    Provider.of<MyDatabase>(context, listen: false).getEvents(),
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.active:
+                      List<EventsTableData> events =
+                          snapshot.data as List<EventsTableData>;
+                      print(events.length);
+                      return Row(
+                        children: events
+                            .map((event) => GestureDetector(
+                                  onTap: () {
+                                    print(event.id);
+                                  },
+                                  child: Column(children: [
+                                    Text(event.name),
+                                    Text(event.date.toString())
+                                  ]),
+                                ))
+                            .toList(),
+                      );
+                  }
+                  return Container();
+                },
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

@@ -4,9 +4,18 @@ import 'dart:ui';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+
+import 'package:project_dumangan/pages/EditorSample.dart';
+
 import 'package:project_dumangan/database/database.dart';
+
+import 'package:project_dumangan/pages/archive_page.dart';
+import 'package:project_dumangan/pages/help_page.dart';
+import 'package:project_dumangan/pages/setting_page.dart';
+
 import 'package:project_dumangan/model/attribute_mapping.dart';
 import 'package:project_dumangan/services/file_handler.dart';
+
 import 'package:provider/provider.dart';
 import 'package:sqlite3/open.dart';
 import 'package:sqlite3_library_windows/sqlite3_library_windows.dart';
@@ -107,33 +116,40 @@ class _MyHomePageState extends State<MyHomePage> {
             )),
 
             PaneItem(
+              icon: const Icon(FluentIcons.add_event),
+              title: const Text('Add Event'),
+            ),
+            PaneItem(
+              icon: const Icon(FluentIcons.check_mark),
+              title: const Text('Generate'),
+            ),
+            PaneItem(
+              icon: const Icon(FluentIcons.edit),
+              title: const Text('Edit'),
+            ),
+            PaneItem(
               icon: const Icon(FluentIcons.edit),
               title: const Text('Edit'),
             ),
 
             PaneItem(
-              icon: const Icon(FluentIcons.archive),
-              title: const Text('Generate'),
-            ),
-
-            PaneItem(
-              icon: const Icon(FluentIcons.add_event),
-              title: const Text('Add Event'),
-            ),
-
-            PaneItem(
-              icon: const Icon(FluentIcons.edit_photo),
-              title: const Text('Editor'),
-            ),
-
-            PaneItem(
-              icon: const Icon(FluentIcons.archive),
-              title: const Text('Generate'),
-            ),
-
-            PaneItem(
               icon: const Icon(FluentIcons.send),
               title: const Text('Send'),
+            ),
+
+            PaneItem(
+              icon: const Icon(FluentIcons.settings),
+              title: const Text('Settings'),
+            ),
+
+            PaneItem(
+              icon: const Icon(FluentIcons.archive),
+              title: const Text('Archive'),
+            ),
+
+            PaneItem(
+              icon: const Icon(FluentIcons.help),
+              title: const Text('Help'),
             ),
           ],
           footerItems: [
@@ -149,14 +165,14 @@ class _MyHomePageState extends State<MyHomePage> {
             )),
         index: index,
         children: [
-          const EventPage(),
+          EventPage(),
           CertPage(),
-          const EditorPage(),
-          const DataPage(),
-          LoginPage(),
-          const EditorPage(),
-          CertPage(),
-          const DataPage(),
+          EditorPage(),
+          EditorSample(),
+          DataPage(),
+          Settigs_page(),
+          ArchivePage(),
+          HelpPage(),
           LoginPage(),
         ],
       ),

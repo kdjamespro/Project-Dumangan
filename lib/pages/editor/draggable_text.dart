@@ -44,7 +44,7 @@ class _DraggableTextState extends State<DraggableText> {
           cursorColor: Colors.black,
           style: TextStyle(
             color: Colors.black,
-            fontSize: 16,
+            fontSize: 20,
           ),
         ),
       ),
