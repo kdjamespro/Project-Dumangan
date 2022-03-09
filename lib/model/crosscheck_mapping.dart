@@ -23,6 +23,10 @@ class CrossCheckMapping {
     return _crossCheckMapping.keys.toList();
   }
 
+  List getValues() {
+    return _crossCheckMapping.values.toList();
+  }
+
   void removeAttribute(String key) {
     _crossCheckMapping.remove(key);
   }

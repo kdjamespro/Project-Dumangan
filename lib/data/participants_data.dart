@@ -4,12 +4,14 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../model/participant.dart';
 
 class ParticipantsData extends DataGridSource {
-  ParticipantsData() {
+  List dataList;
+  ParticipantsData({required this.dataList}) {
     participants = participantList
         .map<DataGridRow>((e) => DataGridRow(cells: [
               DataGridCell<int>(columnName: 'id', value: e.id),
               DataGridCell<String>(columnName: 'Full Name', value: e.fullName),
               DataGridCell<String>(columnName: 'Email', value: e.email),
+              DataGridCell<String>(columnName: 'Organization', value: e.email)
             ]))
         .toList();
   }

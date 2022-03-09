@@ -70,7 +70,26 @@ class MyDatabase extends _$MyDatabase {
     return select(eventsTable).watch();
   }
 
+  Stream<List<ParticipantsTableData>> getParticipants() {
+    return select(participantsTable).watch();
+  }
+
   Future<void> addEvent(EventsTableCompanion event) {
     return into(eventsTable).insert(event);
+  }
+
+  Future<void> addParticipant(ParticipantsTableCompanion participant) {
+    return into(participantsTable).insert(participant);
+  }
+
+  Future<void> addBatchParticipants(List<Insertable> queryList) async {
+    await batch((batch) {
+      batch.insertAll(participantsTable, queryList);
+    });
+  }
+
+  Future deleteParticipants(int id) {
+    return (delete(participantsTable)..where((tbl) => tbl.eventsId.equals(id)))
+        .go();
   }
 }

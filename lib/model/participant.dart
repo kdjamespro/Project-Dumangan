@@ -1,11 +1,14 @@
 class Participant {
-  Participant(
-      {required this.id,
-      required this.fullName,
-      required this.email,
-      this.organization = ''});
-  late int id;
+  Participant({
+    this.id,
+    required this.fullName,
+    required this.email,
+    this.organization = '',
+    this.selected = false,
+  });
+  late int? id;
   late String fullName, email, organization;
+  bool selected;
 }
 
 List<Participant> participantList = [
