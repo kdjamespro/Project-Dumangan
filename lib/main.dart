@@ -9,7 +9,7 @@ import 'package:project_dumangan/pages/EditorSample.dart';
 
 import 'package:project_dumangan/database/database.dart';
 
-import 'package:project_dumangan/pages/archive_page.dart';
+import 'package:project_dumangan/pages/dashboard_page.dart';
 import 'package:project_dumangan/pages/help_page.dart';
 import 'package:project_dumangan/pages/setting_page.dart';
 
@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
     return FluentApp(
       theme: ThemeData(brightness: Brightness.light, accentColor: Colors.blue),
       debugShowCheckedModeBanner: false,
-      title: 'Project Dumangan',
+      // title: 'Project Dumangan',
       home: const MyHomePage(title: 'Project Dumangan'),
     );
   }
@@ -144,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
             PaneItem(
               icon: const Icon(FluentIcons.archive),
-              title: const Text('Archive'),
+              title: const Text('Dashboard'),
             ),
 
             PaneItem(
@@ -171,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
           EditorSample(),
           DataPage(),
           Settigs_page(),
-          ArchivePage(),
+          DashboardPage(),
           HelpPage(),
           LoginPage(),
         ],

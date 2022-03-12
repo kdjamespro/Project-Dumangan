@@ -10,8 +10,15 @@ class DataPage extends StatefulWidget {
   State<DataPage> createState() => _DataPageState();
 }
 
+final flyoutController = FlyoutController();
+
 class _DataPageState extends State<DataPage> {
   @override
+  void dispose() {
+    flyoutController.dispose();
+    super.dispose();
+  }
+
   Widget build(BuildContext context) {
     return FluentApp(
       debugShowCheckedModeBanner: false,
@@ -27,19 +34,22 @@ class _DataPageState extends State<DataPage> {
                 crossAxisCount: 5,
                 mainAxisSpacing: 20,
                 crossAxisSpacing: 20,
-                children: const [
-                  CertificateCard(),
-                  CertificateCard(),
-                  CertificateCard(),
-                  CertificateCard(),
-                  CertificateCard(),
-                  CertificateCard(),
-                  CertificateCard(),
-                  CertificateCard(),
-                  CertificateCard(),
-                  CertificateCard(),
-                  CertificateCard(),
-                  CertificateCard(),
+                children: [
+                  certificateCard(context, "Name", "Email"),
+                  certificateCard(context, "Name", "Email"),
+                  certificateCard(context, "Name", "Email"),
+                  certificateCard(context, "Name", "Email"),
+                  certificateCard(context, "Name", "Email"),
+                  certificateCard(context, "Name", "Email"),
+                  certificateCard(context, "Name", "Email"),
+                  certificateCard(context, "Name", "Email"),
+                  certificateCard(context, "Name", "Email"),
+                  certificateCard(context, "Name", "Email"),
+                  certificateCard(context, "Name", "Email"),
+                  certificateCard(context, "Name", "Email"),
+                  certificateCard(context, "Name", "Email"),
+                  certificateCard(context, "Name", "Email"),
+                  certificateCard(context, "Name", "Email"),
                 ],
               ),
               floatingActionButton: FloatingActionButton(
@@ -77,15 +87,9 @@ class _DataPageState extends State<DataPage> {
       ),
     );
   }
-}
 
-class CertificateCard extends fluent.StatelessWidget {
-  const CertificateCard({
-    fluent.Key? key,
-  }) : super(key: key);
-
-  @override
-  fluent.Widget build(fluent.BuildContext context) {
+  fluent.Stack certificateCard(
+      fluent.BuildContext context, String name, String email) {
     return Stack(
       children: [
         Container(
@@ -128,21 +132,29 @@ class CertificateCard extends fluent.StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      const Align(
+                      Align(
                         alignment: Alignment.bottomLeft,
-                        child: Text(
-                          "Name",
-                          style: TextStyle(fontSize: 14),
+                        child: Expanded(
+                          child: Text(
+                            name,
+                            style: TextStyle(fontSize: 14),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Align(
+                          Align(
                             alignment: Alignment.bottomLeft,
-                            child: Text(
-                              "email",
-                              style: TextStyle(fontSize: 12),
+                            child: Expanded(
+                              child: Text(
+                                email,
+                                style: TextStyle(fontSize: 12),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
                           Row(
@@ -185,3 +197,120 @@ class CertificateCard extends fluent.StatelessWidget {
     );
   }
 }
+
+//Past version of the certificate card
+//
+// class CertificateCard extends fluent.StatelessWidget {
+//   const CertificateCard({
+//     fluent.Key? key,
+//   }) : super(key: key);
+//
+//   @override
+//   fluent.Widget build(fluent.BuildContext context) {
+//     return Stack(
+//       children: [
+//         Container(
+//           child: fluent.Center(
+//               child: fluent.Image(
+//                   fit: fluent.BoxFit.fill,
+//                   height: 200.0,
+//                   image:
+//                       fluent.AssetImage('lib/image/certificate_template.png'))),
+//         ),
+//         Container(
+//           decoration: BoxDecoration(
+//             borderRadius: BorderRadius.circular(16),
+//             gradient: LinearGradient(
+//               begin: Alignment.topCenter,
+//               end: Alignment.bottomCenter,
+//               colors: <Color>[
+//                 fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.7),
+//                 fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.9),
+//                 fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.9),
+//                 fluent.Color.fromARGB(246, 255, 255, 255).withOpacity(1.0),
+//               ],
+//             ),
+//             boxShadow: [
+//               BoxShadow(
+//                 color:
+//                     const Color.fromRGBO(203, 202, 202, 1.0).withOpacity(0.2),
+//                 spreadRadius: 2,
+//                 blurRadius: 3,
+//                 offset: const Offset(1, 3), // changes position of shadow
+//               ),
+//             ],
+//           ),
+//           child: Align(
+//             alignment: Alignment.bottomLeft,
+//             child: Padding(
+//               padding: const EdgeInsets.all(16.0),
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.end,
+//                 children: [
+//                   Column(
+//                     children: [
+//                       Align(
+//                         alignment: Alignment.bottomLeft,
+//                         child: Expanded(
+//                           child: Text(
+//                             "Name",
+//                             style: TextStyle(fontSize: 14),
+//                             maxLines: 1,
+//                             overflow: TextOverflow.ellipsis,
+//                           ),
+//                         ),
+//                       ),
+//                       Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                         children: [
+//                           const Align(
+//                             alignment: Alignment.bottomLeft,
+//                             child: Expanded(
+//                               child: Text(
+//                                 "email",
+//                                 style: TextStyle(fontSize: 12),
+//                                 maxLines: 1,
+//                                 overflow: TextOverflow.ellipsis,
+//                               ),
+//                             ),
+//                           ),
+//                           Row(
+//                             children: [
+//                               fluent.IconButton(
+//                                 icon: const Icon(FluentIcons.download),
+//                                 onPressed: () {
+//                                   showSnackbar(
+//                                     context,
+//                                     Snackbar(
+//                                       content:
+//                                           Text('FileName has been downloaded'),
+//                                     ),
+//                                   );
+//                                 },
+//                               ),
+//                               fluent.IconButton(
+//                                 icon: const Icon(FluentIcons.send),
+//                                 onPressed: () {
+//                                   showSnackbar(
+//                                     context,
+//                                     Snackbar(
+//                                       content: Text('FileName has been sent'),
+//                                     ),
+//                                   );
+//                                 },
+//                               ),
+//                             ],
+//                           )
+//                         ],
+//                       )
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }

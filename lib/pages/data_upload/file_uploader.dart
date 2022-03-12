@@ -86,70 +86,121 @@ class _FileUploaderState extends State<FileUploader> {
                           ),
                         ],
                       ),
-                      Container(
-                        child: const Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Text(
-                              "Matches two or or more .csv files (For example Attendace and Registration Data)"),
-                        ),
-                      ),
-                      ToggleSwitch(
-                        checked: _crossCheck,
-                        onChanged: (v) => setState(() {
-                          if (_crossCheck) {
-                            context
-                                .read<CrossCheckingBloc>()
-                                .add(CrossChekingDisable());
-                          } else {
-                            context
-                                .read<CrossCheckingBloc>()
-                                .add(CrossChekingEnable());
-                          }
-                          _crossCheck = v;
-                          filePicker2.removeFile();
-                        }),
-                        content: Text(_crossCheck ? 'Enable' : 'Disable'),
-                      ),
-                      BlocConsumer<CrossCheckingBloc, CrossCheckingState>(
-                          builder: (context, state) {
-                            if (state is CrossCheckingDisabled) {
-                              return Row(
-                                children: [filePicker1],
-                              );
-                            } else if (state is CrossCheckingEnabled) {
-                              return Row(
-                                children: [filePicker2, filePicker1],
-                              );
-                            } else {
-                              return Container();
-                            }
-                          },
-                          listener: (context, state) {}),
-                      FilledButton(
-                          child: const Text('Upload Data'),
-                          onPressed: () {
-                            if (!isFileReady()) {
-                              showWarningMessage(
-                                  context: context,
-                                  title: 'Missing File',
-                                  message:
-                                      'Please select the file first before uploading');
-                              return;
-                            }
-                            context.read<CrossCheckingBloc>().add(
-                                CrossChekingStart(
-                                    files: _crossCheck
-                                        ? [
-                                            filePicker2.getFile(),
-                                            filePicker1.getFile()
-                                          ]
-                                        : [filePicker1.getFile()],
-                                    crossCheck: _crossCheck));
-                            debugPrint('File Uploaded');
-                          })
                     ],
                   ),
                 ),
+                Container(
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      "Do you want to Cross Check?",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                ToggleSwitch(
+                  checked: _crossCheck,
+                  onChanged: (v) => setState(() {
+                    if (_crossCheck) {
+                      context
+                          .read<CrossCheckingBloc>()
+                          .add(CrossChekingDisable());
+                    } else {
+                      context
+                          .read<CrossCheckingBloc>()
+                          .add(CrossChekingEnable());
+                    }
+                    _crossCheck = v;
+                    filePicker2.removeFile();
+                  }),
+                  content: Text(_crossCheck ? 'Enable' : 'Disable'),
+                ),
+                BlocConsumer<CrossCheckingBloc, CrossCheckingState>(
+                    builder: (context, state) {
+                      if (state is CrossCheckingDisabled) {
+                        return Row(
+                          children: [filePicker1],
+                        );
+                      } else if (state is CrossCheckingEnabled) {
+                        return Row(
+                          children: [filePicker2, filePicker1],
+                        );
+                      } else {
+                        return Container();
+                      }
+                    },
+                    listener: (context, state) {}),
+                FilledButton(
+                    child: const Text('Upload Data'),
+                    onPressed: () {
+                      if (!isFileReady()) {
+                        showWarningMessage(
+                            context: context,
+                            title: 'Missing File',
+                            message:
+                                'Please select the file first before uploading');
+                        return;
+                      }
+                      context.read<CrossCheckingBloc>().add(CrossChekingStart(
+                          files: _crossCheck
+                              ? [filePicker2.getFile(), filePicker1.getFile()]
+                              : [filePicker1.getFile()],
+                          crossCheck: _crossCheck));
+                      debugPrint('File Uploaded');
+                    }),
+                ToggleSwitch(
+                  checked: _crossCheck,
+                  onChanged: (v) => setState(() {
+                    if (_crossCheck) {
+                      context
+                          .read<CrossCheckingBloc>()
+                          .add(CrossChekingDisable());
+                    } else {
+                      context
+                          .read<CrossCheckingBloc>()
+                          .add(CrossChekingEnable());
+                    }
+                    _crossCheck = v;
+                    filePicker2.removeFile();
+                  }),
+                  content: Text(_crossCheck
+                      ? 'Cross Checking Enabled'
+                      : 'Cross Checking Disabled'),
+                ),
+                BlocConsumer<CrossCheckingBloc, CrossCheckingState>(
+                    builder: (context, state) {
+                      if (state is CrossCheckingDisabled) {
+                        return Row(
+                          children: [filePicker1],
+                        );
+                      } else if (state is CrossCheckingEnabled) {
+                        return Row(
+                          children: [filePicker2, filePicker1],
+                        );
+                      } else {
+                        return Container();
+                      }
+                    },
+                    listener: (context, state) {}),
+                FilledButton(
+                    child: const Text('Upload Data'),
+                    onPressed: () {
+                      if (!isFileReady()) {
+                        showWarningMessage(
+                            context: context,
+                            title: 'Missing File',
+                            message:
+                                'Please select the file first before uploading');
+                        return;
+                      }
+                      context.read<CrossCheckingBloc>().add(CrossChekingStart(
+                          files: _crossCheck
+                              ? [filePicker2.getFile(), filePicker1.getFile()]
+                              : [filePicker1.getFile()],
+                          crossCheck: _crossCheck));
+                      debugPrint('File Uploaded');
+                    })
               ],
             );
           }
