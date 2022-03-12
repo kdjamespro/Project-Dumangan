@@ -123,7 +123,7 @@ class _FileUploaderState extends State<FileUploader> {
                     }
                     context.read<CrossCheckingBloc>().add(CrossChekingStart(
                         files: _crossCheck
-                            ? [filePicker1.getFile(), filePicker2.getFile()]
+                            ? [filePicker2.getFile(), filePicker1.getFile()]
                             : [filePicker1.getFile()],
                         crossCheck: _crossCheck));
                     debugPrint('File Uploaded');

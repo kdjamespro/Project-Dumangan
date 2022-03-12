@@ -23,6 +23,10 @@ class AttributeMapping {
     return _columnToAttribute.keys.toList();
   }
 
+  List getValues() {
+    return _columnToAttribute.values.toList();
+  }
+
   void removeAttribute(String key) {
     _columnToAttribute.remove(key);
   }

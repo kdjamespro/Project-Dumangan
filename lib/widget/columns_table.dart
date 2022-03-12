@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
+import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/attribute_mapping.dart';
 import 'package:project_dumangan/services/warning_message.dart';
 import 'package:project_dumangan/widget/drop_down.dart';
@@ -65,6 +66,8 @@ class _ColumnsTableState extends State<ColumnsTable> {
                         } else {
                           context.read<CrossCheckingBloc>().add(
                               CrossCheckingProcess(
+                                  db: Provider.of<MyDatabase>(context,
+                                      listen: false),
                                   isEnabled: widget.crossCheck,
                                   data: widget.data,
                                   attributeMap: Provider.of<AttributeMapping>(

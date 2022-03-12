@@ -24,12 +24,14 @@ class CrossCheckingProceed extends CrossCheckingEvent {
 }
 
 class CrossCheckingProcess extends CrossCheckingEvent {
+  final MyDatabase db;
   final bool isEnabled;
   final Map<String, List> data;
   final AttributeMapping attributeMap;
   final Map<String, List>? crossCheckingData;
   final CrossCheckMapping? crossCheckMap;
   CrossCheckingProcess({
+    required this.db,
     required this.data,
     required this.isEnabled,
     required this.attributeMap,
