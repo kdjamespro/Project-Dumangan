@@ -1,8 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart' as mat;
-import 'package:flutter/material.dart';
 
 String fontSelector = "Calibri";
 String fontViewer = "";
@@ -23,8 +20,8 @@ class _EditorPageState extends State<EditorPage> {
       debugShowCheckedModeBanner: false,
       home: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: Scaffold(
-          body: Row(
+        child: ScaffoldPage(
+          content: Row(
             children: [
               Expanded(
                 child: Container(
@@ -58,6 +55,27 @@ class _EditorPageState extends State<EditorPage> {
                       SizedBox(
                         height: 30,
                       ),
+                      SplitButtonBar(buttons: [
+                        Container(
+                          width: 50,
+                          height: 25,
+                          child: IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                FluentIcons.align_horizontal_left,
+                                size: 10,
+                              )),
+                        ),
+                        SizedBox(
+                          height: 25,
+                          child: IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                FluentIcons.chevron_down,
+                                size: 10,
+                              )),
+                        ),
+                      ]),
                       Expander(
                         header: Text("$fontSelector"),
                         content: Column(
@@ -76,7 +94,7 @@ class _EditorPageState extends State<EditorPage> {
                       // Text("$number"),
                       SizedBox(
                         width: 200,
-                        child: fluent.Slider(
+                        child: Slider(
                           max: 300,
                           value: _verticalScroll,
                           onChanged: (v) => setState(() => _verticalScroll = v),
@@ -85,7 +103,7 @@ class _EditorPageState extends State<EditorPage> {
                       ),
                       SizedBox(
                         width: 200,
-                        child: fluent.Slider(
+                        child: Slider(
                           max: 300,
                           value: _horizontalScroll,
                           onChanged: (v) =>

@@ -5,6 +5,10 @@ abstract class CrossCheckingState {
   const CrossCheckingState();
 }
 
+class CrossCheckingCheck extends CrossCheckingState {
+  const CrossCheckingCheck() : super();
+}
+
 class CrossCheckingEnabled extends CrossCheckingState {
   const CrossCheckingEnabled() : super();
 }

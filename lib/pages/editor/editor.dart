@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart' as mat;
+import 'package:path/path.dart' as Path;
 import 'package:project_dumangan/services/file_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/material.dart' as mat;
+import 'package:screenshot/screenshot.dart';
+
 import 'draggable_text.dart';
 
 String fontSelector = "Calibri";
@@ -17,7 +20,10 @@ class Editor extends StatefulWidget {
 }
 
 class _EditorState extends State<Editor> {
+  ScreenshotController screenshotController = ScreenshotController();
+
   File image = File('');
+  DraggableText text = DraggableText();
 
   Image? setImage(File image) {
     return image.existsSync()
@@ -26,6 +32,29 @@ class _EditorState extends State<Editor> {
             fit: BoxFit.fill,
           )
         : null;
+  }
+
+  Container FontChanger(font, style) {
+    final String fontTitle = font;
+    final String styleFont = style;
+    return Container(
+      child: mat.OutlinedButton(
+        style: mat.OutlinedButton.styleFrom(
+            side: BorderSide(color: mat.Colors.white, width: 400),
+            padding: EdgeInsets.fromLTRB(5, 0, 120, 10)),
+        child: Text(
+          fontTitle,
+          style: TextStyle(color: mat.Colors.black, fontFamily: styleFont),
+        ),
+        onPressed: () {
+          setState(() {
+            fontSelector = fontTitle;
+            fontViewer = styleFont;
+            print(fontSelector);
+          });
+        },
+      ),
+    );
   }
 
   @override
@@ -37,20 +66,26 @@ class _EditorState extends State<Editor> {
           child: Column(
             children: [
               Expanded(
-                child: Stack(
-                  children: [
-                    Positioned(
-                      child: AspectRatio(
-                        aspectRatio: 1.6471 / 1,
-                        child: Container(
-                          margin: const EdgeInsets.all(16),
-                          color: Colors.white,
-                          child: setImage(image),
+                child: Screenshot(
+                  controller: screenshotController,
+                  child: Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: [
+                      Positioned(
+                        child: AspectRatio(
+                          aspectRatio: 1.6471 / 1,
+                          child: Container(
+                            margin: const EdgeInsets.all(16),
+                            color: Colors.white,
+                            child: setImage(image),
+                          ),
                         ),
                       ),
-                    ),
-                    const DraggableText(),
-                  ],
+                      Positioned.fill(
+                          child:
+                              Align(alignment: Alignment.center, child: text))
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -87,7 +122,7 @@ class _EditorState extends State<Editor> {
                 Row(
                   children: [
                     Button(
-                      child: Text('Upload Image'),
+                      child: const Text('Upload Image'),
                       onPressed: () async {
                         final picked =
                             await context.read<FileHandler>().openImageFile();
@@ -102,95 +137,24 @@ class _EditorState extends State<Editor> {
                     Button(
                       child: Text('Save Image'),
                       onPressed: () async {
-                        context.read<FileHandler>().saveFile();
+                        String path =
+                            await context.read<FileHandler>().saveFile();
+                        String name = Path.basename(path);
+                        if (path != '') {
+                          screenshotController.captureAndSave(
+                              Path.dirname(path),
+                              pixelRatio: 3.0,
+                              fileName: name);
+                        }
                       },
                     ),
                   ],
                 ),
               ],
             ),
-
-            // child: Flexible(
-            //    flex: 1,
-            //    child: Container(
-            //      color: Colors.white,
-            //      child: Column(children: [
-            //        Button(
-            //          child: const Text('Upload Image'),
-            //          onPressed: () async {
-            //            final picked =
-            //                await context.read<FileHandler>().openImageFile();
-            //            if (picked.existsSync()) {
-            //              image = picked;
-            //            }
-            //            setState(() {
-            //              setImage(image);
-            //            });
-            //          },
-            //        ),
-            //        Button(
-            //          child: const Text('Save Image'),
-            //          onPressed: () async {
-            //            context.read<FileHandler>().saveFile();
-            //          },
-            //        ),
-            //      ]),
-            //
-            //    ),
-            //  ),
-            // Flexible(
-            //   flex: 1,
-            //   child: Container(
-            //     color: Colors.white,
-            //     child: Column(children: [
-            //       Button(
-            //         child: Text('Upload Image'),
-            //         onPressed: () async {
-            //           final picked =
-            //               await context.read<FileHandler>().openImageFile();
-            //           if (picked.existsSync()) {
-            //             image = picked;
-            //           }
-            //           setState(() {
-            //             setImage(image);
-            //           });
-            //         },
-            //       ),
-            //       Button(
-            //         child: Text('Save Image'),
-            //         onPressed: () async {
-            //           context.read<FileHandler>().saveFile();
-            //         },
-            //       ),
-            //     ]),
-            //   ),
-            // ),
           ),
         ),
       ],
-    );
-  }
-
-  Container FontChanger(font, style) {
-    final String fontTitle = font;
-    final String styleFont = style;
-    return Container(
-      child: mat.OutlinedButton(
-        style: mat.OutlinedButton.styleFrom(
-            side: BorderSide(color: mat.Colors.white, width: 400),
-            padding: EdgeInsets.fromLTRB(5, 0, 120, 10)),
-        child: Text(
-          fontTitle,
-          style: TextStyle(color: mat.Colors.black, fontFamily: styleFont),
-        ),
-        onPressed: () {
-          setState(() {
-            fontSelector = fontTitle;
-            fontViewer = styleFont;
-            print(fontSelector);
-          });
-        },
-      ),
     );
   }
 }

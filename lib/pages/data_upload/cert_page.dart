@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/attribute_mapping.dart';
 import 'package:project_dumangan/model/participant.dart';
+import 'package:project_dumangan/services/warning_message.dart';
 import 'package:project_dumangan/widget/columns_table.dart';
 import 'package:project_dumangan/widget/crosschecking_table.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +16,6 @@ import 'file_uploader.dart';
 
 class CertPage extends StatelessWidget {
   CertPage({Key? key}) : super(key: key);
-  bool fileExists = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,33 +44,7 @@ class CertPage extends StatelessWidget {
               crossCheckData: state.crossCheckingData,
             );
           } else if (state is CrossCheckingFinished) {
-            return Container(
-              child: Center(
-                child: Column(children: [
-                  Button(
-                      child: const Text('Delete Data'),
-                      onPressed: () async {
-                        bool proceed = await showVerificationMessage(
-                            context: context,
-                            title: 'Deleting Data',
-                            message:
-                                'Do you want to delete your existing data?');
-                        if (proceed) {
-                          Provider.of<AttributeMapping>(context, listen: false)
-                              .removeAll();
-                          Provider.of<CrossCheckMapping>(context, listen: false)
-                              .removeAll();
-                          await Provider.of<MyDatabase>(context, listen: false)
-                              .deleteParticipants(1);
-                          context
-                              .read<CrossCheckingBloc>()
-                              .add(CrossChekingInitialize());
-                        }
-                      }),
-                  Table(),
-                ]),
-              ),
-            );
+            return Table();
           } else {
             return const FileUploader();
           }
@@ -87,18 +61,33 @@ class Table extends StatefulWidget {
   _TableState createState() => _TableState();
 }
 
-class _TableState extends State<Table> {
+class _TableState extends State<Table>
+    with AutomaticKeepAliveClientMixin<Table> {
+  @override
+  bool get wantKeepAlive => true;
   List selectedRow = [];
   bool isLoaded = false;
   final FlyoutController flyoutController = FlyoutController();
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController organizationController = TextEditingController();
 
   @override
   void dispose() {
+    fullNameController.dispose();
+    emailController.dispose();
+    organizationController.dispose();
     flyoutController.dispose();
     super.dispose();
   }
 
   TableSource dataSource = TableSource(dataList: [], selectedRows: []);
+
+  void clearController() {
+    fullNameController.clear();
+    emailController.clear();
+    organizationController.clear();
+  }
 
   void getData(List data) {
     List participantsList = [];
@@ -107,6 +96,7 @@ class _TableState extends State<Table> {
         id: row.id,
         fullName: row.fullName,
         email: row.email,
+        attended: row.attended,
         organization: row.organization ?? '',
       ));
 
@@ -116,120 +106,185 @@ class _TableState extends State<Table> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: StreamBuilder(
-          stream:
-              Provider.of<MyDatabase>(context, listen: false).getParticipants(),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.active:
-                List<ParticipantsTableData> data =
-                    snapshot.data as List<ParticipantsTableData>;
-                getData(data);
-                return mat.Material(
-                  color: FluentTheme.of(context).scaffoldBackgroundColor,
-                  child: mat.Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    padding: const EdgeInsets.all(16.0),
-                    child: SingleChildScrollView(
-                      child: mat.PaginatedDataTable(
-                        header: Row(children: [
-                          Text(
-                            'Participants',
-                            style: FluentTheme.of(context).typography.subtitle,
-                          ),
-                          Spacer(),
-                          Flyout(
-                            contentWidth: 500,
-                            controller: flyoutController,
-                            content: FlyoutContent(
-                                child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 8.0,
-                              ),
-                              height: 400,
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Add New Participants',
-                                    style: FluentTheme.of(context)
-                                        .typography
-                                        .subtitle,
-                                  ),
-                                  TextFormBox(
-                                    header: 'Full Name*',
-                                  ),
-                                  TextFormBox(
-                                    header: 'Email*',
-                                  ),
-                                  TextFormBox(
-                                    header: 'Organization',
-                                  ),
-                                  FilledButton(
-                                      child: const Text('Add New Participants'),
-                                      onPressed: () {
+    return StreamBuilder(
+        stream:
+            Provider.of<MyDatabase>(context, listen: false).getParticipants(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return const Center(
+                child: ProgressRing(),
+              );
+            case ConnectionState.active:
+              List<ParticipantsTableData> data =
+                  snapshot.data as List<ParticipantsTableData>;
+              getData(data);
+              return mat.Material(
+                color: FluentTheme.of(context).scaffoldBackgroundColor,
+                child: mat.Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
+                    child: mat.PaginatedDataTable(
+                      header: Row(children: [
+                        Text(
+                          'Participants',
+                          style: FluentTheme.of(context).typography.subtitle,
+                        ),
+                        const Spacer(),
+                        Flyout(
+                          contentWidth: 500,
+                          controller: flyoutController,
+                          content: FlyoutContent(
+                              child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                              vertical: 8.0,
+                            ),
+                            height: 400,
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Add New Participants',
+                                  style: FluentTheme.of(context)
+                                      .typography
+                                      .subtitle,
+                                ),
+                                TextFormBox(
+                                  header: 'Full Name*',
+                                  controller: fullNameController,
+                                ),
+                                TextFormBox(
+                                  header: 'Email*',
+                                  controller: emailController,
+                                ),
+                                TextFormBox(
+                                  header: 'Organization',
+                                  controller: organizationController,
+                                ),
+                                FilledButton(
+                                    child: const Text('Add New Participants'),
+                                    onPressed: () {
+                                      if (fullNameController.text.isNotEmpty &&
+                                          emailController.text.isNotEmpty) {
+                                        clearController();
+                                        flyoutController.open = false;
                                         showSnackbar(
                                             context,
-                                            Snackbar(
+                                            const Snackbar(
                                               content: Text(
                                                   'New Participants Added'),
                                             ));
-                                        flyoutController.open = false;
-                                      })
-                                ],
-                              ),
-                            )),
-                            child: Tooltip(
-                              message: 'Add new participants',
-                              child: IconButton(
-                                  onPressed: () {
-                                    flyoutController.open = true;
-                                  },
-                                  icon: const Icon(FluentIcons.add)),
+                                      } else {
+                                        showWarningMessage(
+                                            context: context,
+                                            title: 'Incomplete Field',
+                                            message:
+                                                'Please fill up full name and email');
+                                      }
+                                    })
+                              ],
                             ),
-                          ),
-                          Tooltip(
-                            message: 'Delete selected rows',
+                          )),
+                          child: Tooltip(
+                            message: 'Add new participants',
                             child: IconButton(
                                 onPressed: () {
-                                  print(dataSource.selectedRows);
+                                  flyoutController.open = true;
                                 },
-                                icon: const Icon(FluentIcons.delete)),
+                                icon: const Icon(FluentIcons.add)),
                           ),
-                          Tooltip(
-                            message: 'Delete all data in table',
-                            child: IconButton(
-                                onPressed: () {},
-                                icon: const Icon(FluentIcons.delete_table)),
-                          ),
-                        ]),
-                        columns: const [
-                          mat.DataColumn(label: Text('Id')),
-                          mat.DataColumn(label: Text('Full Name')),
-                          mat.DataColumn(label: Text('Email')),
-                          mat.DataColumn(label: Text('Organization')),
-                        ],
-                        source: dataSource,
-                        rowsPerPage: 10,
-                        showCheckboxColumn: true,
-                      ),
+                        ),
+                        Tooltip(
+                          message: 'Delete selected rows',
+                          child: IconButton(
+                              onPressed: () async {
+                                int selectedCount =
+                                    dataSource.selectedRows.length;
+                                if (selectedCount > 0) {
+                                  bool proceed = await showVerificationMessage(
+                                      context: context,
+                                      title: 'Deleting Data',
+                                      message:
+                                          'Do you want to delete the $selectedCount selected rows?');
+                                  if (proceed) {
+                                    for (var row in dataSource.selectedRows) {
+                                      await Provider.of<MyDatabase>(context,
+                                              listen: false)
+                                          .deleteParticipant(row.id);
+                                    }
+                                    showSnackbar(
+                                        context,
+                                        Snackbar(
+                                          content: Text(
+                                              'Sucessfully Deleted $selectedCount rows'),
+                                        ));
+                                  }
+                                } else {
+                                  showSnackbar(
+                                      context,
+                                      const Snackbar(
+                                        content: Text(
+                                            'Please select first rows you want to delete'),
+                                      ));
+                                }
+                              },
+                              icon: const Icon(FluentIcons.delete)),
+                        ),
+                        Tooltip(
+                          message: 'Delete all data in table',
+                          child: IconButton(
+                              onPressed: () async {
+                                bool proceed = await showVerificationMessage(
+                                    context: context,
+                                    title: 'Deleting Data',
+                                    message:
+                                        'Do you want to delete your existing data?');
+                                if (proceed) {
+                                  Provider.of<AttributeMapping>(context,
+                                          listen: false)
+                                      .removeAll();
+                                  Provider.of<CrossCheckMapping>(context,
+                                          listen: false)
+                                      .removeAll();
+                                  await Provider.of<MyDatabase>(context,
+                                          listen: false)
+                                      .deleteParticipants(1);
+                                  context
+                                      .read<CrossCheckingBloc>()
+                                      .add(CrossChekingInitialize());
+                                }
+                              },
+                              icon: const Icon(FluentIcons.delete_table)),
+                        ),
+                      ]),
+                      columns: const [
+                        mat.DataColumn(label: Text('Id')),
+                        mat.DataColumn(label: Text('Full Name')),
+                        mat.DataColumn(label: Text('Email')),
+                        mat.DataColumn(label: Text('Organization')),
+                        mat.DataColumn(label: Text('Attended')),
+                      ],
+                      source: dataSource,
+                      rowsPerPage: 10,
+                      showCheckboxColumn: true,
                     ),
                   ),
-                );
-            }
-            return mat.DataTable(
-              columns: const [
-                mat.DataColumn(label: Text('Id')),
-                mat.DataColumn(label: Text('Full Name')),
-                mat.DataColumn(label: Text('Email')),
-                mat.DataColumn(label: Text('Organization')),
-              ],
-              rows: [],
-            );
-          }),
-    );
+                ),
+              );
+          }
+          return mat.DataTable(
+            columns: const [
+              mat.DataColumn(label: Text('Id')),
+              mat.DataColumn(label: Text('Full Name')),
+              mat.DataColumn(label: Text('Email')),
+              mat.DataColumn(label: Text('Organization')),
+              mat.DataColumn(label: Text('Attended')),
+            ],
+            rows: [],
+          );
+        });
   }
 }
 
@@ -274,6 +329,19 @@ class TableSource extends mat.DataTableSource {
             child: Text(dataList[index].organization),
           ),
         ),
+        mat.DataCell(
+          Container(
+            child: dataList[index].attended
+                ? Text(
+                    'Present',
+                    style: TextStyle(color: Colors.green),
+                  )
+                : Text(
+                    'Absent',
+                    style: TextStyle(color: Colors.red),
+                  ),
+          ),
+        ),
       ],
     );
   }
@@ -290,35 +358,3 @@ class TableSource extends mat.DataTableSource {
   // TODO: implement selectedRowCount
   int get selectedRowCount => 0;
 }
-
-
-//  SfDataGrid(
-//           source: ParticipantsData(),
-//           columns: ParticipantsData().getColumns(),
-//           allowSorting: true,
-//           columnWidthMode: ColumnWidthMode.fill,
-//         ),
-
-// participantsList.isNotEmpty
-//                         ? participantsList
-//                             .map((row) => mat.DataS(
-//                                   cells: [
-//                                     mat.DataCell(
-//                                       Container(
-//                                         child: AutoSizeText(row.id.toString()),
-//                                       ),
-//                                     ),
-//                                     mat.DataCell(
-//                                       Container(
-//                                         child: AutoSizeText(row.fullName),
-//                                       ),
-//                                     ),
-//                                                                        mat.DataCell(
-//                                       Container(
-//                                         child: AutoSizeText(row.),
-//                                       ),
-//                                     ),
-//                                   ],
-//                                 ))
-//                             .toList()
-//                         : [],

@@ -1,9 +1,10 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 import 'package:project_dumangan/database/database.dart';
+import 'package:project_dumangan/services/date_text_input_formatter.dart';
+import 'package:project_dumangan/services/utils.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/material.dart' as mat;
 
 class EventPage extends StatefulWidget {
   const EventPage({Key? key}) : super(key: key);
@@ -115,8 +116,10 @@ class _EventPageState extends State<EventPage> {
                         Row(
                           children: [
                             Expanded(
-                              child: TextBox(
+                              child: TextFormBox(
+                                validator: Utils.dateValidator,
                                 keyboardType: TextInputType.datetime,
+                                inputFormatters: [DateTextInputFormatter()],
                                 controller: dateController,
                                 header: 'Date',
                                 placeholder: 'Type event\'s date',
@@ -148,12 +151,15 @@ class _EventPageState extends State<EventPage> {
                               onPressed: () async {
                                 MyDatabase db = Provider.of<MyDatabase>(context,
                                     listen: false);
-                                String name = eventsTitleController.text;
+                                String title = eventsTitleController.text;
                                 String desc = eventsDescController.text;
+                                String setDate = dateController.text;
+                                DateTime eventDate =
+                                    DateFormat('dd/MM/yyyy').parse(setDate);
                                 await db.addEvent(EventsTableCompanion(
-                                  name: drift.Value(name),
+                                  name: drift.Value(title),
                                   description: drift.Value(desc),
-                                  date: drift.Value(date),
+                                  date: drift.Value(eventDate),
                                   absentees: const drift.Value(0),
                                   participants: const drift.Value(0),
                                 ));

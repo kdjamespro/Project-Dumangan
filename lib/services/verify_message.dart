@@ -12,14 +12,14 @@ Future<bool> showVerificationMessage(
         content: Text(message),
         actions: [
           Button(
-              child: const Text('Yes'),
-              onPressed: () {
-                Navigator.pop(context, true);
-              }),
-          Button(
               child: const Text('No'),
               onPressed: () {
                 Navigator.pop(context, false);
+              }),
+          FilledButton(
+              child: const Text('Yes'),
+              onPressed: () {
+                Navigator.pop(context, true);
               }),
         ],
       );

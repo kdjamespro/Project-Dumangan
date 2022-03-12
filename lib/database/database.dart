@@ -88,8 +88,22 @@ class MyDatabase extends _$MyDatabase {
     });
   }
 
+  Future<int> getParticipantsCount(int eventId) async {
+    return await customSelect(
+      'SELECT COUNT (*) as count FROM participants_table WHERE events_id = ?',
+      variables: [Variable.withInt(eventId)],
+      readsFrom: {participantsTable},
+    ).map((row) => row.read<int>('count')).getSingle();
+  }
+
   Future deleteParticipants(int id) {
     return (delete(participantsTable)..where((tbl) => tbl.eventsId.equals(id)))
+        .go();
+  }
+
+  Future deleteParticipant(int participantId) {
+    return (delete(participantsTable)
+          ..where((tbl) => tbl.id.equals(participantId)))
         .go();
   }
 }

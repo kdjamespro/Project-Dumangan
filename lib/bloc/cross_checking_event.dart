@@ -39,3 +39,5 @@ class CrossCheckingProcess extends CrossCheckingEvent {
     this.crossCheckMap,
   });
 }
+
+class DbLoaded extends CrossCheckingEvent {}

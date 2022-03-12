@@ -36,6 +36,9 @@ class CrossCheckingBloc extends Bloc<CrossCheckingEvent, CrossCheckingState> {
     on<CrossCheckingProcess>((event, emit) async {
       await _crossCheck(event, emit);
     });
+    on<DbLoaded>((event, emit) async {
+      emit(const CrossCheckingFinished());
+    });
   }
 
   Future<void> _parseFile(CrossChekingStart start, Emitter emit) async {

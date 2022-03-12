@@ -36,10 +36,9 @@ class FileHandler {
     return File(file.path);
   }
 
-  Future<String?> saveFile() async {
-    String? outputFile = await FilePicker.platform.saveFile(
-      dialogTitle: 'Save As',
-    );
+  Future<String> saveFile() async {
+    String? outputFile = await FilePicker.platform
+        .saveFile(dialogTitle: 'Save As', allowedExtensions: ['jpg', 'png']);
 
     if (outputFile == null) {
       return '';

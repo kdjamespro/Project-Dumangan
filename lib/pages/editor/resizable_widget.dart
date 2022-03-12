@@ -55,6 +55,7 @@ class _ResizableWidgetState extends State<ResizableWidget> {
         final FocusNode focusNode = Focus.of(context);
         _isFocused = focusNode.hasFocus;
         return Stack(
+          alignment: Alignment.center,
           children: <Widget>[
             Positioned(
               top: top + ballDiameter / 2,
