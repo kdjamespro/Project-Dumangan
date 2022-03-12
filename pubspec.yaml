@@ -58,6 +58,8 @@ dependencies:
   flutter_datetime_picker: ^1.5.1
   data_table_2: ^2.2.1
   cupertino_icons: ^1.0.2
+  google_fonts: ^2.3.1
+  flutter_colorpicker: ^1.0.3
 
 dev_dependencies:
   flutter_test:

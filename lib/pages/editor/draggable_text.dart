@@ -9,7 +9,8 @@ class DraggableText extends StatefulWidget {
 }
 
 class _DraggableTextState extends State<DraggableText> {
-  TextEditingController _controller = TextEditingController(text: "Add Text");
+  TextEditingController _controller =
+      TextEditingController(text: "Sample Name");
   late FocusNode _focusNode;
 
   @override
@@ -28,46 +29,29 @@ class _DraggableTextState extends State<DraggableText> {
   Widget build(BuildContext context) {
     return ResizableWidget(
       focusNode: _focusNode,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: EditableText(
-          onEditingComplete: (() {}),
-          cursorRadius: const Radius.circular(2.0),
-          textInputAction: TextInputAction.done,
-          scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
-          scrollPhysics: const NeverScrollableScrollPhysics(),
-          scrollController: null,
-          controller: _controller,
-          backgroundCursorColor: Colors.black,
-          focusNode: _focusNode,
-          maxLines: null,
-          cursorColor: Colors.black,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-          ),
-        ),
+      child: Center(
+        child: buildEditableText("", ""),
+      ),
+    );
+  }
+
+  EditableText buildEditableText(String styleFontStyle, String styleFontSize) {
+    return EditableText(
+      onEditingComplete: (() {}),
+      cursorRadius: const Radius.circular(1.0),
+      textInputAction: TextInputAction.done,
+      scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
+      scrollPhysics: const NeverScrollableScrollPhysics(),
+      scrollController: null,
+      controller: _controller,
+      backgroundCursorColor: Colors.black,
+      focusNode: _focusNode,
+      maxLines: null,
+      cursorColor: Colors.black,
+      style: const TextStyle(
+        color: Colors.black,
+        fontSize: 20,
       ),
     );
   }
 }
-
-// Padding(
-//         padding: const EdgeInsets.all(10.0),
-//         child: EditableText(
-//           cursorRadius: Radius.circular(2.0),
-//           textInputAction: TextInputAction.done,
-//           scrollBehavior: ScrollBehavior().copyWith(scrollbars: false),
-//           scrollPhysics: const NeverScrollableScrollPhysics(),
-//           scrollController: null,
-//           controller: _controller,
-//           backgroundCursorColor: Colors.black,
-//           focusNode: _focusNode,
-//           maxLines: null,
-//           cursorColor: Colors.black,
-//           style: TextStyle(
-//             color: Colors.black,
-//             fontSize: 16,
-//           ),
-//         ),
-//       ),

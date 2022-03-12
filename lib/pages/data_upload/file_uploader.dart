@@ -63,7 +63,7 @@ class _FileUploaderState extends State<FileUploader> {
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text(
-                        "Cross Check?",
+                        "Do you want to Cross Check?",
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
@@ -91,7 +91,9 @@ class _FileUploaderState extends State<FileUploader> {
                   _crossCheck = v;
                   filePicker2.removeFile();
                 }),
-                content: Text(_crossCheck ? 'Enable' : 'Disable'),
+                content: Text(_crossCheck
+                    ? 'Cross Checking Enabled'
+                    : 'Cross Checking Disabled'),
               ),
               BlocConsumer<CrossCheckingBloc, CrossCheckingState>(
                   builder: (context, state) {
