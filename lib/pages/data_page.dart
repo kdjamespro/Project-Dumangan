@@ -10,15 +10,8 @@ class DataPage extends StatefulWidget {
   State<DataPage> createState() => _DataPageState();
 }
 
-final flyoutController = FlyoutController();
-
 class _DataPageState extends State<DataPage> {
   @override
-  void dispose() {
-    flyoutController.dispose();
-    super.dispose();
-  }
-
   Widget build(BuildContext context) {
     return FluentApp(
       debugShowCheckedModeBanner: false,
@@ -134,13 +127,11 @@ class _DataPageState extends State<DataPage> {
                     children: [
                       Align(
                         alignment: Alignment.bottomLeft,
-                        child: Expanded(
-                          child: Text(
-                            name,
-                            style: TextStyle(fontSize: 14),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        child: Text(
+                          name,
+                          style: TextStyle(fontSize: 14),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       Row(
@@ -148,13 +139,11 @@ class _DataPageState extends State<DataPage> {
                         children: [
                           Align(
                             alignment: Alignment.bottomLeft,
-                            child: Expanded(
-                              child: Text(
-                                email,
-                                style: TextStyle(fontSize: 12),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            child: Text(
+                              email,
+                              style: TextStyle(fontSize: 12),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           Row(

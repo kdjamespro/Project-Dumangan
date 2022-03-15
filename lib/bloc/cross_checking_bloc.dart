@@ -83,13 +83,18 @@ class CrossCheckingBloc extends Bloc<CrossCheckingEvent, CrossCheckingState> {
       for (int i = 0; i < min(key2.length, val2.length); i++) {
         crossData[val2[i]] = event.crossCheckingData![key2[i]];
       }
-      CrossChecker check = CrossChecker(regData: regData, crossData: crossData);
+      CrossChecker check = CrossChecker(
+          regData: regData, crossData: crossData, eventId: event.eventId);
       check.crossCheck();
       await db.addBatchParticipants(check.participants);
       await db.addBatchParticipants(check.absentees);
+      await db.updateEvent(
+          event.eventId, check.participants.length, check.absentees.length);
     } else {
-      MapParticipants query = MapParticipants(regData: regData);
+      MapParticipants query =
+          MapParticipants(regData: regData, eventId: event.eventId);
       await db.addBatchParticipants(query.participants);
+      await db.updateEvent(event.eventId, query.participants.length, 0);
     }
 
     emit(const CrossCheckingFinished());

@@ -4,28 +4,22 @@ import 'dart:ui';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-
-import 'package:project_dumangan/pages/EditorSample.dart';
-
 import 'package:project_dumangan/database/database.dart';
-
-import 'package:project_dumangan/pages/dashboard_page.dart';
+import 'package:project_dumangan/model/attribute_mapping.dart';
+import 'package:project_dumangan/pages/EditorSample.dart';
 import 'package:project_dumangan/pages/help_page.dart';
 import 'package:project_dumangan/pages/setting_page.dart';
-
-import 'package:project_dumangan/model/attribute_mapping.dart';
 import 'package:project_dumangan/services/file_handler.dart';
-
 import 'package:provider/provider.dart';
 import 'package:sqlite3/open.dart';
 import 'package:sqlite3_library_windows/sqlite3_library_windows.dart';
 
+import '/pages/events/event_page.dart';
 import 'model/crosscheck_mapping.dart';
 import 'model/fontstyle_controller.dart';
+import 'model/selected_event.dart';
 import 'pages/data_page.dart';
 import 'pages/data_upload/cert_page.dart';
-import 'pages/editor/editor_page.dart';
-import 'pages/event_page.dart';
 import 'pages/login_page.dart';
 
 void main() async {
@@ -36,6 +30,7 @@ void main() async {
     providers: [
       Provider(create: (context) => AttributeMapping()),
       Provider(create: (context) => CrossCheckMapping()),
+      Provider(create: (context) => SelectedEvent()),
       Provider(create: (context) => FileHandler(platform: FilePicker.platform)),
       ChangeNotifierProvider(create: (context) => FontStyleController()),
       Provider<MyDatabase>(
@@ -117,15 +112,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
             PaneItem(
               icon: const Icon(FluentIcons.add_event),
-              title: const Text('Add Event'),
+              title: const Text('Event'),
             ),
             PaneItem(
               icon: const Icon(FluentIcons.check_mark),
               title: const Text('Generate'),
-            ),
-            PaneItem(
-              icon: const Icon(FluentIcons.edit),
-              title: const Text('Edit'),
             ),
             PaneItem(
               icon: const Icon(FluentIcons.edit),
@@ -140,11 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
             PaneItem(
               icon: const Icon(FluentIcons.settings),
               title: const Text('Settings'),
-            ),
-
-            PaneItem(
-              icon: const Icon(FluentIcons.archive),
-              title: const Text('Dashboard'),
             ),
 
             PaneItem(
@@ -165,20 +151,28 @@ class _MyHomePageState extends State<MyHomePage> {
             )),
         index: index,
         children: [
-          EventPage(),
-          CertPage(),
-          EditorPage(),
+          const EventPage(),
+          const CertPage(),
           EditorSample(),
-          DataPage(),
-          Settigs_page(),
-          DashboardPage(),
-          HelpPage(),
+          const DataPage(),
+          const Settigs_page(),
+          const HelpPage(),
           LoginPage(),
         ],
       ),
     );
   }
 }
+
+// BlocProvider(
+//   create: (context) => EventsBloc(),
+//   child: Builder(builder: (context) {
+//     return BlocProvider.value(
+//       value: BlocProvider.of<EventsBloc>(context),
+//       child: EventPage(),
+//     );
+//   }),
+// ),
 
 class WindowButtons extends StatelessWidget {
   const WindowButtons({Key? key}) : super(key: key);

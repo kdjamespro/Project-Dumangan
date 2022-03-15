@@ -5,8 +5,9 @@ import 'package:project_dumangan/database/database.dart';
 
 class MapParticipants {
   Map regData;
+  int eventId;
   late List<Insertable> _participants;
-  MapParticipants({required this.regData}) {
+  MapParticipants({required this.regData, required this.eventId}) {
     _participants = [];
     _parseData();
   }
@@ -35,7 +36,7 @@ class MapParticipants {
   void _createQuery(List map) {
     for (var participant in map) {
       _participants.add(ParticipantsTableCompanion.insert(
-        eventsId: 1,
+        eventsId: eventId,
         fullName: participant['Full Name'],
         email: participant['Email'],
         organization: Value(participant['Organization']),

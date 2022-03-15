@@ -1,10 +1,11 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:flutter/material.dart';
-import 'package:fluent_ui/fluent_ui.dart' as fluent;
+import 'package:project_dumangan/database/database.dart';
 
 class EventInfo extends StatefulWidget {
-  const EventInfo({Key? key}) : super(key: key);
+  EventInfo({Key? key, required this.event}) : super(key: key);
+  EventsTableData event;
 
   @override
   _EventInfoState createState() => _EventInfoState();
@@ -43,17 +44,14 @@ class _EventInfoState extends State<EventInfo> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          EventTitleText(context, "Event Title: ",
-                              "This is a sample title for an imaginary event (2022)"),
-                          EventDescription(context, '''
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sodales consequat felis et pharetra. Fusce scelerisque magna lacus, quis porttitor nibh maximus in. Suspendisse potenti. Mauris sit amet sagittis dolor. Mauris sodales nec justo et sodales. Nulla vitae leo sed turpis rutrum lobortis. Vestibulum hendrerit quam a finibus fringilla. Vestibulum non ante rhoncus, finibus diam sit amet, suscipit enim. Vivamus id elit nec nulla mattis viverra.
-
-Mauris cursus, quam vel sollicitudin placerat, ante massa fringilla lacus, non tempor urna nisi sit amet quam. Fusce ac sem ac nisl euismod commodo et ut mauris. Sed consectetur efficitur varius. Nulla mollis elementum. 
-                            '''),
+                          EventTitleText(
+                              context, "Event Title: ", widget.event.name),
+                          EventDescription(
+                              context, widget.event.description ?? ''),
                           EventTitleText(context, "Location / Meeting room : ",
                               "Online, Zoom link"),
                           EventTitleText(context, "Time & Date: ",
-                              "12:00 PM       March 10, 2022"),
+                              widget.event.date.toString()),
                         ],
                       ),
                     ),
@@ -75,7 +73,7 @@ Mauris cursus, quam vel sollicitudin placerat, ante massa fringilla lacus, non t
                                   child: Text('Select Event'),
                                 ),
                                 onPressed: () {
-                                  print('pressed filled button');
+                                  Navigator.pop(context, widget.event.id);
                                 },
                               ),
                             ),
@@ -92,8 +90,7 @@ Mauris cursus, quam vel sollicitudin placerat, ante massa fringilla lacus, non t
                                   child: Text('Return'),
                                 ),
                                 onPressed: () {
-                                  print('pressed filled button');
-                                  Navigator.pop(context);
+                                  Navigator.pop(context, -1);
                                 },
                               ),
                             ),

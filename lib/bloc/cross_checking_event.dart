@@ -30,7 +30,9 @@ class CrossCheckingProcess extends CrossCheckingEvent {
   final AttributeMapping attributeMap;
   final Map<String, List>? crossCheckingData;
   final CrossCheckMapping? crossCheckMap;
+  final int eventId;
   CrossCheckingProcess({
+    required this.eventId,
     required this.db,
     required this.data,
     required this.isEnabled,

@@ -1,40 +1,45 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' as mat;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:project_dumangan/bloc/bloc/events_bloc.dart';
 import 'package:project_dumangan/database/database.dart';
-import 'package:project_dumangan/pages/event_info.dart';
-import 'package:project_dumangan/services/date_text_input_formatter.dart';
-import 'package:project_dumangan/services/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+
+import '/model/selected_event.dart';
+import 'event_info.dart';
 // import 'package:flutter_datetime_picker/flutter_datetime_picker.dart' as picker;
 
-class EventPage extends StatefulWidget {
-  const EventPage({Key? key}) : super(key: key);
+class EventSelectionPage extends StatefulWidget {
+  const EventSelectionPage({Key? key}) : super(key: key);
 
   @override
-  State<EventPage> createState() => _EventPageState();
+  State<EventSelectionPage> createState() => _EventSelectionPageState();
 }
 
-class _EventPageState extends State<EventPage> {
+class _EventSelectionPageState extends State<EventSelectionPage> {
   DateTime date = DateTime.now();
 
   late TextEditingController eventsTitleController;
   late TextEditingController eventsDescController;
   late TextEditingController locationController;
   late TextEditingController dateController;
-
-  final flyoutController = FlyoutController();
+  final ScrollController _firstController = ScrollController();
+  final FlyoutController calendarFlyout = FlyoutController();
+  final DateFormat df = DateFormat('MM/dd/yyyy');
   late final dateTimeController =
       TextEditingController(text: DateTime.now().toString());
+  final formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     eventsTitleController = TextEditingController();
     eventsDescController = TextEditingController();
     locationController = TextEditingController();
-    dateController = TextEditingController();
-
+    dateController = TextEditingController(text: df.format(DateTime.now()));
     super.initState();
   }
 
@@ -43,9 +48,9 @@ class _EventPageState extends State<EventPage> {
     eventsTitleController.dispose();
     eventsDescController.dispose();
     locationController.dispose();
-    flyoutController.dispose();
     dateTimeController.dispose();
     dateController.dispose();
+    _firstController.dispose();
     super.dispose();
   }
 
@@ -56,8 +61,6 @@ class _EventPageState extends State<EventPage> {
     dateController.clear();
   }
 
-  @override
-  final ScrollController _firstController = ScrollController();
   Widget build(BuildContext context) {
     return ScaffoldPage(
       header: Container(
@@ -82,7 +85,9 @@ class _EventPageState extends State<EventPage> {
         children: [
           Container(
             padding: EdgeInsets.all(16),
-            child: Expanded(
+            child: Form(
+              key: formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Row(
                 children: [
                   Expanded(
@@ -90,9 +95,14 @@ class _EventPageState extends State<EventPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         TextFormBox(
-                          header: 'Event Title *',
+                          header: 'Event Title',
                           placeholder: 'Type the event\'s name',
                           controller: eventsTitleController,
+                          validator: (text) {
+                            if (text == null || text.length == 0) {
+                              return 'Event\'s name is required';
+                            }
+                          },
                         ),
                         TextBox(
                           controller: eventsDescController,
@@ -105,7 +115,7 @@ class _EventPageState extends State<EventPage> {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 30,
                   ),
                   Expanded(
@@ -118,32 +128,66 @@ class _EventPageState extends State<EventPage> {
                           placeholder: 'Type the event\'s location',
                         ),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Expanded(
-                              child: TextFormBox(
-                                validator: Utils.dateValidator,
-                                keyboardType: TextInputType.datetime,
-                                inputFormatters: [DateTextInputFormatter()],
-                                controller: dateController,
-                                header: 'Date',
-                                placeholder: 'Type event\'s date',
-                              ),
-                            ),
-                            SizedBox(
+                            Flyout(
+                                child: Expanded(
+                                    child: TextFormBox(
+                                  prefix: const Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: Icon(FluentIcons.calendar),
+                                  ),
+                                  header: 'Event\'s Date',
+                                  controller: dateController,
+                                  onTap: () {
+                                    calendarFlyout.open = true;
+                                  },
+                                  readOnly: true,
+                                )),
+                                content: SizedBox(
+                                  height: 300,
+                                  child: Card(
+                                    backgroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16.0, horizontal: 8.0),
+                                    child: SfDateRangePicker(
+                                      initialSelectedDate: DateTime.now(),
+                                      viewSpacing: 10,
+                                      showActionButtons: true,
+                                      showNavigationArrow: true,
+                                      onCancel: () {
+                                        calendarFlyout.open = false;
+                                      },
+                                      onSubmit: (date) {
+                                        if (date != null) {
+                                          var selected =
+                                              df.format(date as DateTime);
+                                          dateController.text = selected;
+                                          print(date);
+
+                                          calendarFlyout.open = false;
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                contentWidth: 500,
+                                controller: calendarFlyout),
+                            const SizedBox(
                               width: 30,
                             ),
                             Expanded(
                               // Here Kirk
                               child: TimePicker(
-                                header: 'Starts At',
-                                selected: date,
-                                onChanged: (selectedDate) =>
-                                    setState(() => date = selectedDate),
-                              ),
+                                  header: 'Starts At',
+                                  selected: date,
+                                  onChanged: (selectedDate) =>
+                                      print(selectedDate)),
                             ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         SizedBox(
@@ -154,22 +198,38 @@ class _EventPageState extends State<EventPage> {
                                 child: Text('Add New Event'),
                               ),
                               onPressed: () async {
-                                MyDatabase db = Provider.of<MyDatabase>(context,
-                                    listen: false);
-                                String title = eventsTitleController.text;
-                                String desc = eventsDescController.text;
-                                String setDate = dateController.text;
-                                DateTime eventDate =
-                                    DateFormat('dd/MM/yyyy').parse(setDate);
-                                await db.addEvent(EventsTableCompanion(
-                                  name: drift.Value(title),
-                                  description: drift.Value(desc),
-                                  date: drift.Value(eventDate),
-                                  absentees: const drift.Value(0),
-                                  participants: const drift.Value(0),
-                                ));
-                                print('Added to db');
-                                clearController();
+                                if (formKey.currentState!.validate()) {
+                                  MyDatabase db = Provider.of<MyDatabase>(
+                                      context,
+                                      listen: false);
+                                  String title = eventsTitleController.text;
+                                  String desc = eventsDescController.text;
+                                  String setDate = dateController.text;
+                                  DateTime eventDate =
+                                      DateFormat('dd/MM/yyyy').parse(setDate);
+                                  await db.addEvent(EventsTableCompanion(
+                                    name: drift.Value(title),
+                                    description: drift.Value(desc),
+                                    date: drift.Value(eventDate),
+                                    absentees: const drift.Value(0),
+                                    participants: const drift.Value(0),
+                                  ));
+                                  clearController();
+                                  showSnackbar(
+                                      context,
+                                      const Snackbar(
+                                          content: Text('New Event Added')));
+                                } else {
+                                  showSnackbar(
+                                      context,
+                                      Snackbar(
+                                          extended: true,
+                                          content: Container(
+                                            color: Colors.red,
+                                            child: const Text(
+                                                'Event Addition Failed! \n Please fill up the details in the form'),
+                                          )));
+                                }
                               }),
                         ),
                       ],
@@ -184,41 +244,49 @@ class _EventPageState extends State<EventPage> {
             child: Container(
               padding: EdgeInsets.only(bottom: 14, left: 12),
               child: Scrollbar(
-                isAlwaysShown: true,
+                isAlwaysShown: false,
                 controller: _firstController,
-                child: ListView.builder(
-                    // Uncomment this is you want to check is the item was added
-                    // reverse: true,
-                    padding: EdgeInsets.only(bottom: 20),
-                    scrollDirection: Axis.horizontal,
-                    controller: _firstController,
-                    //Change this to show how many contents are there to show
-                    itemCount: 1,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        // color: mat.Colors.greenAccent,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            child: StreamBuilder(
-                              stream: Provider.of<MyDatabase>(context,
-                                      listen: false)
-                                  .getEvents(),
-                              builder: (context, snapshot) {
-                                switch (snapshot.connectionState) {
-                                  case ConnectionState.active:
-                                    List<EventsTableData> events =
-                                        snapshot.data as List<EventsTableData>;
-                                    print(events.length);
-                                    return EventCard(events);
-                                }
-                                return Container();
-                              },
+                child: ScrollConfiguration(
+                  behavior:
+                      ScrollConfiguration.of(context).copyWith(dragDevices: {
+                    PointerDeviceKind.touch,
+                    PointerDeviceKind.mouse,
+                  }),
+                  child: ListView.builder(
+                      primary: false,
+                      // Uncomment this is you want to check is the item was added
+                      // reverse: true,
+                      controller: _firstController,
+                      padding: EdgeInsets.only(bottom: 20),
+                      scrollDirection: Axis.horizontal,
+                      //Change this to show how many contents are there to show
+                      itemCount: 1,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                          // color: mat.Colors.greenAccent,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              child: StreamBuilder(
+                                stream: Provider.of<MyDatabase>(context,
+                                        listen: false)
+                                    .getEvents(),
+                                builder: (context, snapshot) {
+                                  switch (snapshot.connectionState) {
+                                    case ConnectionState.active:
+                                      List<EventsTableData> events = snapshot
+                                          .data as List<EventsTableData>;
+                                      print(events.length);
+                                      return EventCard(events);
+                                  }
+                                  return Container();
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    }),
+                        );
+                      }),
+                ),
               ),
             ),
           )
@@ -231,13 +299,23 @@ class _EventPageState extends State<EventPage> {
     return Row(
       children: events
           .map((event) => GestureDetector(
-                onTap: () {
-                  print(event.id);
-                  Navigator.push(
+                onTap: () async {
+                  int selectedEventId = await Navigator.push(
                     context,
                     mat.MaterialPageRoute(
-                        builder: (context) => const EventInfo()),
+                      builder: (_) => EventInfo(
+                        event: event,
+                      ),
+                    ),
                   );
+                  if (selectedEventId >= 0) {
+                    context.read<SelectedEvent>().setEvent(event);
+                    context.read<EventsBloc>().add(LoadEvent(
+                        eventId: selectedEventId,
+                        db: context.read<MyDatabase>()));
+                    print('Selected Event: $selectedEventId');
+                    print('Event: ${event.id}');
+                  }
                 },
                 child: Container(
                   width: 225,
@@ -277,7 +355,6 @@ class _EventPageState extends State<EventPage> {
                             alignment: Alignment.topRight,
                             child: IconButton(
                               onPressed: () {
-                                // Combobox;
                                 print("More options clicked");
                               },
                               icon: Icon(
@@ -290,17 +367,15 @@ class _EventPageState extends State<EventPage> {
                           // Container(),
                           mat.Align(
                             alignment: Alignment.centerLeft,
-                            child: Expanded(
-                              child: Text(
-                                event.name,
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    color: mat.Colors.white,
-                                    fontSize: 15,
-                                    letterSpacing: 1,
-                                    fontWeight: mat.FontWeight.w600),
-                              ),
+                            child: Text(
+                              event.name,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  color: mat.Colors.white,
+                                  fontSize: 15,
+                                  letterSpacing: 1,
+                                  fontWeight: mat.FontWeight.w600),
                             ),
                           ),
                           mat.Align(
@@ -410,3 +485,25 @@ class _EventPageState extends State<EventPage> {
     return formattedDate;
   }
 }
+
+
+// TextFormBox(
+//                                 // validator: Utils.dateValidator,
+//                                 keyboardType: TextInputType.datetime,
+//                                 inputFormatters: [DateTextInputFormatter()],
+//                                 controller: dateController,
+//                                 header: 'Date',
+//                                 placeholder: 'Type event\'s date',
+//                               ),
+
+// IconButton(
+//                               onPressed: () {
+//                                 // Combobox;
+//                                 print("More options clicked");
+//                               },
+//                               icon: Icon(
+//                                 mat.Icons.more_horiz,
+//                                 color: Colors.white,
+//                                 size: 20,
+//                               ),
+//                             ),

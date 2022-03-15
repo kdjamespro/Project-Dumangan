@@ -1,10 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
-import 'package:flutter/material.dart';
-import 'package:fluent_ui/fluent_ui.dart' as fluent;
-
-import '../widget/drop_down.dart';
-import 'event_info.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project_dumangan/bloc/bloc/events_bloc.dart';
+import 'package:project_dumangan/model/selected_event.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -16,6 +14,7 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
+    SelectedEvent event = context.read<SelectedEvent>();
     return mat.SafeArea(
       child: FluentApp(
         debugShowCheckedModeBanner: false,
@@ -28,11 +27,30 @@ class _DashboardPageState extends State<DashboardPage> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                mat.Align(
+                Align(
                   alignment: Alignment.topLeft,
-                  child: Text(
-                    "Your Dashboard",
-                    style: FluentTheme.of(context).typography.title,
+                  child: Row(
+                    children: [
+                      Text(
+                        "Your Dashboard",
+                        style: FluentTheme.of(context).typography.title,
+                      ),
+                      Spacer(),
+                      SizedBox(
+                        child: FilledButton(
+                            child: Row(
+                              children: [
+                                Icon(FluentIcons.cancel),
+                                SizedBox(width: 20),
+                                Text('Select/Add \nAnother Event'),
+                              ],
+                            ),
+                            onPressed: () {
+                              event.clearEvent();
+                              context.read<EventsBloc>().add(SelectEvent());
+                            }),
+                      )
+                    ],
                   ),
                 ),
                 Padding(
@@ -69,10 +87,12 @@ class _DashboardPageState extends State<DashboardPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                DashStats(context,
-                                    "Total Number of Participants", "120"),
                                 DashStats(
-                                    context, "Total Number of Absentees", "0"),
+                                    context,
+                                    "Total Number of Participants",
+                                    '${event.eventParticipants}'),
+                                DashStats(context, "Total Number of Absentees",
+                                    '${event.eventAbsentees}'),
                                 DashStats(
                                     context,
                                     "Total Number of Certificates Generated",
@@ -110,14 +130,14 @@ class _DashboardPageState extends State<DashboardPage> {
                               vertical: 16.0, horizontal: 8.0),
                           child: mat.Material(
                             color: mat.Colors.white,
-                            child: DataTable(
-                              columns: <DataColumn>[
+                            child: mat.DataTable(
+                              columns: <mat.DataColumn>[
                                 ColumnData("Event Name"),
                                 ColumnData("Event Date"),
                                 ColumnData("Event Absentees"),
                                 ColumnData("Event Attendees"),
                               ],
-                              rows: <DataRow>[
+                              rows: <mat.DataRow>[
                                 RowData(
                                     context,
                                     "This is a sample Event Name rrrrrrrrrrrr rrrrrrrrrrrrrrr rrrrrrrr rrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrrrfor the table (2022)",
@@ -208,16 +228,17 @@ class _DashboardPageState extends State<DashboardPage> {
 
   mat.DataRow RowData(BuildContext context, String eventName, String eventDate,
       String numAbsent, String numPresent) {
-    return DataRow(
-      cells: <DataCell>[
-        DataCell(
+    return mat.DataRow(
+      cells: <mat.DataCell>[
+        mat.DataCell(
           mat.GestureDetector(
             onTap: () {
               print("Hello");
               Navigator.push(
-                context,
-                mat.MaterialPageRoute(builder: (context) => const EventInfo()),
-              );
+                  context,
+                  mat.MaterialPageRoute(
+                      builder: (context) => SizedBox()) //EventInfo()),
+                  );
             },
             child: Container(
               width: MediaQuery.of(context).size.width / 4,
@@ -230,17 +251,17 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           ),
         ),
-        DataCell(
+        mat.DataCell(
           Text('$eventDate'),
         ),
-        DataCell(Text('$numAbsent')),
-        DataCell(Text('$numPresent')),
+        mat.DataCell(Text('$numAbsent')),
+        mat.DataCell(Text('$numPresent')),
       ],
     );
   }
 
   mat.DataColumn ColumnData(String name) {
-    return DataColumn(
+    return mat.DataColumn(
       label: Text(
         name,
         style: FluentTheme.of(context).typography.bodyStrong,

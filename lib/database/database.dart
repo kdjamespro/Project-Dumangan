@@ -26,9 +26,12 @@ class EventsTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text()();
   TextColumn get description => text().nullable()();
+  TextColumn get location => text().nullable()();
   DateTimeColumn get date => dateTime()();
   IntColumn get participants => integer().withDefault(const Constant(0))();
   IntColumn get absentees => integer().withDefault(const Constant(0))();
+  IntColumn get certificatesGenerated =>
+      integer().withDefault(const Constant(0))();
 }
 
 class CertificatesTable extends Table {
@@ -70,12 +73,22 @@ class MyDatabase extends _$MyDatabase {
     return select(eventsTable).watch();
   }
 
-  Stream<List<ParticipantsTableData>> getParticipants() {
-    return select(participantsTable).watch();
+  Stream<List<ParticipantsTableData>> getParticipants(int eventsId) {
+    return (select(participantsTable)
+          ..where((row) => row.eventsId.equals(eventsId)))
+        .watch();
   }
 
   Future<void> addEvent(EventsTableCompanion event) {
     return into(eventsTable).insert(event);
+  }
+
+  Future updateEvent(int eventId, int participants, int absentees) async {
+    return (update(eventsTable)..where((row) => row.id.equals(eventId)))
+        .write(EventsTableCompanion(
+      participants: Value(participants),
+      absentees: Value(absentees),
+    ));
   }
 
   Future<void> addParticipant(ParticipantsTableCompanion participant) {
@@ -89,6 +102,9 @@ class MyDatabase extends _$MyDatabase {
   }
 
   Future<int> getParticipantsCount(int eventId) async {
+    if (eventId < 0) {
+      return 0;
+    }
     return await customSelect(
       'SELECT COUNT (*) as count FROM participants_table WHERE events_id = ?',
       variables: [Variable.withInt(eventId)],

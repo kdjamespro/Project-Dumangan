@@ -8,8 +8,10 @@ class CrossChecker {
   Map crossData;
   late List<Insertable> _participants;
   late List<Insertable> _absentees;
+  int eventId;
 
-  CrossChecker({required this.regData, required this.crossData}) {
+  CrossChecker(
+      {required this.regData, required this.crossData, required this.eventId}) {
     _participants = [];
     _absentees = [];
   }
@@ -101,7 +103,7 @@ class CrossChecker {
   void _addParticipants(List map) {
     for (var participant in map) {
       _participants.add(ParticipantsTableCompanion.insert(
-        eventsId: 1,
+        eventsId: eventId,
         fullName: participant['Full Name'],
         email: participant['Email'],
         organization: Value(participant['Organization']),
@@ -114,7 +116,7 @@ class CrossChecker {
     for (var absent in map) {
       _absentees.add(
         ParticipantsTableCompanion.insert(
-          eventsId: 1,
+          eventsId: eventId,
           fullName: absent['Full Name'],
           email: absent['Email'],
           organization: Value(absent['Organization']),
