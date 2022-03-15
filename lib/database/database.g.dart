@@ -11,16 +11,20 @@ class EventsTableData extends DataClass implements Insertable<EventsTableData> {
   final int id;
   final String name;
   final String? description;
+  final String? location;
   final DateTime date;
   final int participants;
   final int absentees;
+  final int certificatesGenerated;
   EventsTableData(
       {required this.id,
       required this.name,
       this.description,
+      this.location,
       required this.date,
       required this.participants,
-      required this.absentees});
+      required this.absentees,
+      required this.certificatesGenerated});
   factory EventsTableData.fromData(Map<String, dynamic> data,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -31,12 +35,16 @@ class EventsTableData extends DataClass implements Insertable<EventsTableData> {
           .mapFromDatabaseResponse(data['${effectivePrefix}name'])!,
       description: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}description']),
+      location: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}location']),
       date: const DateTimeType()
           .mapFromDatabaseResponse(data['${effectivePrefix}date'])!,
       participants: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}participants'])!,
       absentees: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}absentees'])!,
+      certificatesGenerated: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}certificates_generated'])!,
     );
   }
   @override
@@ -47,9 +55,13 @@ class EventsTableData extends DataClass implements Insertable<EventsTableData> {
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String?>(description);
     }
+    if (!nullToAbsent || location != null) {
+      map['location'] = Variable<String?>(location);
+    }
     map['date'] = Variable<DateTime>(date);
     map['participants'] = Variable<int>(participants);
     map['absentees'] = Variable<int>(absentees);
+    map['certificates_generated'] = Variable<int>(certificatesGenerated);
     return map;
   }
 
@@ -60,9 +72,13 @@ class EventsTableData extends DataClass implements Insertable<EventsTableData> {
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
+      location: location == null && nullToAbsent
+          ? const Value.absent()
+          : Value(location),
       date: Value(date),
       participants: Value(participants),
       absentees: Value(absentees),
+      certificatesGenerated: Value(certificatesGenerated),
     );
   }
 
@@ -73,9 +89,12 @@ class EventsTableData extends DataClass implements Insertable<EventsTableData> {
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
+      location: serializer.fromJson<String?>(json['location']),
       date: serializer.fromJson<DateTime>(json['date']),
       participants: serializer.fromJson<int>(json['participants']),
       absentees: serializer.fromJson<int>(json['absentees']),
+      certificatesGenerated:
+          serializer.fromJson<int>(json['certificatesGenerated']),
     );
   }
   @override
@@ -85,9 +104,11 @@ class EventsTableData extends DataClass implements Insertable<EventsTableData> {
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
+      'location': serializer.toJson<String?>(location),
       'date': serializer.toJson<DateTime>(date),
       'participants': serializer.toJson<int>(participants),
       'absentees': serializer.toJson<int>(absentees),
+      'certificatesGenerated': serializer.toJson<int>(certificatesGenerated),
     };
   }
 
@@ -95,16 +116,21 @@ class EventsTableData extends DataClass implements Insertable<EventsTableData> {
           {int? id,
           String? name,
           String? description,
+          String? location,
           DateTime? date,
           int? participants,
-          int? absentees}) =>
+          int? absentees,
+          int? certificatesGenerated}) =>
       EventsTableData(
         id: id ?? this.id,
         name: name ?? this.name,
         description: description ?? this.description,
+        location: location ?? this.location,
         date: date ?? this.date,
         participants: participants ?? this.participants,
         absentees: absentees ?? this.absentees,
+        certificatesGenerated:
+            certificatesGenerated ?? this.certificatesGenerated,
       );
   @override
   String toString() {
@@ -112,16 +138,18 @@ class EventsTableData extends DataClass implements Insertable<EventsTableData> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
+          ..write('location: $location, ')
           ..write('date: $date, ')
           ..write('participants: $participants, ')
-          ..write('absentees: $absentees')
+          ..write('absentees: $absentees, ')
+          ..write('certificatesGenerated: $certificatesGenerated')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, description, date, participants, absentees);
+  int get hashCode => Object.hash(id, name, description, location, date,
+      participants, absentees, certificatesGenerated);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -129,50 +157,63 @@ class EventsTableData extends DataClass implements Insertable<EventsTableData> {
           other.id == this.id &&
           other.name == this.name &&
           other.description == this.description &&
+          other.location == this.location &&
           other.date == this.date &&
           other.participants == this.participants &&
-          other.absentees == this.absentees);
+          other.absentees == this.absentees &&
+          other.certificatesGenerated == this.certificatesGenerated);
 }
 
 class EventsTableCompanion extends UpdateCompanion<EventsTableData> {
   final Value<int> id;
   final Value<String> name;
   final Value<String?> description;
+  final Value<String?> location;
   final Value<DateTime> date;
   final Value<int> participants;
   final Value<int> absentees;
+  final Value<int> certificatesGenerated;
   const EventsTableCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
+    this.location = const Value.absent(),
     this.date = const Value.absent(),
     this.participants = const Value.absent(),
     this.absentees = const Value.absent(),
+    this.certificatesGenerated = const Value.absent(),
   });
   EventsTableCompanion.insert({
     this.id = const Value.absent(),
     required String name,
     this.description = const Value.absent(),
+    this.location = const Value.absent(),
     required DateTime date,
     this.participants = const Value.absent(),
     this.absentees = const Value.absent(),
+    this.certificatesGenerated = const Value.absent(),
   })  : name = Value(name),
         date = Value(date);
   static Insertable<EventsTableData> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<String?>? description,
+    Expression<String?>? location,
     Expression<DateTime>? date,
     Expression<int>? participants,
     Expression<int>? absentees,
+    Expression<int>? certificatesGenerated,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
+      if (location != null) 'location': location,
       if (date != null) 'date': date,
       if (participants != null) 'participants': participants,
       if (absentees != null) 'absentees': absentees,
+      if (certificatesGenerated != null)
+        'certificates_generated': certificatesGenerated,
     });
   }
 
@@ -180,16 +221,21 @@ class EventsTableCompanion extends UpdateCompanion<EventsTableData> {
       {Value<int>? id,
       Value<String>? name,
       Value<String?>? description,
+      Value<String?>? location,
       Value<DateTime>? date,
       Value<int>? participants,
-      Value<int>? absentees}) {
+      Value<int>? absentees,
+      Value<int>? certificatesGenerated}) {
     return EventsTableCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
+      location: location ?? this.location,
       date: date ?? this.date,
       participants: participants ?? this.participants,
       absentees: absentees ?? this.absentees,
+      certificatesGenerated:
+          certificatesGenerated ?? this.certificatesGenerated,
     );
   }
 
@@ -205,6 +251,9 @@ class EventsTableCompanion extends UpdateCompanion<EventsTableData> {
     if (description.present) {
       map['description'] = Variable<String?>(description.value);
     }
+    if (location.present) {
+      map['location'] = Variable<String?>(location.value);
+    }
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
     }
@@ -213,6 +262,10 @@ class EventsTableCompanion extends UpdateCompanion<EventsTableData> {
     }
     if (absentees.present) {
       map['absentees'] = Variable<int>(absentees.value);
+    }
+    if (certificatesGenerated.present) {
+      map['certificates_generated'] =
+          Variable<int>(certificatesGenerated.value);
     }
     return map;
   }
@@ -223,9 +276,11 @@ class EventsTableCompanion extends UpdateCompanion<EventsTableData> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
+          ..write('location: $location, ')
           ..write('date: $date, ')
           ..write('participants: $participants, ')
-          ..write('absentees: $absentees')
+          ..write('absentees: $absentees, ')
+          ..write('certificatesGenerated: $certificatesGenerated')
           ..write(')'))
         .toString();
   }
@@ -255,6 +310,11 @@ class $EventsTableTable extends EventsTable
   late final GeneratedColumn<String?> description = GeneratedColumn<String?>(
       'description', aliasedName, true,
       type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _locationMeta = const VerificationMeta('location');
+  @override
+  late final GeneratedColumn<String?> location = GeneratedColumn<String?>(
+      'location', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
   final VerificationMeta _dateMeta = const VerificationMeta('date');
   @override
   late final GeneratedColumn<DateTime?> date = GeneratedColumn<DateTime?>(
@@ -275,9 +335,25 @@ class $EventsTableTable extends EventsTable
       type: const IntType(),
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
+  final VerificationMeta _certificatesGeneratedMeta =
+      const VerificationMeta('certificatesGenerated');
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, name, description, date, participants, absentees];
+  late final GeneratedColumn<int?> certificatesGenerated =
+      GeneratedColumn<int?>('certificates_generated', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: false,
+          defaultValue: const Constant(0));
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        name,
+        description,
+        location,
+        date,
+        participants,
+        absentees,
+        certificatesGenerated
+      ];
   @override
   String get aliasedName => _alias ?? 'events_table';
   @override
@@ -302,6 +378,10 @@ class $EventsTableTable extends EventsTable
           description.isAcceptableOrUnknown(
               data['description']!, _descriptionMeta));
     }
+    if (data.containsKey('location')) {
+      context.handle(_locationMeta,
+          location.isAcceptableOrUnknown(data['location']!, _locationMeta));
+    }
     if (data.containsKey('date')) {
       context.handle(
           _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
@@ -317,6 +397,12 @@ class $EventsTableTable extends EventsTable
     if (data.containsKey('absentees')) {
       context.handle(_absenteesMeta,
           absentees.isAcceptableOrUnknown(data['absentees']!, _absenteesMeta));
+    }
+    if (data.containsKey('certificates_generated')) {
+      context.handle(
+          _certificatesGeneratedMeta,
+          certificatesGenerated.isAcceptableOrUnknown(
+              data['certificates_generated']!, _certificatesGeneratedMeta));
     }
     return context;
   }

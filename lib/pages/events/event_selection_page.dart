@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:project_dumangan/bloc/bloc/events_bloc.dart';
 import 'package:project_dumangan/database/database.dart';
+import 'package:project_dumangan/services/verify_message.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -39,7 +40,7 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
     eventsTitleController = TextEditingController();
     eventsDescController = TextEditingController();
     locationController = TextEditingController();
-    dateController = TextEditingController(text: df.format(DateTime.now()));
+    dateController = TextEditingController();
     super.initState();
   }
 
@@ -99,7 +100,7 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                           placeholder: 'Type the event\'s name',
                           controller: eventsTitleController,
                           validator: (text) {
-                            if (text == null || text.length == 0) {
+                            if (text == null || text.isEmpty) {
                               return 'Event\'s name is required';
                             }
                           },
@@ -140,6 +141,12 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                   ),
                                   header: 'Event\'s Date',
                                   controller: dateController,
+                                  validator: (text) {
+                                    if (text == null || text.isEmpty) {
+                                      return 'Date Field is required';
+                                    }
+                                    return null;
+                                  },
                                   onTap: () {
                                     calendarFlyout.open = true;
                                   },
@@ -164,7 +171,6 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                           var selected =
                                               df.format(date as DateTime);
                                           dateController.text = selected;
-                                          print(date);
 
                                           calendarFlyout.open = false;
                                         }
@@ -205,8 +211,8 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                   String title = eventsTitleController.text;
                                   String desc = eventsDescController.text;
                                   String setDate = dateController.text;
-                                  DateTime eventDate =
-                                      DateFormat('dd/MM/yyyy').parse(setDate);
+                                  DateTime eventDate = df.parse(setDate);
+                                  print(eventDate);
                                   await db.addEvent(EventsTableCompanion(
                                     name: drift.Value(title),
                                     description: drift.Value(desc),
@@ -222,13 +228,11 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                 } else {
                                   showSnackbar(
                                       context,
-                                      Snackbar(
-                                          extended: true,
-                                          content: Container(
-                                            color: Colors.red,
-                                            child: const Text(
-                                                'Event Addition Failed! \n Please fill up the details in the form'),
-                                          )));
+                                      const Snackbar(
+                                        extended: true,
+                                        content: Text(
+                                            'Event Addition Failed! \n Please fill up the details in the form'),
+                                      ));
                                 }
                               }),
                         ),
@@ -278,6 +282,10 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                           .data as List<EventsTableData>;
                                       print(events.length);
                                       return EventCard(events);
+                                    case ConnectionState.waiting:
+                                      return const Center(
+                                        child: ProgressRing(),
+                                      );
                                   }
                                   return Container();
                                 },
@@ -354,11 +362,26 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                           mat.Align(
                             alignment: Alignment.topRight,
                             child: IconButton(
-                              onPressed: () {
-                                print("More options clicked");
+                              onPressed: () async {
+                                bool proceed = await showVerificationMessage(
+                                    context: context,
+                                    title: 'Delete Event',
+                                    message:
+                                        'Do you really want to delete the selected event?');
+                                if (proceed) {
+                                  await context
+                                      .read<MyDatabase>()
+                                      .deleteEvent(event.id);
+                                  showSnackbar(
+                                    context,
+                                    const Snackbar(
+                                        content:
+                                            Text('Event Successfully Deleted')),
+                                  );
+                                }
                               },
-                              icon: Icon(
-                                mat.Icons.more_horiz,
+                              icon: const Icon(
+                                FluentIcons.delete,
                                 color: Colors.white,
                                 size: 20,
                               ),

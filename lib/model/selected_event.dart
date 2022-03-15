@@ -36,6 +36,11 @@ class SelectedEvent {
     _certifacatesGenerated = 0;
   }
 
+  void updateAttendance(int present, int absent) {
+    _eventParticipants = present;
+    _eventAbsentees = absent;
+  }
+
   int get eventId => _eventId;
 
   String get eventName => _eventName;

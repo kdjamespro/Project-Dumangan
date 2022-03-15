@@ -122,4 +122,16 @@ class MyDatabase extends _$MyDatabase {
           ..where((tbl) => tbl.id.equals(participantId)))
         .go();
   }
+
+  Future deleteEvent(int eventId) {
+    return (delete(eventsTable)..where((tbl) => tbl.id.equals(eventId))).go();
+  }
+
+  Stream<int> eventParticipants(int eventId) {
+    return customSelect(
+      'SELECT participants FROM events_table WHERE events_id = ?',
+      variables: [Variable.withInt(eventId)],
+      readsFrom: {eventsTable},
+    ).map((row) => row.read<int>('participants')).watchSingle();
+  }
 }
