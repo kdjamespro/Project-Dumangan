@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:motion_toast/motion_toast.dart';
 import 'package:project_dumangan/bloc/bloc/events_bloc.dart';
 import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/services/verify_message.dart';
@@ -221,18 +222,24 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                     participants: const drift.Value(0),
                                   ));
                                   clearController();
-                                  showSnackbar(
-                                      context,
-                                      const Snackbar(
-                                          content: Text('New Event Added')));
+                                  MotionToast.success(
+                                          animationDuration:
+                                              const Duration(seconds: 1),
+                                          animationCurve: Curves.easeOut,
+                                          toastDuration:
+                                              const Duration(seconds: 2),
+                                          description:
+                                              const Text('New Event Added'))
+                                      .show(context);
                                 } else {
-                                  showSnackbar(
-                                      context,
-                                      const Snackbar(
-                                        extended: true,
-                                        content: Text(
-                                            'Event Addition Failed! \n Please fill up the details in the form'),
-                                      ));
+                                  MotionToast.error(
+                                    animationDuration:
+                                        const Duration(seconds: 1),
+                                    animationCurve: Curves.easeOut,
+                                    toastDuration: const Duration(seconds: 2),
+                                    description: const Text(
+                                        'Event Addition Failed! Please fill up the details in the form'),
+                                  ).show(context);
                                 }
                               }),
                         ),
@@ -372,12 +379,15 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                   await context
                                       .read<MyDatabase>()
                                       .deleteEvent(event.id);
-                                  showSnackbar(
-                                    context,
-                                    const Snackbar(
-                                        content:
-                                            Text('Event Successfully Deleted')),
-                                  );
+                                  MotionToast.delete(
+                                          animationDuration:
+                                              const Duration(seconds: 1),
+                                          animationCurve: Curves.easeOut,
+                                          toastDuration:
+                                              const Duration(seconds: 2),
+                                          description: const Text(
+                                              'Event Successfully Deleted'))
+                                      .show(context);
                                 }
                               },
                               icon: const Icon(

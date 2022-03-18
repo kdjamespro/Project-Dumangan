@@ -153,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           const EventPage(),
           const CertPage(),
-          EditorSample(),
+          const EditorSample(),
           const DataPage(),
           const Settigs_page(),
           const HelpPage(),

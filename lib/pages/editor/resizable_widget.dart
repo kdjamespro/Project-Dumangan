@@ -54,187 +54,187 @@ class _ResizableWidgetState extends State<ResizableWidget> {
       child: Builder(builder: (BuildContext context) {
         final FocusNode focusNode = Focus.of(context);
         _isFocused = focusNode.hasFocus;
-        return Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-            Positioned(
-              top: top + ballDiameter / 2,
-              left: left + ballDiameter / 2,
-              child: GestureDetector(
-                onTap: () {
-                  if (_isFocused) {
-                    focusNode.unfocus();
-                  } else {
-                    focusNode.requestFocus();
-                  }
-                  setState(() {
-                    _isFocused = focusNode.hasFocus;
-                  });
-                },
-                onPanStart: _handleDrag,
-                onPanUpdate: (details) {
-                  var dx = details.globalPosition.dx - initX;
-                  var dy = details.globalPosition.dy - initY;
-                  initX = details.globalPosition.dx;
-                  initY = details.globalPosition.dy;
-                  setState(() {
-                    top = top + dy;
-                    left = left + dx;
-                  });
-                },
+        return GestureDetector(
+          onTap: () {
+            if (_isFocused) {
+              focusNode.unfocus();
+            } else {
+              focusNode.requestFocus();
+            }
+            setState(() {
+              _isFocused = focusNode.hasFocus;
+            });
+          },
+          onPanStart: _handleDrag,
+          onPanUpdate: (details) {
+            var dx = details.globalPosition.dx - initX;
+            var dy = details.globalPosition.dy - initY;
+            initX = details.globalPosition.dx;
+            initY = details.globalPosition.dy;
+            setState(() {
+              top = top + dy;
+              left = left + dx;
+            });
+          },
+          child: Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
+              Positioned(
+                top: top + ballDiameter / 2,
+                left: left + ballDiameter / 2,
                 child: Container(
                   height: height + ballDiameter / 2,
                   width: width + ballDiameter / 2,
                   child: widget.child,
                 ),
               ),
-            ),
-            // top left
-            Positioned(
-              top: top - ballDiameter / 2,
-              left: left - ballDiameter / 2,
-              child: ManipulatingBall(
-                focus: _isFocused,
-                onDrag: (dx, dy) {
-                  var mid = (dx + dy) / 2;
-                  var newHeight = height - 2 * mid;
-                  var newWidth = width - 2 * mid;
+              // top left
+              Positioned(
+                top: top - ballDiameter / 2,
+                left: left - ballDiameter / 2,
+                child: ManipulatingBall(
+                  focus: _isFocused,
+                  onDrag: (dx, dy) {
+                    var mid = (dx + dy) / 2;
+                    var newHeight = height - 2 * mid;
+                    var newWidth = width - 2 * mid;
 
-                  setState(() {
-                    height = newHeight > 0 ? newHeight : 0;
-                    width = newWidth > 0 ? newWidth : 0;
-                    top = top + mid;
-                    left = left + mid;
-                  });
-                },
+                    setState(() {
+                      height = newHeight > 0 ? newHeight : 0;
+                      width = newWidth > 0 ? newWidth : 0;
+                      top = top + mid;
+                      left = left + mid;
+                    });
+                  },
+                ),
               ),
-            ),
-            // top middle
-            Positioned(
-              top: top - ballDiameter / 2,
-              left: left + width / 2 - ballDiameter / 2,
-              child: ManipulatingBall(
-                focus: _isFocused,
-                onDrag: (dx, dy) {
-                  var newHeight = height - dy;
+              // top middle
+              Positioned(
+                top: top - ballDiameter / 2,
+                left: left + width / 2 - ballDiameter / 2,
+                child: ManipulatingBall(
+                  focus: _isFocused,
+                  onDrag: (dx, dy) {
+                    var newHeight = height - dy;
 
-                  setState(() {
-                    height = newHeight > 0 ? newHeight : 0;
-                    top = top + dy;
-                  });
-                },
+                    setState(() {
+                      height = newHeight > 0 ? newHeight : 0;
+                      top = top + dy;
+                    });
+                  },
+                ),
               ),
-            ),
-            // top right
-            Positioned(
-              top: top - ballDiameter / 2,
-              left: left + width - ballDiameter / 2,
-              child: ManipulatingBall(
-                focus: _isFocused,
-                onDrag: (dx, dy) {
-                  var mid = (dx + (dy * -1)) / 2;
+              // top right
+              Positioned(
+                top: top - ballDiameter / 2,
+                left: left + width - ballDiameter / 2,
+                child: ManipulatingBall(
+                  focus: _isFocused,
+                  onDrag: (dx, dy) {
+                    var mid = (dx + (dy * -1)) / 2;
 
-                  var newHeight = height + 2 * mid;
-                  var newWidth = width + 2 * mid;
+                    var newHeight = height + 2 * mid;
+                    var newWidth = width + 2 * mid;
 
-                  setState(() {
-                    height = newHeight > 0 ? newHeight : 0;
-                    width = newWidth > 0 ? newWidth : 0;
-                    top = top - mid;
-                    left = left - mid;
-                  });
-                },
+                    setState(() {
+                      height = newHeight > 0 ? newHeight : 0;
+                      width = newWidth > 0 ? newWidth : 0;
+                      top = top - mid;
+                      left = left - mid;
+                    });
+                  },
+                ),
               ),
-            ),
-            // center right
-            Positioned(
-              top: top + height / 2 - ballDiameter / 2,
-              left: left + width - ballDiameter / 2,
-              child: ManipulatingBall(
-                focus: _isFocused,
-                onDrag: (dx, dy) {
-                  var newWidth = width + dx;
+              // center right
+              Positioned(
+                top: top + height / 2 - ballDiameter / 2,
+                left: left + width - ballDiameter / 2,
+                child: ManipulatingBall(
+                  focus: _isFocused,
+                  onDrag: (dx, dy) {
+                    var newWidth = width + dx;
 
-                  setState(() {
-                    width = newWidth > 0 ? newWidth : 0;
-                  });
-                },
+                    setState(() {
+                      width = newWidth > 0 ? newWidth : 0;
+                    });
+                  },
+                ),
               ),
-            ),
-            // bottom right
-            Positioned(
-              top: top + height - ballDiameter / 2,
-              left: left + width - ballDiameter / 2,
-              child: ManipulatingBall(
-                focus: _isFocused,
-                onDrag: (dx, dy) {
-                  var mid = (dx + dy) / 2;
+              // bottom right
+              Positioned(
+                top: top + height - ballDiameter / 2,
+                left: left + width - ballDiameter / 2,
+                child: ManipulatingBall(
+                  focus: _isFocused,
+                  onDrag: (dx, dy) {
+                    var mid = (dx + dy) / 2;
 
-                  var newHeight = height + 2 * mid;
-                  var newWidth = width + 2 * mid;
+                    var newHeight = height + 2 * mid;
+                    var newWidth = width + 2 * mid;
 
-                  setState(() {
-                    height = newHeight > 0 ? newHeight : 0;
-                    width = newWidth > 0 ? newWidth : 0;
-                    top = top - mid;
-                    left = left - mid;
-                  });
-                },
+                    setState(() {
+                      height = newHeight > 0 ? newHeight : 0;
+                      width = newWidth > 0 ? newWidth : 0;
+                      top = top - mid;
+                      left = left - mid;
+                    });
+                  },
+                ),
               ),
-            ),
-            // bottom center
-            Positioned(
-              top: top + height - ballDiameter / 2,
-              left: left + width / 2 - ballDiameter / 2,
-              child: ManipulatingBall(
-                focus: _isFocused,
-                onDrag: (dx, dy) {
-                  var newHeight = height + dy;
+              // bottom center
+              Positioned(
+                top: top + height - ballDiameter / 2,
+                left: left + width / 2 - ballDiameter / 2,
+                child: ManipulatingBall(
+                  focus: _isFocused,
+                  onDrag: (dx, dy) {
+                    var newHeight = height + dy;
 
-                  setState(() {
-                    height = newHeight > 0 ? newHeight : 0;
-                  });
-                },
+                    setState(() {
+                      height = newHeight > 0 ? newHeight : 0;
+                    });
+                  },
+                ),
               ),
-            ),
-            // bottom left
-            Positioned(
-              top: top + height - ballDiameter / 2,
-              left: left - ballDiameter / 2,
-              child: ManipulatingBall(
-                focus: _isFocused,
-                onDrag: (dx, dy) {
-                  var mid = ((dx * -1) + dy) / 2;
+              // bottom left
+              Positioned(
+                top: top + height - ballDiameter / 2,
+                left: left - ballDiameter / 2,
+                child: ManipulatingBall(
+                  focus: _isFocused,
+                  onDrag: (dx, dy) {
+                    var mid = ((dx * -1) + dy) / 2;
 
-                  var newHeight = height + 2 * mid;
-                  var newWidth = width + 2 * mid;
+                    var newHeight = height + 2 * mid;
+                    var newWidth = width + 2 * mid;
 
-                  setState(() {
-                    height = newHeight > 0 ? newHeight : 0;
-                    width = newWidth > 0 ? newWidth : 0;
-                    top = top - mid;
-                    left = left - mid;
-                  });
-                },
+                    setState(() {
+                      height = newHeight > 0 ? newHeight : 0;
+                      width = newWidth > 0 ? newWidth : 0;
+                      top = top - mid;
+                      left = left - mid;
+                    });
+                  },
+                ),
               ),
-            ),
-            //left center
-            Positioned(
-              top: top + height / 2 - ballDiameter / 2,
-              left: left - ballDiameter / 2,
-              child: ManipulatingBall(
-                focus: _isFocused,
-                onDrag: (dx, dy) {
-                  var newWidth = width - dx;
+              //left center
+              Positioned(
+                top: top + height / 2 - ballDiameter / 2,
+                left: left - ballDiameter / 2,
+                child: ManipulatingBall(
+                  focus: _isFocused,
+                  onDrag: (dx, dy) {
+                    var newWidth = width - dx;
 
-                  setState(() {
-                    width = newWidth > 0 ? newWidth : 0;
-                    left = left + dx;
-                  });
-                },
+                    setState(() {
+                      width = newWidth > 0 ? newWidth : 0;
+                      left = left + dx;
+                    });
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       }),
     );

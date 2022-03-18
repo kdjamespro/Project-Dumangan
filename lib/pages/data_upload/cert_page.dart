@@ -4,6 +4,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:motion_toast/motion_toast.dart';
 import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/attribute_mapping.dart';
 import 'package:project_dumangan/model/participant.dart';
@@ -15,7 +16,6 @@ import 'package:provider/provider.dart';
 import '/bloc/cross_checking_bloc.dart';
 import '/model/crosscheck_mapping.dart';
 import '/services/verify_message.dart';
-import '/services/warning_message.dart';
 import 'file_uploader.dart';
 
 class CertPage extends StatelessWidget {
@@ -228,20 +228,31 @@ class _TableState extends State<Table>
                                             ));
                                         clearController();
                                         flyoutController.open = false;
-
-                                        showSnackbar(
-                                            context,
-                                            const Snackbar(
-                                              content: Text(
-                                                  'New Participants Added'),
-                                            ));
+                                        MotionToast.success(
+                                                animationDuration:
+                                                    const Duration(seconds: 1),
+                                                animationCurve: Curves.easeOut,
+                                                toastDuration:
+                                                    const Duration(seconds: 2),
+                                                description: const Text(
+                                                    'New Participants Added'))
+                                            .show(context);
                                       } else {
-                                        showWarningMessage(
-                                            context: context,
-                                            title:
-                                                'Incomplete/Incorrect Fields',
-                                            message:
-                                                'Please fill up the proper information for full name and email');
+                                        MotionToast.error(
+                                          animationDuration:
+                                              const Duration(seconds: 1),
+                                          animationCurve: Curves.easeOut,
+                                          toastDuration:
+                                              const Duration(seconds: 2),
+                                          description: const Text(
+                                              'Please fill up the proper information for full name and email'),
+                                        ).show(context);
+                                        // showWarningMessage(
+                                        //     context: context,
+                                        //     title:
+                                        //         'Incomplete/Incorrect Fields',
+                                        //     message:
+                                        //         'Please fill up the proper information for full name and email');
                                       }
                                     })
                               ],
@@ -275,20 +286,26 @@ class _TableState extends State<Table>
                                             listen: false)
                                         .deleteParticipant(row.id);
                                   }
-                                  showSnackbar(
-                                      context,
-                                      Snackbar(
-                                        content: Text(
-                                            'Sucessfully Deleted $selectedCount rows'),
-                                      ));
+                                  MotionToast.delete(
+                                          animationDuration:
+                                              const Duration(seconds: 1),
+                                          animationCurve: Curves.easeOut,
+                                          toastDuration:
+                                              const Duration(seconds: 2),
+                                          description: Text(
+                                              'Sucessfully deleted $selectedCount rows'))
+                                      .show(context);
                                 }
                               } else {
-                                showSnackbar(
-                                    context,
-                                    const Snackbar(
-                                      content: Text(
-                                          'Please select first rows you want to delete'),
-                                    ));
+                                MotionToast.info(
+                                        animationDuration:
+                                            const Duration(seconds: 1),
+                                        animationCurve: Curves.easeOut,
+                                        toastDuration:
+                                            const Duration(seconds: 2),
+                                        description: const Text(
+                                            'Please select first rows you want to delete'))
+                                    .show(context);
                               }
                             },
                             icon: const Icon(FluentIcons.delete)),
