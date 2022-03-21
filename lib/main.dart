@@ -16,7 +16,6 @@ import 'package:sqlite3_library_windows/sqlite3_library_windows.dart';
 
 import '/pages/events/event_page.dart';
 import 'model/crosscheck_mapping.dart';
-import 'model/fontstyle_controller.dart';
 import 'model/selected_event.dart';
 import 'pages/data_page.dart';
 import 'pages/data_upload/cert_page.dart';
@@ -32,7 +31,6 @@ void main() async {
       Provider(create: (context) => CrossCheckMapping()),
       Provider(create: (context) => SelectedEvent()),
       Provider(create: (context) => FileHandler(platform: FilePicker.platform)),
-      ChangeNotifierProvider(create: (context) => FontStyleController()),
       Provider<MyDatabase>(
         create: (context) => MyDatabase(),
         dispose: (context, db) => db.close(),

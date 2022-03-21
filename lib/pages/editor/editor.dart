@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:path/path.dart' as Path;
+import 'package:project_dumangan/model/canvas_controller.dart';
+import 'package:project_dumangan/model/fontstyle_controller.dart';
+import 'package:project_dumangan/pages/editor/canvas_menu.dart';
 import 'package:project_dumangan/pages/editor/resizable_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
@@ -30,18 +32,35 @@ class Editor extends StatefulWidget {
 
 final autoSuggestBox = TextEditingController();
 
-class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
+class _EditorState extends State<Editor> {
   ScreenshotController screenshotController = ScreenshotController();
   Color color = Colors.red;
   Color pickerColor = const Color(0xff443a49);
   Color currentColor = const Color(0xff443a49);
   int menuIndex = 0;
-
+  late double aspectRatio;
   File image = File('');
-  DraggableText text = const DraggableText();
+  late DraggableText text;
+
+  late FontStyleController styleController;
+  late CanvasController canvasController;
 
   @override
-  bool get wantKeepAlive => true;
+  void initState() {
+    aspectRatio = PageOrientation.a4Landscape.size;
+    styleController = FontStyleController(
+        controller: TextEditingController(text: 'Sample Text'));
+    canvasController = CanvasController();
+    canvasController.addListener(() {
+      setState(() {
+        aspectRatio = canvasController.aspectRatio;
+      });
+    });
+    text = DraggableText(
+      style: styleController,
+    );
+    super.initState();
+  }
 
   Image? setImage(File image) {
     return image.existsSync()
@@ -62,6 +81,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
     'ExtraBold',
     'Black'
   ];
+
   String? comboBoxValue;
   @override
   Widget build(BuildContext context) {
@@ -79,7 +99,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                     children: [
                       Positioned(
                         child: AspectRatio(
-                          aspectRatio: 1.6471 / 1,
+                          aspectRatio: aspectRatio,
                           child: Container(
                             margin: const EdgeInsets.all(16),
                             color: Colors.white,
@@ -87,7 +107,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                           ),
                         ),
                       ),
-                      Container(child: const DraggableText()),
+                      Container(child: text),
                     ],
                   ),
                 ),
@@ -120,6 +140,17 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                     FluentIcons.file_image,
                     size: 30,
                   ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      menuIndex = 2;
+                    });
+                  },
+                  icon: const Icon(
+                    FluentIcons.size_legacy,
+                    size: 30,
+                  ),
                 )
               ],
             )),
@@ -132,6 +163,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                 children: [
                   fontsMenu(),
                   imageMenu(context),
+                  CanvasMenu(controller: canvasController),
                 ],
               )),
         ),
@@ -161,7 +193,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
           trailingIcon: const Icon(FluentIcons.search),
           placeholder: "Pick a Font style",
           controller: autoSuggestBox,
-          items: const [
+          items: [
             'Abhaya Libre',
             'Abril Fatface',
             'Alegreya',
@@ -170,9 +202,12 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
           ],
           onSelected: (text) {
             print(text);
+            selectedFont = text;
             setState(() {
-              selectedFont = text;
+              styleController.changeFontStyle(selectedFont);
             });
+
+            selectedFont = text;
           },
         ),
         // Text("$number"),
@@ -192,7 +227,12 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
             min: 10,
             max: 100,
             value: _styleFontSize,
-            onChanged: (v) => setState(() => _styleFontSize = v),
+            onChanged: (v) {
+              setState(() {
+                _styleFontSize = v;
+                styleController.changeFontSize(v);
+              });
+            },
             label: '${_styleFontSize.toInt()}',
           ),
         ),
@@ -247,45 +287,10 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
             value: comboBoxValue,
             onChanged: (value) {
               // print(value);
-              if (value != null) setState(() => comboBoxValue = value);
-              if (value == "Thin") {
+              if (value != null) {
                 setState(() {
-                  fontWeightSelector = FontWeight.w100;
-                });
-              }
-              if (value == "Light") {
-                setState(() {
-                  fontWeightSelector = FontWeight.w300;
-                });
-              }
-              if (value == "Regular") {
-                setState(() {
-                  fontWeightSelector = FontWeight.w400;
-                });
-              }
-              if (value == "Medium") {
-                setState(() {
-                  fontWeightSelector = FontWeight.w500;
-                });
-              }
-              if (value == "SemiBold") {
-                setState(() {
-                  fontWeightSelector = FontWeight.w600;
-                });
-              }
-              if (value == "Bold") {
-                setState(() {
-                  fontWeightSelector = FontWeight.w700;
-                });
-              }
-              if (value == "ExtraBold") {
-                setState(() {
-                  fontWeightSelector = FontWeight.w800;
-                });
-              }
-              if (value == "Black") {
-                setState(() {
-                  fontWeightSelector = FontWeight.w900;
+                  comboBoxValue = value;
+                  styleController.changeFontWeight(value);
                 });
               }
             },
@@ -309,17 +314,23 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                 DropDownButtonItem(
                   title: const Text('Left'),
                   leading: const Icon(FluentIcons.align_left),
-                  onTap: () => debugPrint('left'),
+                  onTap: () => setState(() {
+                    styleController.changeFontAlignment(TextAlign.left);
+                  }),
                 ),
                 DropDownButtonItem(
                   title: const Text('Center'),
                   leading: const Icon(FluentIcons.align_center),
-                  onTap: () => debugPrint('center'),
+                  onTap: () => setState(() {
+                    styleController.changeFontAlignment(TextAlign.center);
+                  }),
                 ),
                 DropDownButtonItem(
                   title: const Text('Right'),
                   leading: const Icon(FluentIcons.align_right),
-                  onTap: () => debugPrint('right'),
+                  onTap: () => setState(() {
+                    styleController.changeFontAlignment(TextAlign.right);
+                  }),
                 ),
               ],
             ),
@@ -345,11 +356,12 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
           },
         ),
         Button(
-          child: const Text('Save Image'),
+          child: const Text('Generate PDF'),
           onPressed: () async {
             String path = await context.read<FileHandler>().saveFile();
             String name = Path.basename(path);
             if (path != '') {
+              styleController.changeText('Kenneth');
               var cert = await screenshotController.capture(
                 pixelRatio: 3.0,
               );
@@ -386,6 +398,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                   print('button pressed');
                   setState(() {
                     fontColorPicker = color;
+                    styleController.changeFontColor(color);
                   });
                 }),
           ],
@@ -396,20 +409,32 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
 }
 
 class DraggableText extends StatefulWidget {
-  const DraggableText({Key? key}) : super(key: key);
-
+  DraggableText({Key? key, required this.style}) : super(key: key);
+  FontStyleController style;
   @override
   _DraggableTextState createState() => _DraggableTextState();
 }
 
 class _DraggableTextState extends State<DraggableText> {
-  TextEditingController _controller =
-      TextEditingController(text: "Sample Name");
+  late TextEditingController _controller;
   late FocusNode _focusNode;
+  late FontStyleController styleController;
+  late TextStyle style;
+  late TextAlign alignment;
 
   @override
   void initState() {
     _focusNode = FocusNode();
+    styleController = widget.style;
+    _controller = widget.style.controller;
+    style = styleController.textStyle;
+    alignment = styleController.alignment;
+    styleController.addListener(() {
+      setState(() {
+        style = styleController.textStyle;
+        alignment = styleController.alignment;
+      });
+    });
     super.initState();
   }
 
@@ -424,7 +449,25 @@ class _DraggableTextState extends State<DraggableText> {
     return ResizableWidget(
       focusNode: _focusNode,
       child: Center(
-        child: buildEditableText("", ""),
+        child: Align(
+          //Here
+          alignment: Alignment.center,
+          child: EditableText(
+            onEditingComplete: (() {}),
+            cursorRadius: const Radius.circular(1.0),
+            textInputAction: TextInputAction.done,
+            scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
+            scrollPhysics: const NeverScrollableScrollPhysics(),
+            scrollController: null,
+            controller: _controller,
+            backgroundCursorColor: Colors.black,
+            focusNode: _focusNode,
+            maxLines: null,
+            cursorColor: Colors.black,
+            textAlign: alignment,
+            style: style,
+          ),
+        ),
       ),
     );
   }
@@ -446,242 +489,37 @@ class _DraggableTextState extends State<DraggableText> {
         maxLines: null,
         cursorColor: Colors.black,
         textAlign: TextAlign.center,
-        style: GoogleFonts.getFont(
-          "$selectedFont",
-          fontSize: _styleFontSize,
-          color: fontColorPicker,
-          fontWeight: fontWeightSelector,
-        ),
+        style: widget.style.textStyle,
       ),
     );
   }
 }
 
-//  Container(
-//           width: 300,
-//           child: Padding(
-//             padding: const EdgeInsets.all(12.0),
-//             child: Column(
-//               mainAxisAlignment: MainAxisAlignment.start,
-//               children: [
-                // Text('Tools'),
-                // SizedBox(
-                //   height: 20,
-                // ),
-                // Align(
-                //   alignment: Alignment.centerLeft,
-                //   child: Text('Font style selector'),
-                // ),
-                // AutoSuggestBox(
-                //   cursorColor: mat.Colors.blue,
-                //   highlightColor: mat.Colors.black,
-                //   clearButtonEnabled: true,
-                //   trailingIcon: Icon(FluentIcons.search),
-                //   placeholder: "Pick a Font style",
-                //   controller: autoSuggestBox,
-                //   items: [
-                //     'Abhaya Libre',
-                //     'Abril Fatface',
-                //     'Alegreya',
-                //     'Alegreya Sans',
-                //     'Amatic SC',
-                //   ],
-                //   onSelected: (text) {
-                //     print(text);
-                //     setState(() {
-                //       selectedFont = text;
-                //     });
-                //   },
-                // ),
-                // // Text("$number"),
-                // SizedBox(
-                //   height: 20,
-                // ),
-                // Align(
-                //   alignment: Alignment.centerLeft,
-                //   child: Text('Font size selector'),
-                // ),
-                // SizedBox(
-                //   // The default width is 200.
-                //   // The slider does not have its own widget, so you have to add it yourself.
-                //   // The slider always try to be as big as possible
-                //   width: 250,
-                //   child: Slider(
-                //     min: 10,
-                //     max: 100,
-                //     value: _styleFontSize,
-                //     onChanged: (v) => setState(() => _styleFontSize = v),
-                //     label: '${_styleFontSize.toInt()}',
-                //   ),
-                // ),
-                // SizedBox(
-                //   height: 20,
-                // ),
-                // Row(
-                //   children: [
-                //     GestureDetector(
-                //       child: Container(
-                //         decoration: BoxDecoration(
-                //             color: fontColorPicker,
-                //             borderRadius: BorderRadius.circular(5)),
-                //         height: 25,
-                //         width: 25,
-                //       ),
-                //       onTap: () {
-                //         pickColor(context);
-                //         print('button pressed');
-                //       },
-                //     ),
-                //     SizedBox(
-                //       width: 25,
-                //     ),
-                //     Button(
-                //         child: Text('Open color picker'),
-                //         // Set onPressed to null to disable the button
-                //         onPressed: () {
-                //           pickColor(context);
-                //           print('button pressed');
-                //         })
-                //   ],
-                // ),
-                // SizedBox(
-                //   height: 20,
-                // ),
-                // Align(
-                //   alignment: Alignment.centerLeft,
-                //   child: Text('Font weight selector'),
-                // ),
-                // SizedBox(
-                //   width: 300,
-                //   child: Combobox<String>(
-                //     placeholder: Text('Selected list item'),
-                //     isExpanded: true,
-                //     items: values
-                //         .map((e) => ComboboxItem<String>(
-                //               value: e,
-                //               child: Text(e),
-                //             ))
-                //         .toList(),
-                //     value: comboBoxValue,
-                //     onChanged: (value) {
-                //       // print(value);
-                //       if (value != null) setState(() => comboBoxValue = value);
-                //       if (value == "Thin") {
-                //         setState(() {
-                //           fontWeightSelector = FontWeight.w100;
-                //         });
-                //       }
-                //       if (value == "Light") {
-                //         setState(() {
-                //           fontWeightSelector = FontWeight.w300;
-                //         });
-                //       }
-                //       if (value == "Regular") {
-                //         setState(() {
-                //           fontWeightSelector = FontWeight.w400;
-                //         });
-                //       }
-                //       if (value == "Medium") {
-                //         setState(() {
-                //           fontWeightSelector = FontWeight.w500;
-                //         });
-                //       }
-                //       if (value == "SemiBold") {
-                //         setState(() {
-                //           fontWeightSelector = FontWeight.w600;
-                //         });
-                //       }
-                //       if (value == "Bold") {
-                //         setState(() {
-                //           fontWeightSelector = FontWeight.w700;
-                //         });
-                //       }
-                //       if (value == "ExtraBold") {
-                //         setState(() {
-                //           fontWeightSelector = FontWeight.w800;
-                //         });
-                //       }
-                //       if (value == "Black") {
-                //         setState(() {
-                //           fontWeightSelector = FontWeight.w900;
-                //         });
-                //       }
-                //     },
-                //   ),
-                // ),
-                // SizedBox(
-                //   height: 20,
-                // ),
-                // Align(
-                //   alignment: Alignment.centerLeft,
-                //   child: Text('Alignment selector'),
-                // ),
-                // SizedBox(
-                //   width: 300,
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: DropDownButton(
-                //       leading: const Icon(FluentIcons.align_left),
-                //       title: const Text('Alignment'),
-                //       items: [
-                //         DropDownButtonItem(
-                //           title: const Text('Left'),
-                //           leading: const Icon(FluentIcons.align_left),
-                //           onTap: () => debugPrint('left'),
-                //         ),
-                //         DropDownButtonItem(
-                //           title: const Text('Center'),
-                //           leading: const Icon(FluentIcons.align_center),
-                //           onTap: () => debugPrint('center'),
-                //         ),
-                //         DropDownButtonItem(
-                //           title: const Text('Right'),
-                //           leading: const Icon(FluentIcons.align_right),
-                //           onTap: () => debugPrint('right'),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-//                 SizedBox(
-//                   height: 200,
-//                 ),
-//                 Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                   children: [
-                    // Button(
-                    //   child: const Text('Upload Image'),
-                    //   onPressed: () async {
-                    //     final picked =
-                    //         await context.read<FileHandler>().openImageFile();
-                    //     if (picked.existsSync()) {
-                    //       image = picked;
-                    //     }
-                    //     setState(() {
-                    //       setImage(image);
-                    //     });
-                    //   },
-                    // ),
-                    // Button(
-                    //   child: Text('Save Image'),
-                    //   onPressed: () async {
-                    //     String path =
-                    //         await context.read<FileHandler>().saveFile();
-                    //     String name = Path.basename(path);
-                    //     if (path != '') {
-                    //       var cert = await screenshotController.capture(
-                    //         pixelRatio: 3.0,
-                    //       );
-                    //       if (cert != null) {
-                    //         await PdfGenerator.generatePdf(cert, path);
-                    //         print('Sucessful');
-                    //       }
-                    //     }
-                    //   },
-                    // ),
-//                   ],
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
+enum PageOrientation {
+  a4Portrait,
+  a4Landscape,
+  legalPortrait,
+  legalLandscape,
+  letterPortrait,
+  letterLandscape,
+}
+
+extension PageSizeExtension on PageOrientation {
+  double get size {
+    switch (this) {
+      case PageOrientation.a4Portrait:
+        return 1 / 1.4142;
+      case PageOrientation.legalPortrait:
+        return 1 / 1.6471;
+      case PageOrientation.legalLandscape:
+        return 1.6471 / 1;
+      case PageOrientation.letterPortrait:
+        return 1 / 1.2941;
+      case PageOrientation.letterLandscape:
+        return 1.2941 / 1;
+      case PageOrientation.a4Landscape:
+      default:
+        return 1.4142 / 1;
+    }
+  }
+}

@@ -317,7 +317,7 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                 onTap: () async {
                   int selectedEventId = await Navigator.push(
                     context,
-                    mat.MaterialPageRoute(
+                    FluentPageRoute(
                       builder: (_) => EventInfo(
                         event: event,
                       ),

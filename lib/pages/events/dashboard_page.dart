@@ -234,11 +234,6 @@ class _DashboardPageState extends State<DashboardPage> {
           mat.GestureDetector(
             onTap: () {
               print("Hello");
-              Navigator.push(
-                  context,
-                  mat.MaterialPageRoute(
-                      builder: (context) => SizedBox()) //EventInfo()),
-                  );
             },
             child: Container(
               width: MediaQuery.of(context).size.width / 4,

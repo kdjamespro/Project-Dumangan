@@ -4,10 +4,10 @@ class ResizableWidget extends StatefulWidget {
   ResizableWidget({
     Key? key,
     required this.child,
-    this.focusNode,
+    required this.focusNode,
   }) : super(key: key);
   final Widget child;
-  FocusNode? focusNode;
+  FocusNode focusNode;
 
   @override
   _ResizableWidgetState createState() => _ResizableWidgetState();
@@ -26,6 +26,18 @@ class _ResizableWidgetState extends State<ResizableWidget> {
 
   late bool _isFocused;
   late var widgetKey = GlobalKey();
+  late FocusNode focus;
+
+  @override
+  void initState() {
+    focus = FocusNode();
+    focus.addListener(() {
+      setState(() {
+        _isFocused = focus.hasFocus;
+      });
+    });
+    super.initState();
+  }
 
   void onDrag(double dx, double dy) {
     var newHeight = height + dy;
@@ -51,20 +63,21 @@ class _ResizableWidgetState extends State<ResizableWidget> {
   @override
   Widget build(BuildContext context) {
     return Focus(
+      focusNode: focus,
       child: Builder(builder: (BuildContext context) {
         final FocusNode focusNode = Focus.of(context);
         _isFocused = focusNode.hasFocus;
         return GestureDetector(
-          onTap: () {
-            if (_isFocused) {
-              focusNode.unfocus();
-            } else {
-              focusNode.requestFocus();
-            }
-            setState(() {
-              _isFocused = focusNode.hasFocus;
-            });
-          },
+          // onTap: () {
+          //   if (_isFocused) {
+          //     focusNode.unfocus();
+          //   } else {
+          //     focusNode.requestFocus();
+          //   }
+          //   // setState(() {
+          //   //   _isFocused = focusNode.hasFocus;
+          //   // });
+          // },
           onPanStart: _handleDrag,
           onPanUpdate: (details) {
             var dx = details.globalPosition.dx - initX;
@@ -245,7 +258,7 @@ class ManipulatingBall extends StatefulWidget {
   ManipulatingBall({Key? key, required this.onDrag, required this.focus});
 
   final Function onDrag;
-  bool focus = false;
+  bool focus;
 
   @override
   _ManipulatingBallState createState() => _ManipulatingBallState();
@@ -273,7 +286,7 @@ class _ManipulatingBallState extends State<ManipulatingBall> {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: true,
+      visible: widget.focus,
       child: GestureDetector(
         onPanStart: _handleDrag,
         onPanUpdate: _handleUpdate,
