@@ -7,21 +7,13 @@ import 'package:path/path.dart' as Path;
 import 'package:project_dumangan/model/canvas_controller.dart';
 import 'package:project_dumangan/model/fontstyle_controller.dart';
 import 'package:project_dumangan/pages/editor/canvas_menu.dart';
-import 'package:project_dumangan/pages/editor/resizable_widget.dart';
+import 'package:project_dumangan/pages/editor/draggable_text.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 
 import '/services/file_handler.dart';
 import '/services/pdf_generator.dart';
-
-String fontSelector = "Calibri";
-String fontViewer = "";
-String selectedFont = "Lato";
-String styleFontStyle = "";
-String styleFontColor = "";
-double _styleFontSize = 10;
-Color fontColorPicker = const Color(0xff443a49);
-FontWeight fontWeightSelector = FontWeight.normal;
+import 'attribute_text.dart';
 
 class Editor extends StatefulWidget {
   const Editor({Key? key}) : super(key: key);
@@ -34,6 +26,15 @@ final autoSuggestBox = TextEditingController();
 
 class _EditorState extends State<Editor> {
   ScreenshotController screenshotController = ScreenshotController();
+  String fontSelector = "Calibri";
+  String selectedFont = "Lato";
+  String styleFontStyle = "";
+  String styleFontColor = "";
+  double _styleFontSize = 10;
+  Color fontColorPicker = const Color(0xff443a49);
+  FontWeight fontWeightSelector = FontWeight.normal;
+  late AttributeText dyanmicFields;
+
   Color color = Colors.red;
   Color pickerColor = const Color(0xff443a49);
   Color currentColor = const Color(0xff443a49);
@@ -41,24 +42,40 @@ class _EditorState extends State<Editor> {
   late double aspectRatio;
   File image = File('');
   late DraggableText text;
-
+  List<Widget> stackContents = [];
   late FontStyleController styleController;
   late CanvasController canvasController;
 
+  changeFontController(FontStyleController controller) {
+    styleController = controller;
+    Color selectedColor = styleController.textStyle.color ?? pickerColor;
+    setState(() {
+      changeColor(selectedColor);
+      fontColorPicker = selectedColor;
+      _styleFontSize = styleController.textStyle.fontSize ?? _styleFontSize;
+    });
+  }
+
   @override
   void initState() {
-    aspectRatio = PageOrientation.a4Landscape.size;
     styleController = FontStyleController(
         controller: TextEditingController(text: 'Sample Text'));
     canvasController = CanvasController();
+    aspectRatio = canvasController.aspectRatio;
     canvasController.addListener(() {
       setState(() {
+        print('Changing');
         aspectRatio = canvasController.aspectRatio;
       });
     });
+    dyanmicFields = AttributeText(changeController: changeFontController)
+      ..addAttribute('Full Name')
+      ..addAttribute('Email');
     text = DraggableText(
       style: styleController,
+      focus: FocusNode(),
     );
+    stackContents.addAll(dyanmicFields.attributes.values);
     super.initState();
   }
 
@@ -107,7 +124,7 @@ class _EditorState extends State<Editor> {
                           ),
                         ),
                       ),
-                      Container(child: text),
+                      ...stackContents,
                     ],
                   ),
                 ),
@@ -119,15 +136,17 @@ class _EditorState extends State<Editor> {
             width: 50,
             child: Column(
               children: [
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      menuIndex = 0;
-                    });
-                  },
-                  icon: const Icon(
-                    FluentIcons.font,
-                    size: 30,
+                Container(
+                  child: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        menuIndex = 0;
+                      });
+                    },
+                    icon: const Icon(
+                      FluentIcons.font,
+                      size: 30,
+                    ),
                   ),
                 ),
                 IconButton(
@@ -363,10 +382,11 @@ class _EditorState extends State<Editor> {
             if (path != '') {
               styleController.changeText('Kenneth');
               var cert = await screenshotController.capture(
-                pixelRatio: 3.0,
+                pixelRatio: 5,
               );
               if (cert != null) {
-                await PdfGenerator.generatePdf(cert, path);
+                await PdfGenerator.generatePdf(
+                    cert, path, canvasController.orientation);
                 print('Sucessful');
               }
             }
@@ -408,118 +428,90 @@ class _EditorState extends State<Editor> {
   }
 }
 
-class DraggableText extends StatefulWidget {
-  DraggableText({Key? key, required this.style}) : super(key: key);
-  FontStyleController style;
-  @override
-  _DraggableTextState createState() => _DraggableTextState();
-}
+// class DraggableText extends StatefulWidget {
+//   DraggableText({Key? key, required this.style}) : super(key: key);
+//   FontStyleController style;
 
-class _DraggableTextState extends State<DraggableText> {
-  late TextEditingController _controller;
-  late FocusNode _focusNode;
-  late FontStyleController styleController;
-  late TextStyle style;
-  late TextAlign alignment;
+//   @override
+//   _DraggableTextState createState() => _DraggableTextState();
+// }
 
-  @override
-  void initState() {
-    _focusNode = FocusNode();
-    styleController = widget.style;
-    _controller = widget.style.controller;
-    style = styleController.textStyle;
-    alignment = styleController.alignment;
-    styleController.addListener(() {
-      setState(() {
-        style = styleController.textStyle;
-        alignment = styleController.alignment;
-      });
-    });
-    super.initState();
-  }
+// class _DraggableTextState extends State<DraggableText> {
+//   late TextEditingController _controller;
+//   late FocusNode _focusNode;
+//   late FontStyleController styleController;
+//   late TextStyle style;
+//   late TextAlign alignment;
 
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    super.dispose();
-  }
+//   @override
+//   void initState() {
+//     _focusNode = FocusNode();
+//     styleController = widget.style;
+//     _controller = widget.style.controller;
+//     style = styleController.textStyle;
+//     alignment = styleController.alignment;
+//     styleController.addListener(() {
+//       setState(() {
+//         style = styleController.textStyle;
+//         alignment = styleController.alignment;
+//       });
+//     });
+//     super.initState();
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return ResizableWidget(
-      focusNode: _focusNode,
-      child: Center(
-        child: Align(
-          //Here
-          alignment: Alignment.center,
-          child: EditableText(
-            onEditingComplete: (() {}),
-            cursorRadius: const Radius.circular(1.0),
-            textInputAction: TextInputAction.done,
-            scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
-            scrollPhysics: const NeverScrollableScrollPhysics(),
-            scrollController: null,
-            controller: _controller,
-            backgroundCursorColor: Colors.black,
-            focusNode: _focusNode,
-            maxLines: null,
-            cursorColor: Colors.black,
-            textAlign: alignment,
-            style: style,
-          ),
-        ),
-      ),
-    );
-  }
+//   @override
+//   void dispose() {
+//     _focusNode.dispose();
+//     super.dispose();
+//   }
 
-  Align buildEditableText(String styleFontStyle, String styleFontSize) {
-    return Align(
-      //Here
-      alignment: Alignment.center,
-      child: EditableText(
-        onEditingComplete: (() {}),
-        cursorRadius: const Radius.circular(1.0),
-        textInputAction: TextInputAction.done,
-        scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
-        scrollPhysics: const NeverScrollableScrollPhysics(),
-        scrollController: null,
-        controller: _controller,
-        backgroundCursorColor: Colors.black,
-        focusNode: _focusNode,
-        maxLines: null,
-        cursorColor: Colors.black,
-        textAlign: TextAlign.center,
-        style: widget.style.textStyle,
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return ResizableWidget(
+//       focusNode: _focusNode,
+//       child: Center(
+//         child: Align(
+//           //Here
+//           alignment: Alignment.center,
+//           child: EditableText(
+//             onEditingComplete: (() {}),
+//             cursorRadius: const Radius.circular(1.0),
+//             textInputAction: TextInputAction.done,
+//             scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
+//             scrollPhysics: const NeverScrollableScrollPhysics(),
+//             scrollController: null,
+//             controller: _controller,
+//             backgroundCursorColor: Colors.black,
+//             focusNode: _focusNode,
+//             maxLines: null,
+//             cursorColor: Colors.black,
+//             textAlign: alignment,
+//             style: style,
+//           ),
+//         ),
+//       ),
+//     );
+//   }
 
-enum PageOrientation {
-  a4Portrait,
-  a4Landscape,
-  legalPortrait,
-  legalLandscape,
-  letterPortrait,
-  letterLandscape,
-}
-
-extension PageSizeExtension on PageOrientation {
-  double get size {
-    switch (this) {
-      case PageOrientation.a4Portrait:
-        return 1 / 1.4142;
-      case PageOrientation.legalPortrait:
-        return 1 / 1.6471;
-      case PageOrientation.legalLandscape:
-        return 1.6471 / 1;
-      case PageOrientation.letterPortrait:
-        return 1 / 1.2941;
-      case PageOrientation.letterLandscape:
-        return 1.2941 / 1;
-      case PageOrientation.a4Landscape:
-      default:
-        return 1.4142 / 1;
-    }
-  }
-}
+//   Align buildEditableText(String styleFontStyle, String styleFontSize) {
+//     return Align(
+//       //Here
+//       alignment: Alignment.center,
+//       child: EditableText(
+//         onEditingComplete: (() {}),
+//         cursorRadius: const Radius.circular(1.0),
+//         textInputAction: TextInputAction.done,
+//         scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
+//         scrollPhysics: const NeverScrollableScrollPhysics(),
+//         scrollController: null,
+//         controller: _controller,
+//         backgroundCursorColor: Colors.black,
+//         focusNode: _focusNode,
+//         maxLines: null,
+//         cursorColor: Colors.black,
+//         textAlign: TextAlign.center,
+//         style: widget.style.textStyle,
+//       ),
+//     );
+//   }
+// }

@@ -66,6 +66,8 @@ dependencies:
   pdf: ^3.7.2
   printing: ^5.7.3
   motion_toast: ^2.1.3
+  google_sign_in: ^5.2.4
+  google_sign_in_dartio: ^0.2.0
 
 dev_dependencies:
   flutter_test:

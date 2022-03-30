@@ -23,7 +23,6 @@ import 'pages/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   open.overrideFor(OperatingSystem.windows, openSQLiteOnWindows);
   runApp(MultiProvider(
     providers: [
@@ -74,6 +73,21 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int index = 0;
+  Image? userPhoto;
+  String? userName;
+  void setUserProfile(String url, String name) {
+    if (url == '') {
+      setState(() {
+        userPhoto = null;
+        userName = null;
+      });
+    } else {
+      setState(() {
+        userPhoto = Image.network(url);
+        userName = name;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,8 +152,18 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
           footerItems: [
             PaneItem(
-              icon: const Icon(FluentIcons.signin),
-              title: const Text('Sign In'),
+              icon: userPhoto == null
+                  ? const Icon(FluentIcons.signin)
+                  : CircleAvatar(
+                      minRadius: 10,
+                      child: userPhoto,
+                    ),
+              title: userName == null
+                  ? const Text('Sign In')
+                  : Text(
+                      userName ?? '',
+                      maxLines: 2,
+                    ),
             ),
           ]),
       content: NavigationBody(
@@ -155,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
           const DataPage(),
           const Settigs_page(),
           const HelpPage(),
-          LoginPage(),
+          LoginPage(setInfo: setUserProfile),
         ],
       ),
     );

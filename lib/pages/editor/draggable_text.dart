@@ -1,25 +1,37 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:project_dumangan/model/fontstyle_controller.dart';
 import 'package:project_dumangan/pages/editor/resizable_widget.dart';
 
 class DraggableText extends StatefulWidget {
-  const DraggableText({Key? key}) : super(key: key);
+  DraggableText({Key? key, required this.style, required this.focus})
+      : super(key: key);
+  FontStyleController style;
+  FocusNode focus;
 
   @override
   _DraggableTextState createState() => _DraggableTextState();
 }
 
 class _DraggableTextState extends State<DraggableText> {
-  TextEditingController _controller =
-      TextEditingController(text: "Sample Name");
+  late TextEditingController _controller;
   late FocusNode _focusNode;
-  TextStyle textStyle = TextStyle(
-    color: Colors.black,
-    fontSize: 20,
-  );
+  late FontStyleController styleController;
+  late TextStyle style;
+  late TextAlign alignment;
 
   @override
   void initState() {
-    _focusNode = FocusNode();
+    _focusNode = widget.focus;
+    styleController = widget.style;
+    _controller = widget.style.controller;
+    style = styleController.textStyle;
+    alignment = styleController.alignment;
+    styleController.addListener(() {
+      setState(() {
+        style = styleController.textStyle;
+        alignment = styleController.alignment;
+      });
+    });
     super.initState();
   }
 
@@ -34,27 +46,47 @@ class _DraggableTextState extends State<DraggableText> {
     return ResizableWidget(
       focusNode: _focusNode,
       child: Center(
-        child: buildEditableText("", ""),
+        child: Align(
+          //Here
+          alignment: Alignment.center,
+          child: EditableText(
+            onEditingComplete: (() {}),
+            cursorRadius: const Radius.circular(1.0),
+            textInputAction: TextInputAction.done,
+            scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
+            scrollPhysics: const NeverScrollableScrollPhysics(),
+            scrollController: null,
+            controller: _controller,
+            backgroundCursorColor: Colors.black,
+            focusNode: _focusNode,
+            maxLines: null,
+            cursorColor: Colors.black,
+            textAlign: alignment,
+            style: style,
+          ),
+        ),
       ),
     );
   }
 
-  EditableText buildEditableText(String styleFontStyle, String styleFontSize) {
-    return EditableText(
-      onEditingComplete: (() {}),
-      cursorRadius: const Radius.circular(1.0),
-      textInputAction: TextInputAction.done,
-      scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
-      scrollPhysics: const NeverScrollableScrollPhysics(),
-      scrollController: null,
-      controller: _controller,
-      backgroundCursorColor: Colors.black,
-      focusNode: _focusNode,
-      maxLines: null,
-      cursorColor: Colors.black,
-      style: const TextStyle(
-        color: Colors.black,
-        fontSize: 20,
+  Align buildEditableText(String styleFontStyle, String styleFontSize) {
+    return Align(
+      //Here
+      alignment: Alignment.center,
+      child: EditableText(
+        onEditingComplete: (() {}),
+        cursorRadius: const Radius.circular(1.0),
+        textInputAction: TextInputAction.done,
+        scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
+        scrollPhysics: const NeverScrollableScrollPhysics(),
+        scrollController: null,
+        controller: _controller,
+        backgroundCursorColor: Colors.black,
+        focusNode: _focusNode,
+        maxLines: null,
+        cursorColor: Colors.black,
+        textAlign: TextAlign.center,
+        style: widget.style.textStyle,
       ),
     );
   }
