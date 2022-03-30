@@ -10,7 +10,8 @@ class CanvasMenu extends StatefulWidget {
   State<CanvasMenu> createState() => _CanvasMenuState();
 }
 
-class _CanvasMenuState extends State<CanvasMenu> {
+class _CanvasMenuState extends State<CanvasMenu>
+    with AutomaticKeepAliveClientMixin {
   late CanvasController page;
   int _selectedPageSize = 0;
   int _selectedOrientation = 0;
@@ -24,7 +25,11 @@ class _CanvasMenuState extends State<CanvasMenu> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

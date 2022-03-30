@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class FontStyleController extends ChangeNotifier {
   TextAlign alignment = TextAlign.center;
   TextStyle textStyle = TextStyle(
-    fontSize: 15,
+    fontSize: 12,
     color: Colors.black,
     fontFamily: 'Calibri',
   );

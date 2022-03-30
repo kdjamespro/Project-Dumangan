@@ -8,8 +8,10 @@ import 'package:project_dumangan/model/canvas_controller.dart';
 import 'package:project_dumangan/model/fontstyle_controller.dart';
 import 'package:project_dumangan/pages/editor/canvas_menu.dart';
 import 'package:project_dumangan/pages/editor/draggable_text.dart';
+import 'package:project_dumangan/services/warning_message.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:string_validator/string_validator.dart';
 
 import '/services/file_handler.dart';
 import '/services/pdf_generator.dart';
@@ -24,13 +26,13 @@ class Editor extends StatefulWidget {
 
 final autoSuggestBox = TextEditingController();
 
-class _EditorState extends State<Editor> {
+class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
   ScreenshotController screenshotController = ScreenshotController();
   String fontSelector = "Calibri";
   String selectedFont = "Lato";
   String styleFontStyle = "";
   String styleFontColor = "";
-  double _styleFontSize = 10;
+  double _styleFontSize = 12;
   Color fontColorPicker = const Color(0xff443a49);
   FontWeight fontWeightSelector = FontWeight.normal;
   late AttributeText dyanmicFields;
@@ -45,6 +47,8 @@ class _EditorState extends State<Editor> {
   List<Widget> stackContents = [];
   late FontStyleController styleController;
   late CanvasController canvasController;
+  late FlyoutController fontSelection;
+  late TextEditingController fontValue;
 
   changeFontController(FontStyleController controller) {
     styleController = controller;
@@ -53,11 +57,15 @@ class _EditorState extends State<Editor> {
       changeColor(selectedColor);
       fontColorPicker = selectedColor;
       _styleFontSize = styleController.textStyle.fontSize ?? _styleFontSize;
+      fontValue.text = '${_styleFontSize.toInt()}';
     });
   }
 
   @override
   void initState() {
+    print('Initialized');
+    fontValue = TextEditingController(text: '');
+    fontSelection = FlyoutController();
     styleController = FontStyleController(
         controller: TextEditingController(text: 'Sample Text'));
     canvasController = CanvasController();
@@ -71,13 +79,17 @@ class _EditorState extends State<Editor> {
     dyanmicFields = AttributeText(changeController: changeFontController)
       ..addAttribute('Full Name')
       ..addAttribute('Email');
-    text = DraggableText(
-      style: styleController,
-      focus: FocusNode(),
-    );
     stackContents.addAll(dyanmicFields.attributes.values);
     super.initState();
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 
   Image? setImage(File image) {
     return image.existsSync()
@@ -102,6 +114,7 @@ class _EditorState extends State<Editor> {
   String? comboBoxValue;
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Row(
       children: [
         Flexible(
@@ -194,6 +207,14 @@ class _EditorState extends State<Editor> {
     setState(() => pickerColor = color);
   }
 
+  void changeFontSize(double size) {
+    setState(() {
+      _styleFontSize = size;
+      styleController.changeFontSize(size);
+      fontValue.text = '${size.toInt()}';
+    });
+  }
+
   Widget fontsMenu() {
     return Column(
       children: [
@@ -241,18 +262,146 @@ class _EditorState extends State<Editor> {
           // The default width is 200.
           // The slider does not have its own widget, so you have to add it yourself.
           // The slider always try to be as big as possible
-          width: 250,
-          child: Slider(
-            min: 10,
-            max: 100,
-            value: _styleFontSize,
-            onChanged: (v) {
-              setState(() {
-                _styleFontSize = v;
-                styleController.changeFontSize(v);
-              });
-            },
-            label: '${_styleFontSize.toInt()}',
+          width: 90,
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: SizedBox(
+              child: Flyout(
+                contentWidth: 80,
+                controller: fontSelection,
+                child: TextBox(
+                  enableSuggestions: true,
+                  controller: fontValue,
+                  suffix: IconButton(
+                    icon: const Icon(FluentIcons.chevron_down),
+                    onPressed: () {
+                      fontSelection.open = true;
+                    },
+                  ),
+                  onSubmitted: (text) {
+                    if (isNumeric(text)) {
+                      changeFontSize(double.parse(text));
+                    } else {
+                      showWarningMessage(
+                          context: context,
+                          title: 'Not a number',
+                          message: 'The input is not a valid number');
+                      fontValue.text = '${_styleFontSize.toInt()}';
+                    }
+                  },
+                ),
+                content: SizedBox(
+                  height: 200,
+                  width: 50,
+                  child: Card(
+                    backgroundColor: Colors.white,
+                    child: SingleChildScrollView(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            IconButton(
+                                icon: Container(child: const Text('8')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(8);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('9')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(9);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('10')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(10);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('11')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(11);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('12')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(12);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('14')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(14);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('16')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(16);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('18')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(18);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('20')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(20);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('22')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(22);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('24')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(24);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('26')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(26);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('28')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(28);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('36')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(36);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('48')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(48);
+                                }),
+                            IconButton(
+                                icon: Container(child: const Text('72')),
+                                onPressed: () {
+                                  fontSelection.open = false;
+                                  changeFontSize(72);
+                                }),
+                          ]),
+                    ),
+                  ),
+                ),
+              ),
+              width: 200,
+            ),
           ),
         ),
         const SizedBox(
@@ -427,91 +576,3 @@ class _EditorState extends State<Editor> {
     );
   }
 }
-
-// class DraggableText extends StatefulWidget {
-//   DraggableText({Key? key, required this.style}) : super(key: key);
-//   FontStyleController style;
-
-//   @override
-//   _DraggableTextState createState() => _DraggableTextState();
-// }
-
-// class _DraggableTextState extends State<DraggableText> {
-//   late TextEditingController _controller;
-//   late FocusNode _focusNode;
-//   late FontStyleController styleController;
-//   late TextStyle style;
-//   late TextAlign alignment;
-
-//   @override
-//   void initState() {
-//     _focusNode = FocusNode();
-//     styleController = widget.style;
-//     _controller = widget.style.controller;
-//     style = styleController.textStyle;
-//     alignment = styleController.alignment;
-//     styleController.addListener(() {
-//       setState(() {
-//         style = styleController.textStyle;
-//         alignment = styleController.alignment;
-//       });
-//     });
-//     super.initState();
-//   }
-
-//   @override
-//   void dispose() {
-//     _focusNode.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ResizableWidget(
-//       focusNode: _focusNode,
-//       child: Center(
-//         child: Align(
-//           //Here
-//           alignment: Alignment.center,
-//           child: EditableText(
-//             onEditingComplete: (() {}),
-//             cursorRadius: const Radius.circular(1.0),
-//             textInputAction: TextInputAction.done,
-//             scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
-//             scrollPhysics: const NeverScrollableScrollPhysics(),
-//             scrollController: null,
-//             controller: _controller,
-//             backgroundCursorColor: Colors.black,
-//             focusNode: _focusNode,
-//             maxLines: null,
-//             cursorColor: Colors.black,
-//             textAlign: alignment,
-//             style: style,
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Align buildEditableText(String styleFontStyle, String styleFontSize) {
-//     return Align(
-//       //Here
-//       alignment: Alignment.center,
-//       child: EditableText(
-//         onEditingComplete: (() {}),
-//         cursorRadius: const Radius.circular(1.0),
-//         textInputAction: TextInputAction.done,
-//         scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
-//         scrollPhysics: const NeverScrollableScrollPhysics(),
-//         scrollController: null,
-//         controller: _controller,
-//         backgroundCursorColor: Colors.black,
-//         focusNode: _focusNode,
-//         maxLines: null,
-//         cursorColor: Colors.black,
-//         textAlign: TextAlign.center,
-//         style: widget.style.textStyle,
-//       ),
-//     );
-//   }
-// }

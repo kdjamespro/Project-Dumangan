@@ -15,7 +15,8 @@ class ResizableWidget extends StatefulWidget {
 
 const ballDiameter = 7.0;
 
-class _ResizableWidgetState extends State<ResizableWidget> {
+class _ResizableWidgetState extends State<ResizableWidget>
+    with AutomaticKeepAliveClientMixin {
   late double height = 100;
   late double width = 150;
 
@@ -38,6 +39,9 @@ class _ResizableWidgetState extends State<ResizableWidget> {
     });
     super.initState();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   void onDrag(double dx, double dy) {
     var newHeight = height + dy;
@@ -62,6 +66,7 @@ class _ResizableWidgetState extends State<ResizableWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Focus(
       focusNode: focus,
       child: Builder(builder: (BuildContext context) {

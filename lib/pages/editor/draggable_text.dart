@@ -12,7 +12,8 @@ class DraggableText extends StatefulWidget {
   _DraggableTextState createState() => _DraggableTextState();
 }
 
-class _DraggableTextState extends State<DraggableText> {
+class _DraggableTextState extends State<DraggableText>
+    with AutomaticKeepAliveClientMixin {
   late TextEditingController _controller;
   late FocusNode _focusNode;
   late FontStyleController styleController;
@@ -42,7 +43,11 @@ class _DraggableTextState extends State<DraggableText> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ResizableWidget(
       focusNode: _focusNode,
       child: Center(

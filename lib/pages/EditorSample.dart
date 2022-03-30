@@ -7,6 +7,7 @@ class EditorSample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('parent build');
     return const Editor();
   }
 }

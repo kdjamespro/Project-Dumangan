@@ -71,7 +71,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with AutomaticKeepAliveClientMixin {
   int index = 0;
   Image? userPhoto;
   String? userName;
@@ -90,7 +91,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return NavigationView(
       appBar: NavigationAppBar(
         title: MoveWindow(
