@@ -39,7 +39,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
   double _styleFontSize = 12;
   Color fontColorPicker = const Color(0xff443a49);
   FontWeight fontWeightSelector = FontWeight.normal;
-  late AttributeText dyanmicFields;
+  late AttributeText dynamicFields;
 
   Color color = Colors.red;
   Color pickerColor = const Color(0xff443a49);
@@ -78,10 +78,12 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
         aspectRatio = canvasController.aspectRatio;
       });
     });
-    dyanmicFields = AttributeText(changeController: changeFontController)
-      ..addAttribute('Full Name')
-      ..addAttribute('Email');
-    stackContents.addAll(dyanmicFields.attributes.values);
+    dynamicFields = AttributeText(changeController: changeFontController);
+    dynamicFields.addListener(() {
+      setState(() {
+        stackContents = dynamicFields.attributes.values.toList();
+      });
+    });
     super.initState();
   }
 
@@ -211,7 +213,9 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                   fontsMenu(),
                   imageMenu(context),
                   CanvasMenu(controller: canvasController),
-                  AttributeMenu(),
+                  AttributeMenu(
+                    attributes: dynamicFields,
+                  ),
                 ],
               )),
         ),

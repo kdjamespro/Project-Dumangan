@@ -2,11 +2,13 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:project_dumangan/model/fontstyle_controller.dart';
 import 'package:project_dumangan/pages/editor/draggable_text.dart';
 
-class AttributeText {
+class AttributeText extends ChangeNotifier {
   final List attributeNames = [
-    'Particpant\'s Full Name',
-    'Particpant\'s Email',
-    'Particpant\'s Organization'
+    'Full Name',
+    'Email',
+    'Organization',
+    'Event Name',
+    'Event Date'
   ];
   Map<String, DraggableText> attributes;
   Function changeController;
@@ -25,6 +27,13 @@ class AttributeText {
         changeController(attributes[name]?.style);
       }
     });
+    print('Add new Text');
+    notifyListeners();
+  }
+
+  void removeAttribute(String name) {
+    attributes.remove(name);
+    notifyListeners();
   }
 
   Widget? getAttribute(String name) {
