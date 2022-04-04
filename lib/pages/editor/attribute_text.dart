@@ -3,7 +3,7 @@ import 'package:project_dumangan/model/fontstyle_controller.dart';
 import 'package:project_dumangan/pages/editor/draggable_text.dart';
 
 class AttributeText extends ChangeNotifier {
-  final List attributeNames = [
+  final List<String> attributeNames = [
     'Full Name',
     'Email',
     'Organization',
@@ -17,7 +17,7 @@ class AttributeText extends ChangeNotifier {
   void addAttribute(String name) {
     attributes[name] = DraggableText(
       style: FontStyleController(
-        controller: TextEditingController(text: name),
+        controller: TextEditingController(text: '[' + name + ']'),
       ),
       focus: FocusNode(),
     );
@@ -27,8 +27,25 @@ class AttributeText extends ChangeNotifier {
         changeController(attributes[name]?.style);
       }
     });
-    print('Add new Text');
     notifyListeners();
+  }
+
+  void hideIndicators() {
+    if (attributes.isNotEmpty) {
+      List<DraggableText> texts = attributes.values.toList();
+      for (DraggableText text in texts) {
+        text.hideIndicators();
+      }
+    }
+  }
+
+  void showIndicators() {
+    if (attributes.isNotEmpty) {
+      List<DraggableText> texts = attributes.values.toList();
+      for (DraggableText text in texts) {
+        text.showIndicators();
+      }
+    }
   }
 
   void removeAttribute(String name) {

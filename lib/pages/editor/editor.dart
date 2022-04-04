@@ -11,6 +11,7 @@ import 'package:project_dumangan/model/fontstyle_controller.dart';
 import 'package:project_dumangan/pages/editor/canvas_menu.dart';
 import 'package:project_dumangan/pages/editor/draggable_text.dart';
 import 'package:project_dumangan/pages/editor/image_archive.dart';
+import 'package:project_dumangan/pages/editor/menu_button.dart';
 import 'package:project_dumangan/services/warning_message.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
@@ -101,6 +102,12 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
     }
   }
 
+  void changeMenu(int number) {
+    setState(() {
+      menuIndex = number;
+    });
+  }
+
   final values = [
     'Thin',
     'Light',
@@ -152,54 +159,49 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
           ),
         ),
         Container(
-            width: 50,
+            width: 70,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        menuIndex = 0;
-                      });
-                    },
-                    icon: const Icon(
-                      FluentIcons.font,
-                      size: 30,
-                    ),
+                MenuButton(
+                  label: 'Fonts',
+                  menuIcon: const Icon(
+                    FluentIcons.font,
+                    size: 30,
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      menuIndex = 1;
-                    });
+                  onPress: () {
+                    changeMenu(0);
                   },
-                  icon: const Icon(
+                ),
+                MenuButton(
+                  label: 'Templates',
+                  menuIcon: const Icon(
                     FluentIcons.file_image,
                     size: 30,
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      menuIndex = 2;
-                    });
+                  onPress: () {
+                    changeMenu(1);
                   },
-                  icon: const Icon(
+                ),
+                MenuButton(
+                  label: 'Document\n Size',
+                  menuIcon: const Icon(
                     FluentIcons.size_legacy,
                     size: 30,
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      menuIndex = 3;
-                    });
+                  onPress: () {
+                    changeMenu(2);
                   },
-                  icon: const Icon(
+                ),
+                MenuButton(
+                  label: 'Dynamic\n Fields',
+                  menuIcon: const Icon(
                     FluentIcons.add_field,
                     size: 30,
                   ),
+                  onPress: () {
+                    changeMenu(3);
+                  },
                 ),
               ],
             )),
@@ -533,7 +535,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
             child: ImageArchive(
               renderTemplate: setImage,
             )),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Flexible(
@@ -565,7 +567,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                         .show(context);
                   }
                 },
-                icon: Icon(FluentIcons.save))),
+                icon: const Icon(FluentIcons.save))),
         Flexible(
           child: Button(
             child: const Text('Generate PDF'),
@@ -573,13 +575,14 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
               String path = await context.read<FileHandler>().selectDirectory();
               String name = Path.join(path, 'try.pdf');
               if (path != '') {
-                styleController.changeText('Kenneth');
+                dynamicFields.hideIndicators();
                 var cert = await screenshotController.capture(
                   pixelRatio: 5,
                 );
                 if (cert != null) {
                   await PdfGenerator.generatePdf(
                       cert, name, canvasController.orientation);
+                  dynamicFields.showIndicators();
                   print('Sucessful');
                 }
               }
@@ -626,9 +629,5 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
         ),
       ),
     );
-  }
-
-  Widget attributeSelection() {
-    return Column(children: []);
   }
 }

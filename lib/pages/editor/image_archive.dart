@@ -5,9 +5,10 @@ import 'package:project_dumangan/model/archive_list.dart';
 import 'package:provider/provider.dart';
 
 class ImageArchive extends StatefulWidget {
-  ImageArchive({Key? key, required this.renderTemplate}) : super(key: key);
+  const ImageArchive({Key? key, required this.renderTemplate})
+      : super(key: key);
 
-  Function renderTemplate;
+  final Function renderTemplate;
   @override
   State<ImageArchive> createState() => _ImageArchiveState();
 }

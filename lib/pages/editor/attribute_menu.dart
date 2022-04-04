@@ -11,7 +11,7 @@ class AttributeMenu extends StatefulWidget {
 }
 
 class _AttributeMenuState extends State<AttributeMenu> {
-  late List attributes;
+  late List<String> attributes;
   late List<String> buttonText;
   late List<bool> activated;
   @override
@@ -35,7 +35,7 @@ class _AttributeMenuState extends State<AttributeMenu> {
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Row(
                 children: [
-                  Container(child: Text(attributes[index].toString())),
+                  Container(child: Text(attributes[index])),
                   const Spacer(),
                   ToggleButton(
                     child: Text(buttonText[index]),
