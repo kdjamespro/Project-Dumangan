@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart' as mat;
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:path/path.dart' as Path;
@@ -158,7 +159,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                     },
                     icon: const Icon(
                       FluentIcons.font,
-                      size: 30,
+                      size: 23,
                     ),
                   ),
                 ),
@@ -170,7 +171,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                   },
                   icon: const Icon(
                     FluentIcons.file_image,
-                    size: 30,
+                    size: 23,
                   ),
                 ),
                 IconButton(
@@ -181,7 +182,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                   },
                   icon: const Icon(
                     FluentIcons.size_legacy,
-                    size: 30,
+                    size: 23,
                   ),
                 )
               ],
@@ -554,10 +555,29 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
     showDialog(
       context: context,
       builder: (context) => mat.AlertDialog(
-        title: const mat.Text("Pick a color"),
+        title: const mat.Text(""),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
+            mat.Row(
+              children: [
+                fluent.IconButton(
+                    icon: const Icon(
+                      FluentIcons.return_key,
+                      color: mat.Colors.black,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+                fluent.Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Text(
+                    'Compose Email',
+                  ),
+                ),
+              ],
+            ),
             buildColorPicker(),
             Button(
                 child: const Text('Select'),
