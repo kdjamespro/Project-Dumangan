@@ -27,10 +27,10 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
       child: Column(
         children: [
-          Button(child: Text('Sign in'), onPressed: signIn),
-          Button(child: Text('Send Email'), onPressed: _sendEmail),
+          Button(child: const Text('Sign in'), onPressed: signIn),
+          Button(child: const Text('Send Email'), onPressed: _sendEmail),
           Button(
-            child: Text('Logout'),
+            child: const Text('Logout'),
             onPressed: signOut,
           ),
         ],
@@ -51,6 +51,7 @@ class _LoginPageState extends State<LoginPage> {
       'email',
       'openid',
       'https://mail.google.com/',
+      'https://www.googleapis.com/auth/userinfo.profile',
     ];
 
     obtainAccessCredentialsViaUserConsent(
@@ -94,6 +95,7 @@ class _LoginPageState extends State<LoginPage> {
       clientId:
           '197134437934-d2p2baat8qcaba6f2suttk4ciil212gp.apps.googleusercontent.com',
     );
+    print('Registered');
   }
 
   void signOut() async {

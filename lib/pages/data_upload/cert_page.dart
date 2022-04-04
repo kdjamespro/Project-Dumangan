@@ -28,32 +28,62 @@ class CertPage extends StatelessWidget {
       create: (context) => CrossCheckingBloc(
           db: Provider.of<MyDatabase>(context, listen: false)),
       child: ScaffoldPage(
-        content: BlocBuilder<CrossCheckingBloc, CrossCheckingState>(
-            builder: (context, state) {
-          if (state is CrossCheckingLoading) {
-            return const Center(
-              child: mat.CircularProgressIndicator(
-                strokeWidth: 8,
-              ),
-            );
-          } else if (state is CrossCheckingAttribute) {
-            return ColumnsTable(
-              data: state.data,
-              crossCheck: state.isEnabled,
-              file: state.crossCheckFile,
-            );
-          } else if (state is CrossCheckingMapping) {
-            return CrossCheckingTable(
-              data: state.data,
-              crossCheck: state.isEnabled,
-              crossCheckData: state.crossCheckingData,
-            );
-          } else if (state is CrossCheckingFinished) {
-            return Table();
-          } else {
-            return const FileUploader();
-          }
-        }),
+        content: BlocConsumer<CrossCheckingBloc, CrossCheckingState>(
+          builder: (context, state) {
+            if (state is CrossCheckingLoading) {
+              return const Center(
+                child: ProgressRing(
+                  strokeWidth: 8,
+                ),
+              );
+            }
+            if (state is CrossCheckingAttribute) {
+              return ColumnsTable(
+                data: state.data,
+                crossCheck: state.isEnabled,
+                file: state.crossCheckFile,
+              );
+            } else if (state is CrossCheckingMapping) {
+              return CrossCheckingTable(
+                data: state.data,
+                crossCheck: state.isEnabled,
+                crossCheckData: state.crossCheckingData,
+              );
+            } else if (state is CrossCheckingFinished) {
+              return const Table();
+            } else {
+              return const FileUploader();
+            }
+          },
+          listener: (context, state) {
+            if (state is CrossCheckingError) {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return ContentDialog(
+                      title: const Text('File Uploading Error'),
+                      content: const Text(
+                          'The file you uploaded is empty or it exceeded the maximum column count of 100'),
+                      actions: [
+                        SizedBox(
+                          width: 100,
+                          child: FilledButton(
+                            child: const Text('Ok'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            style: FluentTheme.of(context)
+                                .buttonTheme
+                                .filledButtonStyle,
+                          ),
+                        ),
+                      ],
+                    );
+                  });
+              context.read<CrossCheckingBloc>().add(CrossChekingInitialize());
+            }
+          },
+        ),
       ),
     );
   }

@@ -16,11 +16,11 @@ class CrossChekingStart extends CrossCheckingEvent {
 }
 
 class CrossCheckingProceed extends CrossCheckingEvent {
-  final File file;
+  final Map<String, List> crossData;
   final bool crossCheck;
   final Map<String, List> data;
   CrossCheckingProceed(
-      {required this.file, required this.crossCheck, required this.data});
+      {required this.crossData, required this.crossCheck, required this.data});
 }
 
 class CrossCheckingProcess extends CrossCheckingEvent {

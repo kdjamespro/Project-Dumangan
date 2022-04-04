@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:project_dumangan/database/database.dart';
@@ -18,7 +16,7 @@ class ColumnsTable extends StatefulWidget {
 
   Map<String, List> data;
   final bool crossCheck;
-  final File? file;
+  final Map<String, List>? file;
 
   @override
   State<ColumnsTable> createState() => _ColumnsTableState();
@@ -61,7 +59,7 @@ class _ColumnsTableState extends State<ColumnsTable> {
                         if (widget.crossCheck) {
                           context.read<CrossCheckingBloc>().add(
                               CrossCheckingProceed(
-                                  file: widget.file as File,
+                                  crossData: widget.file ?? {},
                                   crossCheck: widget.crossCheck,
                                   data: widget.data));
                         } else {

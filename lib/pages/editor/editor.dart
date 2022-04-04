@@ -5,10 +5,12 @@ import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart' as mat;
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:path/path.dart' as Path;
+import 'package:project_dumangan/model/archive_list.dart';
 import 'package:project_dumangan/model/canvas_controller.dart';
 import 'package:project_dumangan/model/fontstyle_controller.dart';
 import 'package:project_dumangan/pages/editor/canvas_menu.dart';
 import 'package:project_dumangan/pages/editor/draggable_text.dart';
+import 'package:project_dumangan/pages/editor/image_archive.dart';
 import 'package:project_dumangan/services/warning_message.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
@@ -64,7 +66,6 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
 
   @override
   void initState() {
-    print('Initialized');
     fontValue = TextEditingController(text: '');
     fontSelection = FlyoutController();
     styleController = FontStyleController(
@@ -73,7 +74,6 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
     aspectRatio = canvasController.aspectRatio;
     canvasController.addListener(() {
       setState(() {
-        print('Changing');
         aspectRatio = canvasController.aspectRatio;
       });
     });
@@ -512,35 +512,59 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
   Widget imageMenu(BuildContext context) {
     return Column(
       children: [
-        Button(
-          child: const Text('Upload Image'),
-          onPressed: () async {
-            final picked = await context.read<FileHandler>().openImageFile();
-            if (picked.existsSync()) {
-              image = picked;
-            }
-            setState(() {
-              setImage(image);
-            });
-          },
+        Flexible(flex: 2, child: ImageArchive()),
+        SizedBox(
+          height: 10,
         ),
-        Button(
-          child: const Text('Generate PDF'),
-          onPressed: () async {
-            String path = await context.read<FileHandler>().saveFile();
-            String name = Path.basename(path);
-            if (path != '') {
-              styleController.changeText('Kenneth');
-              var cert = await screenshotController.capture(
-                pixelRatio: 5,
-              );
-              if (cert != null) {
-                await PdfGenerator.generatePdf(
-                    cert, path, canvasController.orientation);
-                print('Sucessful');
+        Flexible(
+          child: Button(
+            child: const Text('Upload Image'),
+            onPressed: () async {
+              final picked = await context.read<FileHandler>().openImageFile();
+              if (picked.existsSync()) {
+                image = picked;
               }
-            }
-          },
+              setState(() {
+                setImage(image);
+              });
+            },
+          ),
+        ),
+        Flexible(
+            child: IconButton(
+                onPressed: () async {
+                  bool isSaved =
+                      await context.read<ArchiveList>().addImage(image);
+                  print(isSaved);
+                },
+                icon: Icon(FluentIcons.save))),
+        Flexible(
+          child: Button(
+            child: const Text('Generate PDF'),
+            onPressed: () async {
+              String path = await context.read<FileHandler>().selectDirectory();
+              String name = Path.join(path, 'try.pdf');
+              if (path != '') {
+                styleController.changeText('Kenneth');
+                var cert = await screenshotController.capture(
+                  pixelRatio: 5,
+                );
+                if (cert != null) {
+                  await PdfGenerator.generatePdf(
+                      cert, name, canvasController.orientation);
+                  print('Sucessful');
+                }
+              }
+            },
+          ),
+        ),
+        Flexible(
+          child: Button(
+            child: const Text('Get Templates'),
+            onPressed: () async {
+              await context.read<FileHandler>().getSavedTemplates();
+            },
+          ),
         ),
       ],
     );
