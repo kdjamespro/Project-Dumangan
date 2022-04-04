@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:motion_toast/motion_toast.dart';
 import 'package:path/path.dart' as Path;
 import 'package:project_dumangan/model/archive_list.dart';
 import 'package:project_dumangan/model/canvas_controller.dart';
@@ -91,13 +92,10 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
-  Image? setImage(File image) {
-    return image.existsSync()
-        ? Image.file(
-            image,
-            fit: BoxFit.fill,
-          )
-        : null;
+  void setImage(File selecetedImage) {
+    if (selecetedImage.existsSync()) {
+      setState(() => image = selecetedImage);
+    }
   }
 
   final values = [
@@ -133,7 +131,12 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                           child: Container(
                             margin: const EdgeInsets.all(16),
                             color: Colors.white,
-                            child: setImage(image),
+                            child: image.existsSync()
+                                ? Image.file(
+                                    image,
+                                    fit: BoxFit.fill,
+                                  )
+                                : Container(),
                           ),
                         ),
                       ),
@@ -419,7 +422,6 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
               ),
               onTap: () {
                 pickColor(context);
-                print('button pressed');
               },
             ),
             const SizedBox(
@@ -430,7 +432,6 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                 // Set onPressed to null to disable the button
                 onPressed: () {
                   pickColor(context);
-                  print('button pressed');
                 })
           ],
         ),
@@ -454,7 +455,6 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                 .toList(),
             value: comboBoxValue,
             onChanged: (value) {
-              // print(value);
               if (value != null) {
                 setState(() {
                   comboBoxValue = value;
@@ -511,7 +511,11 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
   Widget imageMenu(BuildContext context) {
     return Column(
       children: [
-        Flexible(flex: 2, child: ImageArchive()),
+        Flexible(
+            flex: 2,
+            child: ImageArchive(
+              renderTemplate: setImage,
+            )),
         SizedBox(
           height: 10,
         ),
@@ -532,9 +536,17 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
         Flexible(
             child: IconButton(
                 onPressed: () async {
-                  bool isSaved =
-                      await context.read<ArchiveList>().addImage(image);
-                  print(isSaved);
+                  if (image.existsSync()) {
+                    bool isSaved =
+                        await context.read<ArchiveList>().addImage(image);
+                  } else {
+                    MotionToast.error(
+                            animationDuration: const Duration(seconds: 1),
+                            animationCurve: Curves.easeOut,
+                            toastDuration: const Duration(seconds: 2),
+                            description: const Text('No Image Found'))
+                        .show(context);
+                  }
                 },
                 icon: Icon(FluentIcons.save))),
         Flexible(
@@ -588,7 +600,6 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                 // Set onPressed to null to disable the button
                 onPressed: () {
                   Navigator.of(context).pop();
-                  print('button pressed');
                   setState(() {
                     fontColorPicker = color;
                     styleController.changeFontColor(color);
