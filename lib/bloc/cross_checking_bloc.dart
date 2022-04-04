@@ -42,23 +42,30 @@ class CrossCheckingBloc extends Bloc<CrossCheckingEvent, CrossCheckingState> {
   }
 
   Future<void> _parseFile(CrossChekingStart start, Emitter emit) async {
-    emit(const CrossCheckingLoading());
-    if (start.crossCheck) {
+    await loading(emit);
+    var regData = await parser.parseFile(start.files[0]);
+    if (regData.keys.isEmpty || regData.keys.length > 100) {
+      emit(const CrossCheckingError());
+    } else if (start.crossCheck) {
+      var crossData = await parser.parseFile(start.files[1]);
+      if (crossData.keys.isEmpty || crossData.keys.length > 100) {
+        emit(const CrossCheckingError());
+      }
       emit((CrossCheckingAttribute(
-          data: await parser.parseFile(start.files[0]),
+          data: regData,
           isEnabled: start.crossCheck,
-          crossCheckFile: start.files[1])));
+          crossCheckFile: crossData)));
     } else {
-      emit((CrossCheckingAttribute(
-          data: await parser.parseFile(start.files[0]),
-          isEnabled: start.crossCheck)));
+      emit(
+          (CrossCheckingAttribute(data: regData, isEnabled: start.crossCheck)));
     }
   }
 
   Future<void> _parseCrossCheckingFile(
       CrossCheckingProceed event, Emitter emit) async {
-    emit(const CrossCheckingLoading());
-    Map<String, List> crossCheckingData = await parser.parseFile(event.file);
+    await loading(emit);
+    Map<String, List> crossCheckingData = event.crossData;
+
     emit((CrossCheckingMapping(
         data: event.data,
         crossCheckingData: crossCheckingData,
@@ -66,7 +73,7 @@ class CrossCheckingBloc extends Bloc<CrossCheckingEvent, CrossCheckingState> {
   }
 
   Future<void> _crossCheck(CrossCheckingProcess event, Emitter emit) async {
-    emit(const CrossCheckingLoading());
+    await loading(emit);
     List key1 = event.attributeMap.getKeys();
     List val1 = event.attributeMap.getValues();
     Map regData = {};
@@ -98,5 +105,10 @@ class CrossCheckingBloc extends Bloc<CrossCheckingEvent, CrossCheckingState> {
     }
 
     emit(const CrossCheckingFinished());
+  }
+
+  Future<void> loading(Emitter emit) async {
+    emit(const CrossCheckingLoading());
+    await Future.delayed(const Duration(seconds: 1));
   }
 }

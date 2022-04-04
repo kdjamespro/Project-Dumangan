@@ -117,12 +117,20 @@ class _FileUploaderState extends State<FileUploader> {
                   FilledButton(
                       child: const Text('Upload Data'),
                       onPressed: () {
+                        int eventId = context.read<SelectedEvent>().eventId;
                         if (!isFileReady()) {
                           showWarningMessage(
                               context: context,
                               title: 'Missing File',
                               message:
                                   'Please select the file first before uploading');
+                          return;
+                        } else if (!(eventId >= 0)) {
+                          showWarningMessage(
+                              context: context,
+                              title: 'No Event Selected',
+                              message:
+                                  'Please select an event first before uploading the data');
                           return;
                         }
                         context.read<CrossCheckingBloc>().add(CrossChekingStart(
@@ -136,9 +144,7 @@ class _FileUploaderState extends State<FileUploader> {
               );
             }
           }
-          return Container(
-            child: Center(child: Text('Error Occured')),
-          );
+          return Container();
         });
   }
 }

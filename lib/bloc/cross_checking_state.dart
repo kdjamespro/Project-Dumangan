@@ -21,10 +21,14 @@ class CrossCheckingLoading extends CrossCheckingState {
   const CrossCheckingLoading() : super();
 }
 
+class CrossCheckingError extends CrossCheckingState {
+  const CrossCheckingError() : super();
+}
+
 class CrossCheckingAttribute extends CrossCheckingState {
   final Map<String, List> data;
   final bool isEnabled;
-  final File? crossCheckFile;
+  final Map<String, List>? crossCheckFile;
   const CrossCheckingAttribute(
       {required this.data, required this.isEnabled, this.crossCheckFile})
       : super();

@@ -200,8 +200,8 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                         SizedBox(
                           width: 630,
                           child: FilledButton(
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
+                              child: const Padding(
+                                padding: EdgeInsets.all(10.0),
                                 child: Text('Add New Event'),
                               ),
                               onPressed: () async {
@@ -284,11 +284,14 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                     .getEvents(),
                                 builder: (context, snapshot) {
                                   switch (snapshot.connectionState) {
-                                    case ConnectionState.active:
-                                      List<EventsTableData> events = snapshot
-                                          .data as List<EventsTableData>;
-                                      print(events.length);
-                                      return EventCard(events);
+                                    case ConnectionState.done:
+                                      if (snapshot.data != null) {
+                                        List<EventsTableData> events = snapshot
+                                            .data as List<EventsTableData>;
+                                        print(events.length);
+                                        return EventCard(events);
+                                      }
+                                      break;
                                     case ConnectionState.waiting:
                                       return const Center(
                                         child: ProgressRing(),
