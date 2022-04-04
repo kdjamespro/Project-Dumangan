@@ -18,6 +18,7 @@ import 'package:string_validator/string_validator.dart';
 
 import '/services/file_handler.dart';
 import '/services/pdf_generator.dart';
+import 'attribute_menu.dart';
 import 'attribute_text.dart';
 
 class Editor extends StatefulWidget {
@@ -186,7 +187,18 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                     FluentIcons.size_legacy,
                     size: 30,
                   ),
-                )
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      menuIndex = 3;
+                    });
+                  },
+                  icon: const Icon(
+                    FluentIcons.add_field,
+                    size: 30,
+                  ),
+                ),
               ],
             )),
         Container(
@@ -199,6 +211,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                   fontsMenu(),
                   imageMenu(context),
                   CanvasMenu(controller: canvasController),
+                  AttributeMenu(),
                 ],
               )),
         ),
@@ -609,5 +622,9 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
         ),
       ),
     );
+  }
+
+  Widget attributeSelection() {
+    return Column(children: []);
   }
 }

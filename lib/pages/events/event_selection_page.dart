@@ -285,6 +285,7 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                 builder: (context, snapshot) {
                                   switch (snapshot.connectionState) {
                                     case ConnectionState.done:
+                                    case ConnectionState.active:
                                       if (snapshot.data != null) {
                                         List<EventsTableData> events = snapshot
                                             .data as List<EventsTableData>;
