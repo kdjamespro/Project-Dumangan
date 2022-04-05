@@ -99,13 +99,13 @@ class _ResizableWidgetState extends State<ResizableWidget>
               });
             },
             child: Stack(
-              alignment: Alignment(0, 0),
+              alignment: const Alignment(0, 0),
               children: <Widget>[
                 Positioned(
                   top: top + ballDiameter / 2,
                   left: left + ballDiameter / 2,
                   child: Container(
-                    padding: EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(2),
                     height: height + ballDiameter / 2,
                     width: width + ballDiameter / 2,
                     child: widget.child,

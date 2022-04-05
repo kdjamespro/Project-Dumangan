@@ -164,6 +164,12 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 MenuButton(
+                  color: menuIndex == 0
+                      ? FluentTheme.of(context)
+                          .accentColor
+                          .lightest
+                          .withOpacity(0.8)
+                      : null,
                   label: 'Fonts',
                   menuIcon: const Icon(
                     FluentIcons.font,
@@ -174,6 +180,12 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                   },
                 ),
                 MenuButton(
+                  color: menuIndex == 1
+                      ? FluentTheme.of(context)
+                          .accentColor
+                          .lightest
+                          .withOpacity(0.8)
+                      : null,
                   label: 'Templates',
                   menuIcon: const Icon(
                     FluentIcons.file_image,
@@ -184,6 +196,12 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                   },
                 ),
                 MenuButton(
+                  color: menuIndex == 2
+                      ? FluentTheme.of(context)
+                          .accentColor
+                          .lightest
+                          .withOpacity(0.8)
+                      : null,
                   label: 'Document\n Size',
                   menuIcon: const Icon(
                     FluentIcons.size_legacy,
@@ -194,6 +212,12 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                   },
                 ),
                 MenuButton(
+                  color: menuIndex == 3
+                      ? FluentTheme.of(context)
+                          .accentColor
+                          .lightest
+                          .withOpacity(0.8)
+                      : null,
                   label: 'Dynamic\n Fields',
                   menuIcon: const Icon(
                     FluentIcons.add_field,
