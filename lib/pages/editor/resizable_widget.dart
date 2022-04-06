@@ -290,7 +290,6 @@ class _ManipulatingBallState extends State<ManipulatingBall> {
     controller.addListener(() {
       setState(() {
         showed = controller.isShowed;
-        print('Change: $showed');
       });
     });
     super.initState();

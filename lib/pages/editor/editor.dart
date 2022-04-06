@@ -5,20 +5,24 @@ import 'package:flutter/material.dart' as mat;
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:motion_toast/motion_toast.dart';
 import 'package:path/path.dart' as Path;
+import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/archive_list.dart';
 import 'package:project_dumangan/model/canvas_controller.dart';
 import 'package:project_dumangan/model/fontstyle_controller.dart';
+import 'package:project_dumangan/model/progress_controller.dart';
+import 'package:project_dumangan/model/selected_event.dart';
 import 'package:project_dumangan/pages/editor/canvas_menu.dart';
 import 'package:project_dumangan/pages/editor/draggable_text.dart';
 import 'package:project_dumangan/pages/editor/image_archive.dart';
 import 'package:project_dumangan/pages/editor/menu_button.dart';
+import 'package:project_dumangan/services/loading_dialog.dart';
+import 'package:project_dumangan/services/pdf_generator.dart';
 import 'package:project_dumangan/services/warning_message.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:string_validator/string_validator.dart';
 
 import '/services/file_handler.dart';
-import '/services/pdf_generator.dart';
 import 'attribute_menu.dart';
 import 'attribute_text.dart';
 
@@ -125,8 +129,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
     super.build(context);
     return Row(
       children: [
-        Flexible(
-          flex: 5,
+        Expanded(
           child: Column(
             children: [
               Expanded(
@@ -158,7 +161,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
             ],
           ),
         ),
-        Container(
+        SizedBox(
             width: 70,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -229,7 +232,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                 ),
               ],
             )),
-        Container(
+        SizedBox(
           width: 300,
           child: Padding(
               padding: const EdgeInsets.all(12.0),
@@ -279,7 +282,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
           trailingIcon: const Icon(FluentIcons.search),
           placeholder: "Pick a Font style",
           controller: autoSuggestBox,
-          items: [
+          items: const [
             'Abhaya Libre',
             'Abril Fatface',
             'Alegreya',
@@ -346,97 +349,97 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             IconButton(
-                                icon: Container(child: const Text('8')),
+                                icon: const Text('8'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(8);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('9')),
+                                icon: const Text('9'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(9);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('10')),
+                                icon: const Text('10'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(10);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('11')),
+                                icon: const Text('11'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(11);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('12')),
+                                icon: const Text('12'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(12);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('14')),
+                                icon: const Text('14'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(14);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('16')),
+                                icon: const Text('16'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(16);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('18')),
+                                icon: const Text('18'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(18);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('20')),
+                                icon: const Text('20'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(20);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('22')),
+                                icon: const Text('22'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(22);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('24')),
+                                icon: const Text('24'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(24);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('26')),
+                                icon: const Text('26'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(26);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('28')),
+                                icon: const Text('28'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(28);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('36')),
+                                icon: const Text('36'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(36);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('48')),
+                                icon: const Text('48'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(48);
                                 }),
                             IconButton(
-                                icon: Container(child: const Text('72')),
+                                icon: const Text('72'),
                                 onPressed: () {
                                   fontSelection.open = false;
                                   changeFontSize(72);
@@ -471,7 +474,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
               width: 25,
             ),
             Button(
-                child: Text('Open color picker'),
+                child: const Text('Open color picker'),
                 // Set onPressed to null to disable the button
                 onPressed: () {
                   pickColor(context);
@@ -584,43 +587,75 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                         await context.read<ArchiveList>().addImage(image);
                   } else {
                     MotionToast.error(
-                            animationDuration: const Duration(seconds: 1),
-                            animationCurve: Curves.easeOut,
-                            toastDuration: const Duration(seconds: 2),
-                            description: const Text('No Image Found'))
-                        .show(context);
+                      animationDuration: const Duration(seconds: 1),
+                      animationCurve: Curves.easeOut,
+                      toastDuration: const Duration(seconds: 2),
+                      description: const Text('No Image Found'),
+                      dismissable: true,
+                    ).show(context);
                   }
                 },
                 icon: const Icon(FluentIcons.save))),
-        Flexible(
-          child: Button(
-            child: const Text('Generate PDF'),
-            onPressed: () async {
-              String path = await context.read<FileHandler>().selectDirectory();
-              String name = Path.join(path, 'try.pdf');
-              if (path != '') {
-                dynamicFields.hideIndicators();
-                var cert = await screenshotController.capture(
-                  pixelRatio: 5,
-                );
-                if (cert != null) {
-                  await PdfGenerator.generatePdf(
-                      cert, name, canvasController.orientation);
-                  dynamicFields.showIndicators();
-                  print('Sucessful');
-                }
-              }
-            },
-          ),
-        ),
-        Flexible(
-          child: Button(
-            child: const Text('Get Templates'),
-            onPressed: () async {
-              await context.read<FileHandler>().getSavedTemplates();
-            },
-          ),
-        ),
+        ChangeNotifierProvider(
+            create: (context) => ProgressController(),
+            builder: (context, _) {
+              return Flexible(
+                child: Button(
+                  child: const Text('Generate PDF'),
+                  onPressed: () async {
+                    SelectedEvent event = context.read<SelectedEvent>();
+                    if (event.isEventSet() &&
+                        dynamicFields.attributes.isNotEmpty) {
+                      String path =
+                          await context.read<FileHandler>().selectDirectory();
+                      if (path != '') {
+                        List<ParticipantsTableData> list = await context
+                            .read<MyDatabase>()
+                            .getAttendedParticipants(event.eventId);
+                        dynamicFields.hideIndicators();
+                        dynamicFields.setDynamicFieldsData(list, event);
+                        int i = 0;
+                        ProgressController loading =
+                            context.read<ProgressController>();
+                        loading.setOverall(5);
+                        LoadingDialog load = LoadingDialog();
+                        load.showLoadingScreen(
+                          context: context,
+                          title: 'Generating Certificate',
+                        );
+                        for (; i < 5;) {
+                          String fileName = dynamicFields.updateAttributes(i);
+                          String name = Path.join(path, fileName);
+                          var cert = await screenshotController.capture(
+                            pixelRatio: 5,
+                          );
+                          if (cert != null) {
+                            await PdfGenerator.generatePdf(
+                                cert, name, canvasController.orientation);
+                            print('Sucessful');
+                          }
+                          i += 1;
+                          loading.increase();
+                        }
+                        dynamicFields.showIndicators();
+                        dynamicFields.reset();
+                        load.hideLoadingScreen();
+                      }
+                    } else {
+                      MotionToast.error(
+                        animationDuration: const Duration(seconds: 1),
+                        animationCurve: Curves.easeOut,
+                        toastDuration: const Duration(seconds: 2),
+                        title: const Text('Certificate Generation Error'),
+                        description: const Text(
+                            'Please select an event first or add atleast one dynamic fields to the certificate'),
+                        dismissable: true,
+                      ).show(context);
+                    }
+                  },
+                ),
+              );
+            }),
       ],
     );
   }
