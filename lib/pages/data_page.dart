@@ -122,7 +122,11 @@ class _DataPageState extends State<DataPage> {
                                       hintText: "Email Subject",
                                       labelText: "Subject",
                                       labelStyle: TextStyle(
+<<<<<<< HEAD
                                         fontSize: 24,
+=======
+                                        fontSize: 18,
+>>>>>>> ed0f253700a6bf647214098bebc9e86dd165b832
                                       ),
                                       border: OutlineInputBorder(),
                                       contentPadding:
@@ -145,7 +149,11 @@ class _DataPageState extends State<DataPage> {
                                           hintText: "Email Body",
                                           labelText: "Body",
                                           labelStyle: TextStyle(
+<<<<<<< HEAD
                                             fontSize: 24,
+=======
+                                            fontSize: 17,
+>>>>>>> ed0f253700a6bf647214098bebc9e86dd165b832
                                           ),
                                           border: OutlineInputBorder(
                                               borderSide: BorderSide(),
@@ -245,8 +253,7 @@ class _DataPageState extends State<DataPage> {
             alignment: Alignment.bottomLeft,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+              child: Wrap(
                 children: [
                   Column(
                     children: [
@@ -274,6 +281,7 @@ class _DataPageState extends State<DataPage> {
                           Row(
                             children: [
                               fluent.IconButton(
+<<<<<<< HEAD
                                 icon: const Icon(FluentIcons.download),
                                 onPressed: () {
                                   showSnackbar(
@@ -286,6 +294,8 @@ class _DataPageState extends State<DataPage> {
                                 },
                               ),
                               fluent.IconButton(
+=======
+>>>>>>> ed0f253700a6bf647214098bebc9e86dd165b832
                                 icon: const Icon(FluentIcons.send),
                                 onPressed: () {
                                   showSnackbar(
@@ -311,120 +321,3 @@ class _DataPageState extends State<DataPage> {
     );
   }
 }
-
-//Past version of the certificate card
-//
-// class CertificateCard extends fluent.StatelessWidget {
-//   const CertificateCard({
-//     fluent.Key? key,
-//   }) : super(key: key);
-//
-//   @override
-//   fluent.Widget build(fluent.BuildContext context) {
-//     return Stack(
-//       children: [
-//         Container(
-//           child: fluent.Center(
-//               child: fluent.Image(
-//                   fit: fluent.BoxFit.fill,
-//                   height: 200.0,
-//                   image:
-//                       fluent.AssetImage('lib/image/certificate_template.png'))),
-//         ),
-//         Container(
-//           decoration: BoxDecoration(
-//             borderRadius: BorderRadius.circular(16),
-//             gradient: LinearGradient(
-//               begin: Alignment.topCenter,
-//               end: Alignment.bottomCenter,
-//               colors: <Color>[
-//                 fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.7),
-//                 fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.9),
-//                 fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.9),
-//                 fluent.Color.fromARGB(246, 255, 255, 255).withOpacity(1.0),
-//               ],
-//             ),
-//             boxShadow: [
-//               BoxShadow(
-//                 color:
-//                     const Color.fromRGBO(203, 202, 202, 1.0).withOpacity(0.2),
-//                 spreadRadius: 2,
-//                 blurRadius: 3,
-//                 offset: const Offset(1, 3), // changes position of shadow
-//               ),
-//             ],
-//           ),
-//           child: Align(
-//             alignment: Alignment.bottomLeft,
-//             child: Padding(
-//               padding: const EdgeInsets.all(16.0),
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.end,
-//                 children: [
-//                   Column(
-//                     children: [
-//                       Align(
-//                         alignment: Alignment.bottomLeft,
-//                         child: Expanded(
-//                           child: Text(
-//                             "Name",
-//                             style: TextStyle(fontSize: 14),
-//                             maxLines: 1,
-//                             overflow: TextOverflow.ellipsis,
-//                           ),
-//                         ),
-//                       ),
-//                       Row(
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           const Align(
-//                             alignment: Alignment.bottomLeft,
-//                             child: Expanded(
-//                               child: Text(
-//                                 "email",
-//                                 style: TextStyle(fontSize: 12),
-//                                 maxLines: 1,
-//                                 overflow: TextOverflow.ellipsis,
-//                               ),
-//                             ),
-//                           ),
-//                           Row(
-//                             children: [
-//                               fluent.IconButton(
-//                                 icon: const Icon(FluentIcons.download),
-//                                 onPressed: () {
-//                                   showSnackbar(
-//                                     context,
-//                                     Snackbar(
-//                                       content:
-//                                           Text('FileName has been downloaded'),
-//                                     ),
-//                                   );
-//                                 },
-//                               ),
-//                               fluent.IconButton(
-//                                 icon: const Icon(FluentIcons.send),
-//                                 onPressed: () {
-//                                   showSnackbar(
-//                                     context,
-//                                     Snackbar(
-//                                       content: Text('FileName has been sent'),
-//                                     ),
-//                                   );
-//                                 },
-//                               ),
-//                             ],
-//                           )
-//                         ],
-//                       )
-//                     ],
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }

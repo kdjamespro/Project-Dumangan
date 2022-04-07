@@ -79,6 +79,14 @@ class MyDatabase extends _$MyDatabase {
         .watch();
   }
 
+  Future<List<ParticipantsTableData>> getAttendedParticipants(
+      int eventsId) async {
+    return await (select(participantsTable)
+          ..where((row) =>
+              row.eventsId.equals(eventsId) & row.attended.equals(true)))
+        .get();
+  }
+
   Future<void> addEvent(EventsTableCompanion event) {
     return into(eventsTable).insert(event);
   }

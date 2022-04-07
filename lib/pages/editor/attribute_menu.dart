@@ -1,15 +1,26 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
-class AttributeMenu extends StatefulWidget {
-  const AttributeMenu({Key? key}) : super(key: key);
+import 'attribute_text.dart';
 
+class AttributeMenu extends StatefulWidget {
+  const AttributeMenu({Key? key, required, required this.attributes})
+      : super(key: key);
+  final AttributeText attributes;
   @override
   State<AttributeMenu> createState() => _AttributeMenuState();
 }
 
 class _AttributeMenuState extends State<AttributeMenu> {
-  bool activated = false;
-  String text = 'Use';
+  late List<String> attributes;
+  late List<String> buttonText;
+  late List<bool> activated;
+  @override
+  void initState() {
+    attributes = widget.attributes.attributeNames;
+    buttonText = List<String>.filled(attributes.length, "Use");
+    activated = List<bool>.filled(attributes.length, false);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,26 +29,34 @@ class _AttributeMenuState extends State<AttributeMenu> {
       margin: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Column(
         children: [
-          Row(
-            children: [
-              Container(child: const Text('Name')),
-              const Spacer(),
-              ToggleButton(
-                child: Text(text),
-                onChanged: (checked) {
-                  setState(() {
-                    activated = checked;
-                    if (activated) {
-                      text = 'Disable';
-                    } else {
-                      text = 'Use';
-                    }
-                  });
-                },
-                checked: activated,
+          ...List.generate(
+            attributes.length,
+            (index) => Container(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                children: [
+                  Container(child: Text(attributes[index])),
+                  const Spacer(),
+                  ToggleButton(
+                    child: Text(buttonText[index]),
+                    onChanged: (checked) {
+                      setState(() {
+                        activated[index] = checked;
+                        if (activated[index]) {
+                          widget.attributes.addAttribute(attributes[index]);
+                          buttonText[index] = 'Disable';
+                        } else {
+                          widget.attributes.removeAttribute(attributes[index]);
+                          buttonText[index] = 'Use';
+                        }
+                      });
+                    },
+                    checked: activated[index],
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          )
         ],
       ),
     );

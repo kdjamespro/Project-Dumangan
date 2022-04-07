@@ -181,17 +181,6 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                 ),
                                 contentWidth: 500,
                                 controller: calendarFlyout),
-                            const SizedBox(
-                              width: 30,
-                            ),
-                            Expanded(
-                              // Here Kirk
-                              child: TimePicker(
-                                  header: 'Starts At',
-                                  selected: date,
-                                  onChanged: (selectedDate) =>
-                                      print(selectedDate)),
-                            ),
                           ],
                         ),
                         const SizedBox(
@@ -342,17 +331,6 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                   decoration: BoxDecoration(
                     color: mat.Colors.blueAccent,
                     borderRadius: BorderRadius.circular(16),
-                    // gradient: LinearGradient(
-                    //   begin: Alignment.topCenter,
-                    //   end: Alignment.bottomCenter,
-                    //   colors: <Color>[
-                    //     fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.7),
-                    //     fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.9),
-                    //     fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.9),
-                    //     fluent.Color.fromARGB(246, 255, 255, 255)
-                    //         .withOpacity(1.0),
-                    //   ],
-                    // ),
                     boxShadow: [
                       BoxShadow(
                         color: const Color.fromRGBO(203, 202, 202, 1.0)
@@ -437,110 +415,33 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
   String dateTimeFormatter(String dateTime) {
     //Date and Time together (Military time)
     //[2021-12-01 23:34:00.0000]
-    String dateTimeInfo = dateTime;
+    // String dateTimeInfo = dateTime;
 
+    List<String> months = [
+      'Jan ',
+      'Feb ',
+      'Mar ',
+      'Apr ',
+      'May ',
+      'Jun ',
+      'Jul ',
+      'Aug ',
+      'Sept ',
+      'Oct ',
+      'Nov ',
+      'Dec '
+    ];
     //Splitting date and time
-    String date = dateTimeInfo.split(" ")[0];
-    String time = dateTimeInfo.split(" ")[1];
-
-    //Splitting time
-    String hours = time.split(":")[0];
-    String minutes = time.split(":")[1];
-    String seconds = time.split(":")[2];
-    int hourInt = int.parse(hours);
-    String formattedTime = "";
-
-    //
-    if (hourInt > 12) {
-      hourInt = hourInt - 12;
-      hours = hourInt.toString();
-      formattedTime = hours + ":$minutes" + " PM";
-    }
-
-    if (hourInt == 12) {
-      hours = '12';
-      formattedTime = hours + ":$minutes" + " AM";
-    } else {
-      hours = hourInt.toString();
-      formattedTime = hours + ":$minutes" + " AM";
-    }
+    String date = dateTime.split(" ")[0];
 
     //Splitting date
-    String month = date.split("-")[1];
+    int monthIndex = int.parse(date.split("-")[1]);
+    String month = months[monthIndex - 1];
     String days = (date.split("-")[2]);
     String years = (date.split("-")[0]);
-    String formattedDate = "";
+    // String formattedDate = "";
 
-    if (month == '01') {
-      month = 'Jan ';
-      formattedDate = (month + "$days, " + years + "    " + formattedTime);
-    }
-    if (month == '02') {
-      month = 'Feb ';
-      formattedDate = (month + "$days, " + years + "    " + formattedTime);
-    }
-    if (month == '03') {
-      month = 'Mar ';
-      formattedDate = (month + "$days, " + years + "   \n" + formattedTime);
-    }
-    if (month == '04') {
-      month = 'Apr ';
-      formattedDate = (month + "$days, " + years + "    " + formattedTime);
-    }
-    if (month == '05') {
-      month = 'May ';
-      formattedDate = (month + "$days, " + years + "    " + formattedTime);
-    }
-    if (month == '06') {
-      month = 'Jun ';
-      formattedDate = (month + "$days, " + years + "    " + formattedTime);
-    }
-    if (month == '07') {
-      month = 'Jul ';
-      formattedDate = (month + "$days, " + years + "    " + formattedTime);
-    }
-    if (month == '08') {
-      month = 'Aug ';
-      formattedDate = (month + "$days, " + years + "    " + formattedTime);
-    }
-    if (month == '09') {
-      month = 'Sept ';
-      formattedDate = (month + "$days, " + years + "    " + formattedTime);
-    }
-    if (month == '10') {
-      month = 'Oct ';
-      formattedDate = (month + "$days, " + years + "    " + formattedTime);
-    }
-    if (month == '11') {
-      month = 'Nov ';
-      formattedDate = (month + "$days, " + years + "    " + formattedTime);
-    }
-    if (month == '12') {
-      month = 'Dec ';
-      formattedDate = (month + "$days, " + years + "    " + formattedTime);
-    }
-    return formattedDate;
+    //formattedDate = (month + "$days, " + years + "    " + formattedTime);
+    return "$month$days, $years ";
   }
 }
-
-
-// TextFormBox(
-//                                 // validator: Utils.dateValidator,
-//                                 keyboardType: TextInputType.datetime,
-//                                 inputFormatters: [DateTextInputFormatter()],
-//                                 controller: dateController,
-//                                 header: 'Date',
-//                                 placeholder: 'Type event\'s date',
-//                               ),
-
-// IconButton(
-//                               onPressed: () {
-//                                 // Combobox;
-//                                 print("More options clicked");
-//                               },
-//                               icon: Icon(
-//                                 mat.Icons.more_horiz,
-//                                 color: Colors.white,
-//                                 size: 20,
-//                               ),
-//                             ),
