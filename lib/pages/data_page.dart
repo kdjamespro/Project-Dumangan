@@ -2,7 +2,6 @@ import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as mat;
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 class DataPage extends StatefulWidget {
   const DataPage({Key? key}) : super(key: key);
@@ -122,11 +121,7 @@ class _DataPageState extends State<DataPage> {
                                       hintText: "Email Subject",
                                       labelText: "Subject",
                                       labelStyle: TextStyle(
-<<<<<<< HEAD
-                                        fontSize: 24,
-=======
                                         fontSize: 18,
->>>>>>> ed0f253700a6bf647214098bebc9e86dd165b832
                                       ),
                                       border: OutlineInputBorder(),
                                       contentPadding:
@@ -149,11 +144,7 @@ class _DataPageState extends State<DataPage> {
                                           hintText: "Email Body",
                                           labelText: "Body",
                                           labelStyle: TextStyle(
-<<<<<<< HEAD
-                                            fontSize: 24,
-=======
                                             fontSize: 17,
->>>>>>> ed0f253700a6bf647214098bebc9e86dd165b832
                                           ),
                                           border: OutlineInputBorder(
                                               borderSide: BorderSide(),
@@ -170,7 +161,6 @@ class _DataPageState extends State<DataPage> {
                           ),
                           floatingActionButton: FloatingActionButton(
                             onPressed: () {
-                              print("Text Box Button");
                               fluent.showDialog(
                                 barrierDismissible: true,
                                 context: context,
@@ -233,10 +223,11 @@ class _DataPageState extends State<DataPage> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: <Color>[
-                fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.7),
-                fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.9),
-                fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.9),
-                fluent.Color.fromARGB(246, 255, 255, 255).withOpacity(1.0),
+                const fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.7),
+                const fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.9),
+                const fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.9),
+                const fluent.Color.fromARGB(246, 255, 255, 255)
+                    .withOpacity(1.0),
               ],
             ),
             boxShadow: [
@@ -281,21 +272,6 @@ class _DataPageState extends State<DataPage> {
                           Row(
                             children: [
                               fluent.IconButton(
-<<<<<<< HEAD
-                                icon: const Icon(FluentIcons.download),
-                                onPressed: () {
-                                  showSnackbar(
-                                    context,
-                                    const Snackbar(
-                                      content:
-                                          Text('FileName has been downloaded'),
-                                    ),
-                                  );
-                                },
-                              ),
-                              fluent.IconButton(
-=======
->>>>>>> ed0f253700a6bf647214098bebc9e86dd165b832
                                 icon: const Icon(FluentIcons.send),
                                 onPressed: () {
                                   showSnackbar(

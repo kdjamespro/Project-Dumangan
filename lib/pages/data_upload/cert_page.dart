@@ -259,6 +259,7 @@ class _TableState extends State<Table>
                                         clearController();
                                         flyoutController.open = false;
                                         MotionToast.success(
+                                                dismissable: true,
                                                 animationDuration:
                                                     const Duration(seconds: 1),
                                                 animationCurve: Curves.easeOut,
@@ -269,6 +270,7 @@ class _TableState extends State<Table>
                                             .show(context);
                                       } else {
                                         MotionToast.error(
+                                          dismissable: true,
                                           animationDuration:
                                               const Duration(seconds: 1),
                                           animationCurve: Curves.easeOut,
@@ -277,12 +279,6 @@ class _TableState extends State<Table>
                                           description: const Text(
                                               'Please fill up the proper information for full name and email'),
                                         ).show(context);
-                                        // showWarningMessage(
-                                        //     context: context,
-                                        //     title:
-                                        //         'Incomplete/Incorrect Fields',
-                                        //     message:
-                                        //         'Please fill up the proper information for full name and email');
                                       }
                                     })
                               ],
@@ -356,9 +352,11 @@ class _TableState extends State<Table>
                                 Provider.of<CrossCheckMapping>(context,
                                         listen: false)
                                     .removeAll();
+                                int eventId =
+                                    context.read<SelectedEvent>().eventId;
                                 await Provider.of<MyDatabase>(context,
                                         listen: false)
-                                    .deleteParticipants(1);
+                                    .deleteParticipants(eventId);
                                 context
                                     .read<CrossCheckingBloc>()
                                     .add(CrossChekingInitialize());
