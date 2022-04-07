@@ -51,7 +51,6 @@ class FileHandler {
 
   Future<String> selectDirectory() async {
     String? directory = await platform.getDirectoryPath();
-    print(directory);
     return directory ?? '';
   }
 
@@ -59,7 +58,6 @@ class FileHandler {
     List<File> templates = [];
     final Directory templateDirectory = await getTemplateDirectory();
     final List files = templateDirectory.listSync();
-    print("IsFileEmpty? ${files.isEmpty}");
     for (FileSystemEntity file in files) {
       templates.add(File(file.path));
     }
@@ -68,7 +66,6 @@ class FileHandler {
   }
 
   Future<bool> saveTemplate(File image, Directory templateDirectory) async {
-    print(image.existsSync());
     if (!image.existsSync()) {
       return false;
     }

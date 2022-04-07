@@ -1,13 +1,16 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:project_dumangan/model/indicator_controller.dart';
 
 class ResizableWidget extends StatefulWidget {
   ResizableWidget({
     Key? key,
     required this.child,
     required this.focusNode,
+    required this.indicatorController,
   }) : super(key: key);
   final Widget child;
   FocusNode focusNode;
+  final IndicatorController indicatorController;
 
   @override
   _ResizableWidgetState createState() => _ResizableWidgetState();
@@ -96,13 +99,13 @@ class _ResizableWidgetState extends State<ResizableWidget>
               });
             },
             child: Stack(
-              alignment: Alignment(0, 0),
+              alignment: const Alignment(0, 0),
               children: <Widget>[
                 Positioned(
                   top: top + ballDiameter / 2,
                   left: left + ballDiameter / 2,
                   child: Container(
-                    padding: EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(2),
                     height: height + ballDiameter / 2,
                     width: width + ballDiameter / 2,
                     child: widget.child,
@@ -113,7 +116,7 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top - ballDiameter / 2,
                   left: left - ballDiameter / 2,
                   child: ManipulatingBall(
-                    focus: _isFocused,
+                    indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var mid = (dx + dy) / 2;
                       var newHeight = height - 2 * mid;
@@ -133,7 +136,7 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top - ballDiameter / 2,
                   left: left + width / 2 - ballDiameter / 2,
                   child: ManipulatingBall(
-                    focus: _isFocused,
+                    indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var newHeight = height - dy;
 
@@ -149,7 +152,7 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top - ballDiameter / 2,
                   left: left + width - ballDiameter / 2,
                   child: ManipulatingBall(
-                    focus: _isFocused,
+                    indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var mid = (dx + (dy * -1)) / 2;
 
@@ -170,7 +173,7 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top + height / 2 - ballDiameter / 2,
                   left: left + width - ballDiameter / 2,
                   child: ManipulatingBall(
-                    focus: _isFocused,
+                    indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var newWidth = width + dx;
 
@@ -185,7 +188,7 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top + height - ballDiameter / 2,
                   left: left + width - ballDiameter / 2,
                   child: ManipulatingBall(
-                    focus: _isFocused,
+                    indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var mid = (dx + dy) / 2;
 
@@ -206,7 +209,7 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top + height - ballDiameter / 2,
                   left: left + width / 2 - ballDiameter / 2,
                   child: ManipulatingBall(
-                    focus: _isFocused,
+                    indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var newHeight = height + dy;
 
@@ -221,7 +224,7 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top + height - ballDiameter / 2,
                   left: left - ballDiameter / 2,
                   child: ManipulatingBall(
-                    focus: _isFocused,
+                    indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var mid = ((dx * -1) + dy) / 2;
 
@@ -242,7 +245,7 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top + height / 2 - ballDiameter / 2,
                   left: left - ballDiameter / 2,
                   child: ManipulatingBall(
-                    focus: _isFocused,
+                    indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var newWidth = width - dx;
 
@@ -263,10 +266,12 @@ class _ResizableWidgetState extends State<ResizableWidget>
 }
 
 class ManipulatingBall extends StatefulWidget {
-  ManipulatingBall({Key? key, required this.onDrag, required this.focus});
+  const ManipulatingBall(
+      {Key? key, required this.onDrag, required this.indicatorController})
+      : super(key: key);
 
   final Function onDrag;
-  bool focus;
+  final IndicatorController indicatorController;
 
   @override
   _ManipulatingBallState createState() => _ManipulatingBallState();
@@ -275,6 +280,20 @@ class ManipulatingBall extends StatefulWidget {
 class _ManipulatingBallState extends State<ManipulatingBall> {
   late double initX;
   late double initY;
+  late IndicatorController controller;
+  late bool showed;
+
+  @override
+  void initState() {
+    controller = widget.indicatorController;
+    showed = controller.isShowed;
+    controller.addListener(() {
+      setState(() {
+        showed = controller.isShowed;
+      });
+    });
+    super.initState();
+  }
 
   _handleDrag(details) {
     setState(() {
@@ -294,7 +313,7 @@ class _ManipulatingBallState extends State<ManipulatingBall> {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: true,
+      visible: showed,
       child: GestureDetector(
         onPanStart: _handleDrag,
         onPanUpdate: _handleUpdate,

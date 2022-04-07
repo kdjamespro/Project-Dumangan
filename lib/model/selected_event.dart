@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:project_dumangan/database/database.dart';
 
 class SelectedEvent {
@@ -7,7 +8,8 @@ class SelectedEvent {
   String _eventLocation;
   int _eventParticipants;
   int _eventAbsentees;
-  int _certifacatesGenerated;
+  DateTime? _eventDate;
+  int _certificatesGenerated;
 
   SelectedEvent()
       : _eventId = -1,
@@ -16,7 +18,7 @@ class SelectedEvent {
         _eventLocation = '',
         _eventParticipants = 0,
         _eventAbsentees = 0,
-        _certifacatesGenerated = 0;
+        _certificatesGenerated = 0;
 
   void setEvent(EventsTableData event) {
     _eventId = event.id;
@@ -24,6 +26,7 @@ class SelectedEvent {
     _eventDescription = event.description ?? '';
     _eventParticipants = event.participants;
     _eventAbsentees = event.absentees;
+    _eventDate = event.date;
   }
 
   void clearEvent() {
@@ -33,7 +36,7 @@ class SelectedEvent {
     _eventLocation = '';
     _eventParticipants = 0;
     _eventAbsentees = 0;
-    _certifacatesGenerated = 0;
+    _certificatesGenerated = 0;
   }
 
   void updateAttendance(int present, int absent) {
@@ -52,6 +55,11 @@ class SelectedEvent {
   int get eventParticipants => _eventParticipants;
 
   int get eventAbsentees => _eventAbsentees;
+
+  int get certficatesGenerated => _certificatesGenerated;
+
+  String get eventDate =>
+      _eventDate == null ? '' : DateFormat.yMd().format(_eventDate as DateTime);
 
   bool isEventSet() {
     return _eventId >= 0;
