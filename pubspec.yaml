@@ -68,6 +68,7 @@ dependencies:
   google_sign_in: ^5.2.4
   google_sign_in_dartio: ^0.2.0
   string_validator: ^0.3.0
+  flutter_phoenix: "^1.0.0"
 
 dev_dependencies:
   flutter_test:
