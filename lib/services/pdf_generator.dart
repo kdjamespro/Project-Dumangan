@@ -16,7 +16,7 @@ class PdfGenerator {
     pdf.addPage(
       pw.Page(
         pageTheme: pw.PageTheme(
-          margin: const pw.EdgeInsets.all(0.5),
+          margin: const pw.EdgeInsets.all(0),
           orientation: pageOrientation,
           pageFormat: pageFormat,
         ),
@@ -24,7 +24,7 @@ class PdfGenerator {
           ignoreMargins: true,
           child: pw.Image(
             pw.MemoryImage(cert),
-            fit: pw.BoxFit.cover,
+            fit: pw.BoxFit.fill,
             dpi: 300,
           ),
         ),

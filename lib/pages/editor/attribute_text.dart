@@ -13,15 +13,19 @@ class AttributeText extends ChangeNotifier {
     'Event Date'
   ];
   Map<String, DraggableText> attributes;
-  Function changeController;
+  late Function changeController;
   Map<String, List<String>> dynamicFieldData;
   int size = 0;
   List<int> _participantIds;
 
-  AttributeText({required this.changeController})
+  AttributeText()
       : attributes = {},
         dynamicFieldData = {},
         _participantIds = [];
+
+  void setChangeController(Function changer) {
+    changeController = changer;
+  }
 
   void addAttribute(String name) {
     attributes[name] = DraggableText(

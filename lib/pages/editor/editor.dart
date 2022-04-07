@@ -12,7 +12,6 @@ import 'package:project_dumangan/model/fontstyle_controller.dart';
 import 'package:project_dumangan/model/progress_controller.dart';
 import 'package:project_dumangan/model/selected_event.dart';
 import 'package:project_dumangan/pages/editor/canvas_menu.dart';
-import 'package:project_dumangan/pages/editor/draggable_text.dart';
 import 'package:project_dumangan/pages/editor/image_archive.dart';
 import 'package:project_dumangan/pages/editor/menu_button.dart';
 import 'package:project_dumangan/services/loading_dialog.dart';
@@ -34,30 +33,52 @@ class Editor extends StatefulWidget {
 }
 
 final autoSuggestBox = TextEditingController();
+String fontSelector = "Calibri";
+String selectedFont = "Lato";
+String styleFontStyle = "";
+String styleFontColor = "";
+double _styleFontSize = 12;
+Color fontColorPicker = const Color(0xff443a49);
+FontWeight fontWeightSelector = FontWeight.normal;
+Color color = Colors.red;
+Color pickerColor = const Color(0xff443a49);
+Color currentColor = const Color(0xff443a49);
+int menuIndex = 0;
+File image = File('');
+CanvasController canvasController = CanvasController();
+List<Widget> stackContents = [];
+double aspectRatio = canvasController.aspectRatio;
+AttributeText dynamicFields = AttributeText();
 
-class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
+class _EditorState extends State<Editor>
+    with AutomaticKeepAliveClientMixin<Editor> {
   ScreenshotController screenshotController = ScreenshotController();
-  String fontSelector = "Calibri";
-  String selectedFont = "Lato";
-  String styleFontStyle = "";
-  String styleFontColor = "";
-  double _styleFontSize = 12;
-  Color fontColorPicker = const Color(0xff443a49);
-  FontWeight fontWeightSelector = FontWeight.normal;
-  late AttributeText dynamicFields;
+  // String fontSelector = "Calibri";
+  // String selectedFont = "Lato";
+  // String styleFontStyle = "";
+  // String styleFontColor = "";
+  // double _styleFontSize = 12;
+  // Color fontColorPicker = const Color(0xff443a49);
+  // FontWeight fontWeightSelector = FontWeight.normal;
 
-  Color color = Colors.red;
-  Color pickerColor = const Color(0xff443a49);
-  Color currentColor = const Color(0xff443a49);
-  int menuIndex = 0;
-  late double aspectRatio;
-  File image = File('');
-  late DraggableText text;
-  List<Widget> stackContents = [];
+  // Color color = Colors.red;
+  // Color pickerColor = const Color(0xff443a49);
+  // Color currentColor = const Color(0xff443a49);
+  // int menuIndex = 0;
+  // File image = File('');
   late FontStyleController styleController;
-  late CanvasController canvasController;
   late FlyoutController fontSelection;
   late TextEditingController fontValue;
+
+  @override
+  void initState() {
+    fontValue = TextEditingController(text: '');
+    fontSelection = FlyoutController();
+    dynamicFields.setChangeController(changeFontController);
+    canvasController.addListener(changeCanvasSize);
+    dynamicFields.addListener(updateTextBox);
+    super.initState();
+  }
 
   changeFontController(FontStyleController controller) {
     styleController = controller;
@@ -70,31 +91,24 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
     });
   }
 
-  @override
-  void initState() {
-    fontValue = TextEditingController(text: '');
-    fontSelection = FlyoutController();
-    styleController = FontStyleController(
-        controller: TextEditingController(text: 'Sample Text'));
-    canvasController = CanvasController();
-    aspectRatio = canvasController.aspectRatio;
-    canvasController.addListener(() {
-      setState(() {
-        aspectRatio = canvasController.aspectRatio;
-      });
+  changeCanvasSize() {
+    setState(() {
+      aspectRatio = canvasController.aspectRatio;
     });
-    dynamicFields = AttributeText(changeController: changeFontController);
-    dynamicFields.addListener(() {
-      setState(() {
-        stackContents = dynamicFields.attributes.values.toList();
-      });
+  }
+
+  updateTextBox() {
+    setState(() {
+      stackContents = dynamicFields.attributes.values.toList();
     });
-    super.initState();
   }
 
   @override
   void dispose() {
+    canvasController.removeListener(changeCanvasSize);
+    dynamicFields.removeListener(updateTextBox);
     super.dispose();
+    // canvasController.removeListener(() { })
   }
 
   @override
@@ -662,7 +676,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
 
   Widget buildColorPicker() => ColorPicker(
         pickerColor: color,
-        onColorChanged: (color) => setState(() => this.color = color),
+        onColorChanged: (newcolor) => setState(() => color = newcolor),
       );
 
   void pickColor(BuildContext context) {
