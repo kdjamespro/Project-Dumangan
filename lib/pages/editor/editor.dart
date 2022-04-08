@@ -21,10 +21,10 @@ import 'package:project_dumangan/services/warning_message.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:string_validator/string_validator.dart';
-
 import '/services/file_handler.dart';
 import 'attribute_menu.dart';
 import 'attribute_text.dart';
+import 'package:project_dumangan/pages/editor/image_archive.dart';
 
 class Editor extends StatefulWidget {
   const Editor({Key? key}) : super(key: key);
@@ -624,6 +624,36 @@ class _EditorState extends State<Editor>
                   }
                 },
                 icon: const Icon(FluentIcons.save))),
+        // Flexible(
+        //   child: Button(
+        //     child: const Text('Delete All Templates'),
+        //     onPressed: () {
+        //       fluent.showDialog(
+        //         barrierDismissible: true,
+        //         context: context,
+        //         builder: (context) {
+        //           return ContentDialog(
+        //             title: const Text('Delete Templates'),
+        //             content: const Text('This process cannot be undone.'),
+        //             actions: [
+        //               Button(
+        //                   child: const Text('Cancel'),
+        //                   onPressed: () {
+        //                     Navigator.pop(context);
+        //                   }),
+        //               Button(
+        //                 child: const Text('Delete'),
+        //                 onPressed: () {
+
+        //                 },
+        //               ),
+        //             ],
+        //           );
+        //         },
+        //       );
+        //     },
+        //   ),
+        // ),
         ChangeNotifierProvider(
             create: (context) => ProgressController(),
             builder: (context, _) {
@@ -645,13 +675,13 @@ class _EditorState extends State<Editor>
                         int i = 0;
                         ProgressController loading =
                             context.read<ProgressController>();
-                        loading.setOverall(5);
+                        loading.setOverall(131);
                         LoadingDialog load = LoadingDialog();
                         load.showLoadingScreen(
                           context: context,
                           title: 'Generating Certificate',
                         );
-                        for (; i < 5;) {
+                        for (; i < 131;) {
                           String fileName = dynamicFields.updateAttributes(i);
                           String name = Path.join(path, fileName);
                           var cert = await screenshotController.capture(
@@ -712,8 +742,8 @@ class _EditorState extends State<Editor>
                     onPressed: () {
                       Navigator.pop(context);
                     }),
-                fluent.Padding(
-                  padding: const EdgeInsets.all(20.0),
+                const fluent.Padding(
+                  padding: EdgeInsets.all(20.0),
                   child: Text(
                     'Compose Email',
                   ),
