@@ -13,7 +13,6 @@ import 'package:project_dumangan/model/fontstyle_controller.dart';
 import 'package:project_dumangan/model/progress_controller.dart';
 import 'package:project_dumangan/model/selected_event.dart';
 import 'package:project_dumangan/pages/editor/canvas_menu.dart';
-import 'package:project_dumangan/pages/editor/draggable_text.dart';
 import 'package:project_dumangan/pages/editor/image_archive.dart';
 import 'package:project_dumangan/pages/editor/menu_button.dart';
 import 'package:project_dumangan/services/loading_dialog.dart';
@@ -35,32 +34,59 @@ class Editor extends StatefulWidget {
   _EditorState createState() => _EditorState();
 }
 
-class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
-  final autoSuggestBox = TextEditingController();
+// <<<<<<< HEAD
+// class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
+//   final autoSuggestBox = TextEditingController();
+//   ScreenshotController screenshotController = ScreenshotController();
+//   String fontSelector = "Calibri";
+//   String selectedFont = "Current Font";
+//   // String styleFontStyle = "";
+//   // String styleFontColor = "";
+//   double _styleFontSize = 12;
+//   Color fontColorPicker = const Color(0xff443a49);
+//   FontWeight fontWeightSelector = FontWeight.normal;
+//   late AttributeText dynamicFields;
+// =======
+final autoSuggestBox = TextEditingController();
+String fontSelector = "Calibri";
+String selectedFont = "Current Font";
+String styleFontStyle = "";
+String styleFontColor = "";
+double _styleFontSize = 12;
+Color fontColorPicker = const Color(0xff443a49);
+FontWeight fontWeightSelector = FontWeight.normal;
+Color color = Colors.red;
+Color pickerColor = const Color(0xff443a49);
+Color currentColor = const Color(0xff443a49);
+int menuIndex = 0;
+File image = File('');
+CanvasController canvasController = CanvasController();
+List<Widget> stackContents = [];
+double aspectRatio = canvasController.aspectRatio;
+AttributeText dynamicFields = AttributeText();
+
+class _EditorState extends State<Editor>
+    with AutomaticKeepAliveClientMixin<Editor> {
   ScreenshotController screenshotController = ScreenshotController();
-  String fontSelector = "Calibri";
-  String selectedFont = "Current Font";
+  // String fontSelector = "Calibri";
+  // String selectedFont = "Lato";
   // String styleFontStyle = "";
   // String styleFontColor = "";
-  double _styleFontSize = 12;
-  Color fontColorPicker = const Color(0xff443a49);
-  FontWeight fontWeightSelector = FontWeight.normal;
-  late AttributeText dynamicFields;
+  // double _styleFontSize = 12;
+  // Color fontColorPicker = const Color(0xff443a49);
+  // FontWeight fontWeightSelector = FontWeight.normal;
+// >>>>>>> 4256ad7f65315b9c276985ecc4add0f4c5117cbf
 
-  Color color = Colors.red;
-  Color pickerColor = const Color(0xff443a49);
-  Color currentColor = const Color(0xff443a49);
-  int menuIndex = 0;
-  late double aspectRatio;
-  File image = File('');
-  late DraggableText text;
-  List<Widget> stackContents = [];
+  // Color color = Colors.red;
+  // Color pickerColor = const Color(0xff443a49);
+  // Color currentColor = const Color(0xff443a49);
+  // int menuIndex = 0;
+  // File image = File('');
   late FontStyleController styleController;
-  late CanvasController canvasController;
   late FlyoutController fontSelection;
   late TextEditingController fontValue;
 
-  var nuller = null;
+// <<<<<<< HEAD
   String _selectedFont = "Roboto";
   TextStyle? _selectedFontTextStyle;
   List<String> _myGoogleFonts = [
@@ -117,6 +143,19 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
     "Work Sans",
     "Zilla Slab"
   ];
+// =======
+  @override
+  void initState() {
+    fontValue = TextEditingController(text: '');
+    fontSelection = FlyoutController();
+    late FontStyleController styleController;
+    dynamicFields.setChangeController(changeFontController);
+    canvasController.addListener(changeCanvasSize);
+    dynamicFields.addListener(updateTextBox);
+    super.initState();
+  }
+
+// >>>>>>> 4256ad7f65315b9c276985ecc4add0f4c5117cbf
   changeFontController(FontStyleController controller) {
     styleController = controller;
     Color selectedColor = styleController.textStyle.color ?? pickerColor;
@@ -128,31 +167,24 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
     });
   }
 
-  @override
-  void initState() {
-    fontValue = TextEditingController(text: '');
-    fontSelection = FlyoutController();
-    styleController = FontStyleController(
-        controller: TextEditingController(text: 'Sample Text'));
-    canvasController = CanvasController();
-    aspectRatio = canvasController.aspectRatio;
-    canvasController.addListener(() {
-      setState(() {
-        aspectRatio = canvasController.aspectRatio;
-      });
+  changeCanvasSize() {
+    setState(() {
+      aspectRatio = canvasController.aspectRatio;
     });
-    dynamicFields = AttributeText(changeController: changeFontController);
-    dynamicFields.addListener(() {
-      setState(() {
-        stackContents = dynamicFields.attributes.values.toList();
-      });
+  }
+
+  updateTextBox() {
+    setState(() {
+      stackContents = dynamicFields.attributes.values.toList();
     });
-    super.initState();
   }
 
   @override
   void dispose() {
+    canvasController.removeListener(changeCanvasSize);
+    dynamicFields.removeListener(updateTextBox);
     super.dispose();
+    // canvasController.removeListener(() { })
   }
 
   @override
@@ -191,28 +223,33 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
           child: Column(
             children: [
               Expanded(
-                child: Screenshot(
-                  controller: screenshotController,
-                  child: Stack(
-                    alignment: AlignmentDirectional.center,
-                    children: [
-                      Positioned(
-                        child: AspectRatio(
-                          aspectRatio: aspectRatio,
-                          child: Container(
-                            margin: const EdgeInsets.all(16),
-                            color: Colors.white,
-                            child: image.existsSync()
-                                ? Image.file(
-                                    image,
-                                    fit: BoxFit.fill,
-                                  )
-                                : Container(),
+                child: Container(
+                  margin: const EdgeInsets.all(8.0),
+                  child: Screenshot(
+                    controller: screenshotController,
+                    child: AspectRatio(
+                      aspectRatio: aspectRatio,
+                      child: Stack(
+                        alignment: AlignmentDirectional.center,
+                        children: [
+                          Positioned(
+                            child: AspectRatio(
+                              aspectRatio: aspectRatio,
+                              child: Container(
+                                color: Colors.white,
+                                child: image.existsSync()
+                                    ? Image.file(
+                                        image,
+                                        fit: BoxFit.fill,
+                                      )
+                                    : Container(),
+                              ),
+                            ),
                           ),
-                        ),
+                          ...stackContents,
+                        ],
                       ),
-                      ...stackContents,
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -227,20 +264,6 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Container(
-                  //   child: IconButton(
-                  //     onPressed: () {
-                  //       setState(() {
-                  //         menuIndex = 0;
-                  //       });
-                  //     },
-                  //     icon: const Icon(
-                  //       FluentIcons.font,
-                  //       size: 23,
-                  //     ),
-                  //   ),
-                  // ),
-
                   MenuButton(
                     color: menuIndex == 0
                         ? FluentTheme.of(context)
@@ -258,7 +281,6 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                       changeMenu(0);
                     },
                   ),
-
                   SizedBox(
                     height: 20,
                   ),
@@ -381,7 +403,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                               setState(() {
                                 selectedFont = font.fontFamily;
                                 styleController.changeFontStyle(selectedFont);
-                                selectedFont = font.fontFamily;
+
                                 // _selectedFont = font.fontFamily;
                                 // _selectedFontTextStyle = font.toTextStyle();
                               });
@@ -571,9 +593,6 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                 pickColor(context);
               },
             ),
-            // const SizedBox(
-            //   width: 25,
-            // ),
             Button(
                 child: Padding(
                   padding: const EdgeInsets.only(right: 100, top: 2, bottom: 2),
@@ -718,26 +737,6 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
             ),
           ),
         ),
-        // Flexible(
-        //   child: Container(
-        //     child: IconButton(
-        //         onPressed: () async {
-        //           if (image.existsSync()) {
-        //             bool isSaved =
-        //                 await context.read<ArchiveList>().addImage(image);
-        //           } else {
-        //             MotionToast.error(
-        //               animationDuration: const Duration(seconds: 1),
-        //               animationCurve: Curves.easeOut,
-        //               toastDuration: const Duration(seconds: 2),
-        //               description: const Text('No Image Found'),
-        //               dismissable: true,
-        //             ).show(context);
-        //           }
-        //         },
-        //         icon: const Icon(FluentIcons.save)),
-        //   ),
-        // ),
         ChangeNotifierProvider(
             create: (context) => ProgressController(),
             builder: (context, _) {
@@ -745,59 +744,89 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
                 child: Container(
                   width: double.infinity,
                   child: Button(
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: const Text('Generate PDF'),
+                    child: const Padding(
+                      padding: EdgeInsets.all(4.0),
+                      child: Text('Generate PDF'),
                     ),
                     onPressed: () async {
                       SelectedEvent event = context.read<SelectedEvent>();
+                      MyDatabase db = context.read<MyDatabase>();
                       if (event.isEventSet() &&
                           dynamicFields.attributes.isNotEmpty) {
-                        String path =
-                            await context.read<FileHandler>().selectDirectory();
-                        if (path != '') {
-                          List<ParticipantsTableData> list = await context
-                              .read<MyDatabase>()
-                              .getAttendedParticipants(event.eventId);
-                          dynamicFields.hideIndicators();
-                          dynamicFields.setDynamicFieldsData(list, event);
-                          int i = 0;
-                          ProgressController loading =
-                              context.read<ProgressController>();
-                          loading.setOverall(5);
-                          LoadingDialog load = LoadingDialog();
-                          load.showLoadingScreen(
-                            context: context,
-                            title: 'Generating Certificate',
-                          );
-                          for (; i < 5;) {
-                            String fileName = dynamicFields.updateAttributes(i);
-                            String name = Path.join(path, fileName);
-                            var cert = await screenshotController.capture(
-                              pixelRatio: 5,
+                        List<ParticipantsTableData> list =
+                            await db.getAttendedParticipants(event.eventId);
+                        if (list.isNotEmpty) {
+                          String path = await context
+                              .read<FileHandler>()
+                              .selectDirectory();
+                          if (path != '') {
+                            dynamicFields.hideIndicators();
+                            dynamicFields.setDynamicFieldsData(list, event);
+                            List<CertificatesTableCompanion> certs = [];
+                            int i = 0;
+                            ProgressController loading =
+                                context.read<ProgressController>();
+                            loading.setOverall(list.length);
+                            LoadingDialog load = LoadingDialog();
+                            load.showLoadingScreen(
+                              context: context,
+                              title: 'Generating Certificate',
                             );
-                            if (cert != null) {
-                              await PdfGenerator.generatePdf(
-                                  cert, name, canvasController.orientation);
-                              print('Sucessful');
+
+                            int sucessful = 0;
+                            for (; i < list.length;) {
+                              final stopwatch = Stopwatch()..start();
+                              int id = dynamicFields.updateAttributes(i);
+                              String name =
+                                  Path.join(path, id.toString() + '.pdf');
+
+                              var cert = await screenshotController.capture(
+                                pixelRatio: 5,
+                              );
+                              if (cert != null) {
+                                try {
+                                  await PdfGenerator.generatePdf(
+                                      cert, name, canvasController.orientation);
+                                  certs.add(CertificatesTableCompanion.insert(
+                                      participantsId: id,
+                                      filename: name,
+                                      eventId: event.eventId));
+                                  sucessful += 1;
+                                } on FileSystemException catch (e) {
+                                  print(e);
+                                  await showWarningMessage(
+                                      context: context,
+                                      title: 'Cannot create pdf file',
+                                      message:
+                                          'The file $name is used by another application or process. Please close it before proceeding');
+                                  i -= 1;
+                                  loading.decrease();
+                                }
+                              }
+                              i += 1;
+                              loading.increase();
+                              print(
+                                  'Whole Generation Process executed in ${stopwatch.elapsed.inSeconds}');
                             }
-                            i += 1;
-                            loading.increase();
+                            await db.addCertificates(certs);
+                            await db.updateEventCertificates(
+                                event.eventId, sucessful);
+                            dynamicFields.showIndicators();
+                            dynamicFields.reset();
+                            load.hideLoadingScreen();
+                            loading.reset();
                           }
-                          dynamicFields.showIndicators();
-                          dynamicFields.reset();
-                          load.hideLoadingScreen();
+                        } else {
+                          MotionToast.error(
+                            animationDuration: const Duration(seconds: 1),
+                            animationCurve: Curves.easeOut,
+                            toastDuration: const Duration(seconds: 2),
+                            title: const Text('Certificate Generation Error'),
+                            description:
+                                const Text('Add a participant\'s data first'),
+                            dismissable: true,
+                          ).show(context);
                         }
-                      } else {
-                        MotionToast.error(
-                          animationDuration: const Duration(seconds: 1),
-                          animationCurve: Curves.easeOut,
-                          toastDuration: const Duration(seconds: 2),
-                          title: const Text('Certificate Generation Error'),
-                          description: const Text(
-                              'Please select an event first or add atleast one dynamic fields to the certificate'),
-                          dismissable: true,
-                        ).show(context);
                       }
                     },
                   ),
@@ -810,7 +839,7 @@ class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
 
   Widget buildColorPicker() => ColorPicker(
         pickerColor: color,
-        onColorChanged: (color) => setState(() => this.color = color),
+        onColorChanged: (newcolor) => setState(() => color = newcolor),
       );
 
   void pickColor(BuildContext context) {

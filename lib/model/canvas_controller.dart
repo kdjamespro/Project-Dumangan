@@ -3,39 +3,54 @@ import 'package:flutter/cupertino.dart';
 class CanvasController extends ChangeNotifier {
   double aspectRatio;
   PageOrientation orientation;
+  int _selectedPageSize;
+  int _selectedOrientation;
   CanvasController()
       : aspectRatio = PageOrientation.a4Landscape.aspecRatio,
-        orientation = PageOrientation.a4Landscape;
+        orientation = PageOrientation.a4Landscape,
+        _selectedPageSize = 0,
+        _selectedOrientation = 0;
 
   void changeSize(String type, String orientation) {
     if (type == 'A4') {
+      _selectedPageSize = 0;
       if (orientation == 'Landscape') {
         aspectRatio = PageOrientation.a4Landscape.aspecRatio;
         this.orientation = PageOrientation.a4Landscape;
+        _selectedOrientation = 0;
       } else {
         aspectRatio = PageOrientation.a4Portrait.aspecRatio;
         this.orientation = PageOrientation.a4Portrait;
+        _selectedOrientation = 1;
       }
     } else if (type == 'Legal') {
+      _selectedPageSize = 1;
       if (orientation == 'Landscape') {
         aspectRatio = PageOrientation.legalLandscape.aspecRatio;
         this.orientation = PageOrientation.legalLandscape;
+        _selectedOrientation = 0;
       } else {
         aspectRatio = PageOrientation.legalPortrait.aspecRatio;
         this.orientation = PageOrientation.legalPortrait;
+        _selectedOrientation = 1;
       }
     } else if (type == 'Letter') {
+      _selectedPageSize = 2;
       if (orientation == 'Landscape') {
         aspectRatio = PageOrientation.letterLandscape.aspecRatio;
         this.orientation = PageOrientation.letterLandscape;
+        _selectedOrientation = 0;
       } else {
         aspectRatio = PageOrientation.letterPortrait.aspecRatio;
         this.orientation = PageOrientation.letterPortrait;
+        _selectedOrientation = 1;
       }
     }
-
     notifyListeners();
   }
+
+  int get selectedPageSize => _selectedPageSize;
+  int get selectedOrientation => _selectedOrientation;
 }
 
 enum PageOrientation {
@@ -68,7 +83,7 @@ extension PageOrientationExtension on PageOrientation {
 }
 
 extension PageOrientationWidth on PageOrientation {
-  int get width {
+  double get width {
     switch (this) {
       case PageOrientation.legalPortrait:
         return 2551;
@@ -88,7 +103,7 @@ extension PageOrientationWidth on PageOrientation {
 }
 
 extension PageOrientationHeight on PageOrientation {
-  int get height {
+  double get height {
     switch (this) {
       case PageOrientation.legalPortrait:
         return 4205;

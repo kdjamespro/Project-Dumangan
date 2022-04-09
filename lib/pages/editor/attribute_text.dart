@@ -13,15 +13,19 @@ class AttributeText extends ChangeNotifier {
     'Event Date'
   ];
   Map<String, DraggableText> attributes;
-  Function changeController;
+  late Function changeController;
   Map<String, List<String>> dynamicFieldData;
   int size = 0;
   List<int> _participantIds;
 
-  AttributeText({required this.changeController})
+  AttributeText()
       : attributes = {},
         dynamicFieldData = {},
         _participantIds = [];
+
+  void setChangeController(Function changer) {
+    changeController = changer;
+  }
 
   void addAttribute(String name) {
     attributes[name] = DraggableText(
@@ -69,17 +73,17 @@ class AttributeText extends ChangeNotifier {
     _setEventsData(event, attr);
   }
 
-  String updateAttributes(int index) {
+  int updateAttributes(int index) {
     if (index < size) {
       for (String field in dynamicFieldData.keys) {
         attributes[field]?.style.controller.text =
             dynamicFieldData[field]?.elementAt(index) ?? '';
       }
-      String certName = _participantIds[index].toString() + '.pdf';
+      int participantsId = _participantIds[index];
       notifyListeners();
-      return certName;
+      return participantsId;
     }
-    return '';
+    return -1;
   }
 
   void _setParticipantsData(List<ParticipantsTableData> participantsInfo,

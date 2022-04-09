@@ -37,7 +37,8 @@ class EventsTable extends Table {
 class CertificatesTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get participantsId =>
-      integer().references(ParticipantsTable, #id)();
+      integer().references(ParticipantsTable, #id).customConstraint('UNIQUE')();
+  IntColumn get eventId => integer()();
   TextColumn get filename => text()();
   BoolColumn get sended => boolean().withDefault(const Constant(false))();
 }
@@ -87,6 +88,20 @@ class MyDatabase extends _$MyDatabase {
         .get();
   }
 
+  Future<String> getParticipantEmail(int participantId) async {
+    return await customSelect(
+      'SELECT email FROM participants_table WHERE id = ?',
+      variables: [Variable.withInt(participantId)],
+      readsFrom: {participantsTable},
+    ).map((row) => row.read<String>('email')).getSingle();
+  }
+
+  Future<List<CertificatesTableData>> getCertificates(int eventsId) async {
+    return await (select(certificatesTable)
+          ..where((row) => row.eventId.equals(eventsId)))
+        .get();
+  }
+
   Future<void> addEvent(EventsTableCompanion event) {
     return into(eventsTable).insert(event);
   }
@@ -99,6 +114,18 @@ class MyDatabase extends _$MyDatabase {
     ));
   }
 
+  Future updateCertStatus(int certId) async {
+    return (update(certificatesTable)..where((row) => row.id.equals(certId)))
+        .write(const CertificatesTableCompanion(sended: Value(true)));
+  }
+
+  Future updateEventCertificates(int eventId, int certGenerated) async {
+    return await (update(eventsTable)..where((row) => row.id.equals(eventId)))
+        .write(EventsTableCompanion(
+      certificatesGenerated: Value(certGenerated),
+    ));
+  }
+
   Future<void> addParticipant(ParticipantsTableCompanion participant) {
     return into(participantsTable).insert(participant);
   }
@@ -106,6 +133,16 @@ class MyDatabase extends _$MyDatabase {
   Future<void> addBatchParticipants(List<Insertable> queryList) async {
     await batch((batch) {
       batch.insertAll(participantsTable, queryList);
+    });
+  }
+
+  Future<void> addCertificates(List<Insertable> queryList) async {
+    await batch((batch) {
+      for (Insertable query in queryList) {
+        batch.insert(certificatesTable, query,
+            onConflict: DoUpdate((old) => query,
+                target: [certificatesTable.participantsId]));
+      }
     });
   }
 
@@ -141,5 +178,23 @@ class MyDatabase extends _$MyDatabase {
       variables: [Variable.withInt(eventId)],
       readsFrom: {eventsTable},
     ).map((row) => row.read<int>('participants')).watchSingle();
+  }
+
+  Future<List<int>> getParticipantsIds(int eventId) async {
+    List<int> ids = [];
+    if (eventId < 0) {
+      return [];
+    }
+    List results = await customSelect(
+      'SELECT id FROM participants_table WHERE events_id = ?',
+      variables: [Variable.withInt(eventId)],
+      readsFrom: {participantsTable},
+    ).get();
+
+    for (QueryRow row in results) {
+      ids.add(row.read<int>('id'));
+    }
+
+    return ids;
   }
 }

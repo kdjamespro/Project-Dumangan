@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:project_dumangan/model/draggable_controller.dart';
 import 'package:project_dumangan/model/fontstyle_controller.dart';
 import 'package:project_dumangan/model/indicator_controller.dart';
 import 'package:project_dumangan/pages/editor/resizable_widget.dart';
@@ -10,6 +11,7 @@ class DraggableText extends StatefulWidget {
   final FontStyleController style;
   final FocusNode focus;
   final IndicatorController indicatorController;
+  final DraggableController drag = DraggableController();
   void hideIndicators() {
     indicatorController.hideIndicator();
   }
@@ -23,7 +25,7 @@ class DraggableText extends StatefulWidget {
 }
 
 class _DraggableTextState extends State<DraggableText>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin<DraggableText> {
   late TextEditingController _controller;
   late FocusNode _focusNode;
   late FontStyleController styleController;
@@ -37,18 +39,20 @@ class _DraggableTextState extends State<DraggableText>
     _controller = widget.style.controller;
     style = styleController.textStyle;
     alignment = styleController.alignment;
-    styleController.addListener(() {
-      setState(() {
-        style = styleController.textStyle;
-        alignment = styleController.alignment;
-      });
-    });
+    styleController.addListener(changeStyle);
     super.initState();
+  }
+
+  void changeStyle() {
+    setState(() {
+      style = styleController.textStyle;
+      alignment = styleController.alignment;
+    });
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    styleController.removeListener(changeStyle);
     super.dispose();
   }
 
@@ -59,6 +63,7 @@ class _DraggableTextState extends State<DraggableText>
   Widget build(BuildContext context) {
     super.build(context);
     return ResizableWidget(
+      drag: widget.drag,
       indicatorController: widget.indicatorController,
       focusNode: _focusNode,
       child: Center(

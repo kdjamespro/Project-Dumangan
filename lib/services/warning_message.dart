@@ -1,11 +1,16 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
-void showWarningMessage(
+Future<void> showWarningMessage(
     {required BuildContext context,
     required String title,
-    required String message}) {
-  showDialog(
-    barrierDismissible: true,
+// <<<<<<< HEAD
+//     required String message}) {
+//   showDialog(
+//     barrierDismissible: true,
+// =======
+    required String message}) async {
+  await showDialog(
+// >>>>>>> 4256ad7f65315b9c276985ecc4add0f4c5117cbf
     context: context,
     builder: (context) {
       return ContentDialog(
@@ -18,6 +23,7 @@ void showWarningMessage(
               child: const Text('Ok'),
               onPressed: () {
                 Navigator.pop(context);
+                return;
               },
               style: FluentTheme.of(context).buttonTheme.filledButtonStyle,
             ),

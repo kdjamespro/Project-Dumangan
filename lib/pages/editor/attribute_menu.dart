@@ -17,8 +17,16 @@ class _AttributeMenuState extends State<AttributeMenu> {
   @override
   void initState() {
     attributes = widget.attributes.attributeNames;
-    buttonText = List<String>.filled(attributes.length, "Use");
+    List<String> selectedAttributes =
+        widget.attributes.attributes.keys.toList();
+    buttonText = List<String>.filled(attributes.length, 'Use');
     activated = List<bool>.filled(attributes.length, false);
+    for (int i = 0; i < attributes.length; i++) {
+      if (selectedAttributes.contains(attributes[i])) {
+        buttonText[i] = 'Disable';
+        activated[i] = true;
+      }
+    }
     super.initState();
   }
 

@@ -33,12 +33,14 @@ class CrossChecker {
     List possibleParticipants = [];
     List possibleAbsentees = [];
 
-    // Convert the names to lowercase
-    regNames = regNames.map((e) => e.toLowerCase()).toList();
-    crossNames = crossNames.map((e) => e.toLowerCase()).toList();
+    // Convert the names to lowercase and stores it to a new list
+    List regSmallNames = regNames.map((e) => e.toLowerCase()).toList();
+    List crossSmallNames = crossNames.map((e) => e.toLowerCase()).toList();
+
     // Iterate through the list and check if there is a matching participant
     for (int i = 0; i < min(regNames.length, regEmails.length); i++) {
-      int match = crossNames.indexOf(regNames[i]);
+      // Use the small Names for case insensitive comparison
+      int match = crossSmallNames.indexOf(regSmallNames[i]);
       if (match >= 0) {
         //
         if (crossEmails[match] == regEmails[i]) {

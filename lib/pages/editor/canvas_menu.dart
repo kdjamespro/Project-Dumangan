@@ -13,14 +13,16 @@ class CanvasMenu extends StatefulWidget {
 class _CanvasMenuState extends State<CanvasMenu>
     with AutomaticKeepAliveClientMixin {
   late CanvasController page;
-  int _selectedPageSize = 0;
-  int _selectedOrientation = 0;
+  late int _selectedPageSize;
+  late int _selectedOrientation;
   final List<String> pageSize = ['A4', 'Legal', 'Letter'];
   final List<String> orientation = ['Landscape', 'Portrait'];
 
   @override
   void initState() {
     page = widget.controller;
+    _selectedPageSize = page.selectedPageSize;
+    _selectedOrientation = page.selectedOrientation;
     super.initState();
   }
 

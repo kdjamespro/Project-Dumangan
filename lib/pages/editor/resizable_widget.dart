@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:project_dumangan/model/draggable_controller.dart';
 import 'package:project_dumangan/model/indicator_controller.dart';
 
 class ResizableWidget extends StatefulWidget {
@@ -7,11 +8,12 @@ class ResizableWidget extends StatefulWidget {
     required this.child,
     required this.focusNode,
     required this.indicatorController,
+    required this.drag,
   }) : super(key: key);
   final Widget child;
   FocusNode focusNode;
   final IndicatorController indicatorController;
-
+  final DraggableController drag;
   @override
   _ResizableWidgetState createState() => _ResizableWidgetState();
 }
@@ -19,27 +21,22 @@ class ResizableWidget extends StatefulWidget {
 const ballDiameter = 7.0;
 
 class _ResizableWidgetState extends State<ResizableWidget>
-    with AutomaticKeepAliveClientMixin {
-  late double height = 100;
-  late double width = 150;
-
-  double top = 100;
-  double left = 100;
+    with AutomaticKeepAliveClientMixin<ResizableWidget> {
+  late double top;
+  late double left;
+  late double height;
+  late double width;
   late double initX;
   late double initY;
-
   late bool _isFocused;
-  late var widgetKey = GlobalKey();
-  late FocusNode focus;
 
   @override
   void initState() {
-    focus = FocusNode();
-    focus.addListener(() {
-      setState(() {
-        _isFocused = focus.hasFocus;
-      });
-    });
+    top = widget.drag.top;
+    left = widget.drag.left;
+    height = widget.drag.height;
+    width = widget.drag.width;
+
     super.initState();
   }
 
@@ -49,7 +46,6 @@ class _ResizableWidgetState extends State<ResizableWidget>
   void onDrag(double dx, double dy) {
     var newHeight = height + dy;
     var newWidth = width + dx;
-
     updateHeight(newHeight, newWidth);
   }
 
@@ -57,6 +53,8 @@ class _ResizableWidgetState extends State<ResizableWidget>
     setState(() {
       height = newHeight > 0 ? newHeight : 0;
       width = newWidth > 0 ? newWidth : 0;
+      widget.drag.height = height;
+      widget.drag.width = width;
     });
   }
 
@@ -64,6 +62,8 @@ class _ResizableWidgetState extends State<ResizableWidget>
     setState(() {
       initX = details.globalPosition.dx;
       initY = details.globalPosition.dy;
+      widget.drag.initX = initX;
+      widget.drag.initY = initY;
     });
   }
 
@@ -71,7 +71,6 @@ class _ResizableWidgetState extends State<ResizableWidget>
   Widget build(BuildContext context) {
     super.build(context);
     return Focus(
-      focusNode: focus,
       child: Builder(builder: (BuildContext context) {
         final FocusNode focusNode = Focus.of(context);
         _isFocused = focusNode.hasFocus;
@@ -96,6 +95,8 @@ class _ResizableWidgetState extends State<ResizableWidget>
               setState(() {
                 top = top + dy;
                 left = left + dx;
+                widget.drag.top = top;
+                widget.drag.left = left;
               });
             },
             child: Stack(
@@ -116,6 +117,7 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top - ballDiameter / 2,
                   left: left - ballDiameter / 2,
                   child: ManipulatingBall(
+                    drag: widget.drag,
                     indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var mid = (dx + dy) / 2;
@@ -125,8 +127,12 @@ class _ResizableWidgetState extends State<ResizableWidget>
                       setState(() {
                         height = newHeight > 0 ? newHeight : 0;
                         width = newWidth > 0 ? newWidth : 0;
+                        widget.drag.height = height;
+                        widget.drag.width = width;
                         top = top + mid;
                         left = left + mid;
+                        widget.drag.top = top;
+                        widget.drag.left = left;
                       });
                     },
                   ),
@@ -136,13 +142,16 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top - ballDiameter / 2,
                   left: left + width / 2 - ballDiameter / 2,
                   child: ManipulatingBall(
+                    drag: widget.drag,
                     indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var newHeight = height - dy;
 
                       setState(() {
                         height = newHeight > 0 ? newHeight : 0;
+                        widget.drag.height = height;
                         top = top + dy;
+                        widget.drag.top = top;
                       });
                     },
                   ),
@@ -152,6 +161,7 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top - ballDiameter / 2,
                   left: left + width - ballDiameter / 2,
                   child: ManipulatingBall(
+                    drag: widget.drag,
                     indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var mid = (dx + (dy * -1)) / 2;
@@ -162,8 +172,12 @@ class _ResizableWidgetState extends State<ResizableWidget>
                       setState(() {
                         height = newHeight > 0 ? newHeight : 0;
                         width = newWidth > 0 ? newWidth : 0;
+                        widget.drag.height = height;
+                        widget.drag.width = width;
                         top = top - mid;
                         left = left - mid;
+                        widget.drag.top = top;
+                        widget.drag.left = left;
                       });
                     },
                   ),
@@ -173,12 +187,14 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top + height / 2 - ballDiameter / 2,
                   left: left + width - ballDiameter / 2,
                   child: ManipulatingBall(
+                    drag: widget.drag,
                     indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var newWidth = width + dx;
 
                       setState(() {
                         width = newWidth > 0 ? newWidth : 0;
+                        widget.drag.width = width;
                       });
                     },
                   ),
@@ -188,6 +204,7 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top + height - ballDiameter / 2,
                   left: left + width - ballDiameter / 2,
                   child: ManipulatingBall(
+                    drag: widget.drag,
                     indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var mid = (dx + dy) / 2;
@@ -198,8 +215,12 @@ class _ResizableWidgetState extends State<ResizableWidget>
                       setState(() {
                         height = newHeight > 0 ? newHeight : 0;
                         width = newWidth > 0 ? newWidth : 0;
+                        widget.drag.height = height;
+                        widget.drag.width = width;
                         top = top - mid;
                         left = left - mid;
+                        widget.drag.top = top;
+                        widget.drag.left = left;
                       });
                     },
                   ),
@@ -209,12 +230,14 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top + height - ballDiameter / 2,
                   left: left + width / 2 - ballDiameter / 2,
                   child: ManipulatingBall(
+                    drag: widget.drag,
                     indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var newHeight = height + dy;
 
                       setState(() {
                         height = newHeight > 0 ? newHeight : 0;
+                        widget.drag.height = height;
                       });
                     },
                   ),
@@ -224,6 +247,7 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top + height - ballDiameter / 2,
                   left: left - ballDiameter / 2,
                   child: ManipulatingBall(
+                    drag: widget.drag,
                     indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var mid = ((dx * -1) + dy) / 2;
@@ -234,8 +258,12 @@ class _ResizableWidgetState extends State<ResizableWidget>
                       setState(() {
                         height = newHeight > 0 ? newHeight : 0;
                         width = newWidth > 0 ? newWidth : 0;
+                        widget.drag.height = height;
+                        widget.drag.width = width;
                         top = top - mid;
                         left = left - mid;
+                        widget.drag.top = top;
+                        widget.drag.left = left;
                       });
                     },
                   ),
@@ -245,13 +273,16 @@ class _ResizableWidgetState extends State<ResizableWidget>
                   top: top + height / 2 - ballDiameter / 2,
                   left: left - ballDiameter / 2,
                   child: ManipulatingBall(
+                    drag: widget.drag,
                     indicatorController: widget.indicatorController,
                     onDrag: (dx, dy) {
                       var newWidth = width - dx;
 
                       setState(() {
                         width = newWidth > 0 ? newWidth : 0;
+                        widget.drag.width = width;
                         left = left + dx;
+                        widget.drag.left = left;
                       });
                     },
                   ),
@@ -267,11 +298,15 @@ class _ResizableWidgetState extends State<ResizableWidget>
 
 class ManipulatingBall extends StatefulWidget {
   const ManipulatingBall(
-      {Key? key, required this.onDrag, required this.indicatorController})
+      {Key? key,
+      required this.onDrag,
+      required this.indicatorController,
+      required this.drag})
       : super(key: key);
 
   final Function onDrag;
   final IndicatorController indicatorController;
+  final DraggableController drag;
 
   @override
   _ManipulatingBallState createState() => _ManipulatingBallState();
@@ -282,23 +317,35 @@ class _ManipulatingBallState extends State<ManipulatingBall> {
   late double initY;
   late IndicatorController controller;
   late bool showed;
+  late DraggableController position;
 
   @override
   void initState() {
     controller = widget.indicatorController;
+    position = widget.drag;
     showed = controller.isShowed;
-    controller.addListener(() {
-      setState(() {
-        showed = controller.isShowed;
-      });
-    });
+    controller.addListener(showBox);
     super.initState();
+  }
+
+  void showBox() {
+    setState(() {
+      showed = controller.isShowed;
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(showBox);
+    super.dispose();
   }
 
   _handleDrag(details) {
     setState(() {
       initX = details.globalPosition.dx;
       initY = details.globalPosition.dy;
+      position.initX = initX;
+      position.initY = initY;
     });
   }
 
@@ -307,6 +354,8 @@ class _ManipulatingBallState extends State<ManipulatingBall> {
     var dy = details.globalPosition.dy - initY;
     initX = details.globalPosition.dx;
     initY = details.globalPosition.dy;
+    position.initX = initX;
+    position.initY = initY;
     widget.onDrag(dx, dy);
   }
 
