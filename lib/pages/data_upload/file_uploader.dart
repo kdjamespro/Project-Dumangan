@@ -51,96 +51,103 @@ class _FileUploaderState extends State<FileUploader> {
             if (snapshot.data as int > 0) {
               context.read<CrossCheckingBloc>().add(DbLoaded());
             } else {
-              return Column(
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: Icon(
-                              FluentIcons.check_list,
-                              size: 30,
-                            ),
-                          ),
-                          Container(
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                "Do you want to Cross Check your data?",
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: Icon(
+                                FluentIcons.check_list,
+                                size: 30,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  ToggleSwitch(
-                    checked: _crossCheck,
-                    onChanged: (v) => setState(() {
-                      if (_crossCheck) {
-                        context
-                            .read<CrossCheckingBloc>()
-                            .add(CrossChekingDisable());
-                      } else {
-                        context
-                            .read<CrossCheckingBloc>()
-                            .add(CrossChekingEnable());
-                      }
-                      _crossCheck = v;
-                      filePicker2.removeFile();
-                    }),
-                    content: Text(_crossCheck
-                        ? 'Cross Checking Enabled'
-                        : 'Cross Checking Disabled'),
-                  ),
-                  BlocConsumer<CrossCheckingBloc, CrossCheckingState>(
-                      builder: (context, state) {
-                        if (state is CrossCheckingDisabled) {
-                          return Row(
-                            children: [filePicker1],
-                          );
-                        } else if (state is CrossCheckingEnabled) {
-                          return Row(
-                            children: [filePicker2, filePicker1],
-                          );
+                            Container(
+                              child: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Do you want to Cross Check your data?",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    ToggleSwitch(
+                      checked: _crossCheck,
+                      onChanged: (v) => setState(() {
+                        if (_crossCheck) {
+                          context
+                              .read<CrossCheckingBloc>()
+                              .add(CrossChekingDisable());
                         } else {
-                          return Container();
+                          context
+                              .read<CrossCheckingBloc>()
+                              .add(CrossChekingEnable());
                         }
-                      },
-                      listener: (context, state) {}),
-                  FilledButton(
-                      child: const Text('Upload Data'),
-                      onPressed: () {
-                        int eventId = context.read<SelectedEvent>().eventId;
-                        if (!isFileReady()) {
-                          showWarningMessage(
-                              context: context,
-                              title: 'Missing File',
-                              message:
-                                  'Please select the file first before uploading');
-                          return;
-                        } else if (!(eventId >= 0)) {
-                          showWarningMessage(
-                              context: context,
-                              title: 'No Event Selected',
-                              message:
-                                  'Please select an event first before uploading the data');
-                          return;
-                        }
-                        context.read<CrossCheckingBloc>().add(CrossChekingStart(
-                            files: _crossCheck
-                                ? [filePicker2.getFile(), filePicker1.getFile()]
-                                : [filePicker1.getFile()],
-                            crossCheck: _crossCheck));
-                        debugPrint('File Uploaded');
+                        _crossCheck = v;
+                        filePicker2.removeFile();
                       }),
-                ],
+                      content: Text(_crossCheck
+                          ? 'Cross Checking Enabled'
+                          : 'Cross Checking Disabled'),
+                    ),
+                    BlocConsumer<CrossCheckingBloc, CrossCheckingState>(
+                        builder: (context, state) {
+                          if (state is CrossCheckingDisabled) {
+                            return Row(
+                              children: [filePicker1],
+                            );
+                          } else if (state is CrossCheckingEnabled) {
+                            return Row(
+                              children: [filePicker2, filePicker1],
+                            );
+                          } else {
+                            return Container();
+                          }
+                        },
+                        listener: (context, state) {}),
+                    FilledButton(
+                        child: const Text('Upload Data'),
+                        onPressed: () {
+                          int eventId = context.read<SelectedEvent>().eventId;
+                          if (!isFileReady()) {
+                            showWarningMessage(
+                                context: context,
+                                title: 'Missing File',
+                                message:
+                                    'Please select the file first before uploading');
+                            return;
+                          } else if (!(eventId >= 0)) {
+                            showWarningMessage(
+                                context: context,
+                                title: 'No Event Selected',
+                                message:
+                                    'Please select an event first before uploading the data');
+                            return;
+                          }
+                          context.read<CrossCheckingBloc>().add(
+                              CrossChekingStart(
+                                  files: _crossCheck
+                                      ? [
+                                          filePicker2.getFile(),
+                                          filePicker1.getFile()
+                                        ]
+                                      : [filePicker1.getFile()],
+                                  crossCheck: _crossCheck));
+                          debugPrint('File Uploaded');
+                        }),
+                  ],
+                ),
               );
             }
           }

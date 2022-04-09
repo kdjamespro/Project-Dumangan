@@ -35,7 +35,7 @@ class _ImageArchiveState extends State<ImageArchive> {
             return GridView.builder(
                 itemCount: archive.archivedImage.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
+                    crossAxisCount: 2, childAspectRatio: 30 / 22),
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {

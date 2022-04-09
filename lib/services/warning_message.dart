@@ -5,6 +5,7 @@ void showWarningMessage(
     required String title,
     required String message}) {
   showDialog(
+    barrierDismissible: true,
     context: context,
     builder: (context) {
       return ContentDialog(
