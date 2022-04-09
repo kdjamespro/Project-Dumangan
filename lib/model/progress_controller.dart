@@ -14,4 +14,13 @@ class ProgressController extends ChangeNotifier {
     progress += 1;
     notifyListeners();
   }
+
+  void decrease() {
+    progress -= 1;
+    notifyListeners();
+  }
+
+  void reset(){
+    progress = 0;
+  }
 }

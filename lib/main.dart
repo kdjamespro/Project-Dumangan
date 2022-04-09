@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/attribute_mapping.dart';
+import 'package:project_dumangan/model/gmail_account.dart';
 import 'package:project_dumangan/pages/EditorSample.dart';
 import 'package:project_dumangan/pages/help_page.dart';
 import 'package:project_dumangan/pages/setting_page.dart';
@@ -24,12 +25,14 @@ import 'pages/login_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   open.overrideFor(OperatingSystem.windows, openSQLiteOnWindows);
+  GmailAccount account = await GmailAccount.create();
   runApp(MultiProvider(
     providers: [
       Provider(create: (context) => AttributeMapping()),
       Provider(create: (context) => CrossCheckMapping()),
       Provider(create: (context) => SelectedEvent()),
       Provider(create: (context) => FileHandler(platform: FilePicker.platform)),
+      Provider(create: (context) => account),
       Provider<MyDatabase>(
         create: (context) => MyDatabase(),
         dispose: (context, db) => db.close(),

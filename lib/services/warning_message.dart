@@ -1,10 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
-void showWarningMessage(
+Future<void> showWarningMessage(
     {required BuildContext context,
     required String title,
-    required String message}) {
-  showDialog(
+    required String message}) async{
+  await showDialog(
     context: context,
     builder: (context) {
       return ContentDialog(
@@ -17,6 +17,7 @@ void showWarningMessage(
               child: const Text('Ok'),
               onPressed: () {
                 Navigator.pop(context);
+                return;
               },
               style: FluentTheme.of(context).buttonTheme.filledButtonStyle,
             ),

@@ -212,6 +212,7 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                   ));
                                   clearController();
                                   MotionToast.success(
+                                          dismissable: true,
                                           animationDuration:
                                               const Duration(seconds: 1),
                                           animationCurve: Curves.easeOut,

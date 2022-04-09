@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as mat;
+import 'package:project_dumangan/database/database.dart';
+import 'package:project_dumangan/model/gmail_account.dart';
+import 'package:project_dumangan/model/selected_event.dart';
+import 'package:provider/provider.dart';
 
 class DataPage extends StatefulWidget {
   const DataPage({Key? key}) : super(key: key);
@@ -55,13 +61,17 @@ class _DataPageState extends State<DataPage>
               ),
               floatingActionButton: FloatingActionButton(
                 onPressed: () {
-                  // ignore: avoid_print
-                  print('Text Box');
+                  MyDatabase db = context.read<MyDatabase>();
+                  SelectedEvent event = context.read<SelectedEvent>();
+                  GmailAccount account = context.read<GmailAccount>();
                   fluent.showDialog(
                     barrierDismissible: true,
                     context: context,
                     builder: (context) {
-                      // ignore: dead_code
+                      TextEditingController emailSubject =
+                          TextEditingController();
+                      TextEditingController emailContents =
+                          TextEditingController();
                       return fluent.Container(
                         margin: const fluent.EdgeInsets.all(100),
                         child: Scaffold(
