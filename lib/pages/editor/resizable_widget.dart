@@ -324,12 +324,20 @@ class _ManipulatingBallState extends State<ManipulatingBall> {
     controller = widget.indicatorController;
     position = widget.drag;
     showed = controller.isShowed;
-    controller.addListener(() {
-      setState(() {
-        showed = controller.isShowed;
-      });
-    });
+    controller.addListener(showBox);
     super.initState();
+  }
+
+  void showBox() {
+    setState(() {
+      showed = controller.isShowed;
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(showBox);
+    super.dispose();
   }
 
   _handleDrag(details) {

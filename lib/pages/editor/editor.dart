@@ -148,28 +148,33 @@ class _EditorState extends State<Editor>
           child: Column(
             children: [
               Expanded(
-                child: Screenshot(
-                  controller: screenshotController,
-                  child: Stack(
-                    alignment: AlignmentDirectional.center,
-                    children: [
-                      Positioned(
-                        child: AspectRatio(
-                          aspectRatio: aspectRatio,
-                          child: Container(
-                            margin: const EdgeInsets.all(16),
-                            color: Colors.white,
-                            child: image.existsSync()
-                                ? Image.file(
-                                    image,
-                                    fit: BoxFit.fill,
-                                  )
-                                : Container(),
+                child: Container(
+                  margin: const EdgeInsets.all(8.0),
+                  child: Screenshot(
+                    controller: screenshotController,
+                    child: AspectRatio(
+                      aspectRatio: aspectRatio,
+                      child: Stack(
+                        alignment: AlignmentDirectional.center,
+                        children: [
+                          Positioned(
+                            child: AspectRatio(
+                              aspectRatio: aspectRatio,
+                              child: Container(
+                                color: Colors.white,
+                                child: image.existsSync()
+                                    ? Image.file(
+                                        image,
+                                        fit: BoxFit.fill,
+                                      )
+                                    : Container(),
+                              ),
+                            ),
                           ),
-                        ),
+                          ...stackContents,
+                        ],
                       ),
-                      ...stackContents,
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -681,12 +686,14 @@ class _EditorState extends State<Editor>
                           context: context,
                           title: 'Generating Certificate',
                         );
-                        for (; i < 131;) {
+                        for (; i < 5;) {
+                          final stopwatch = Stopwatch()..start();
                           String fileName = dynamicFields.updateAttributes(i);
                           String name = Path.join(path, fileName);
                           var cert = await screenshotController.capture(
                             pixelRatio: 5,
                           );
+
                           if (cert != null) {
                             await PdfGenerator.generatePdf(
                                 cert, name, canvasController.orientation);
@@ -694,6 +701,8 @@ class _EditorState extends State<Editor>
                           }
                           i += 1;
                           loading.increase();
+                          print(
+                              'Whole Generation Process executed in ${stopwatch.elapsed.inSeconds}');
                         }
                         dynamicFields.showIndicators();
                         dynamicFields.reset();

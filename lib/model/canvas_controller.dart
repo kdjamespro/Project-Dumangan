@@ -83,7 +83,7 @@ extension PageOrientationExtension on PageOrientation {
 }
 
 extension PageOrientationWidth on PageOrientation {
-  int get width {
+  double get width {
     switch (this) {
       case PageOrientation.legalPortrait:
         return 2551;
@@ -103,7 +103,7 @@ extension PageOrientationWidth on PageOrientation {
 }
 
 extension PageOrientationHeight on PageOrientation {
-  int get height {
+  double get height {
     switch (this) {
       case PageOrientation.legalPortrait:
         return 4205;

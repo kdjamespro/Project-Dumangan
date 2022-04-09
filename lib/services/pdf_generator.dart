@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -9,21 +10,20 @@ import 'package:project_dumangan/model/canvas_controller.dart';
 class PdfGenerator {
   static generatePdf(
       Uint8List image, String path, PageOrientation orientation) async {
+    final stopwatch = Stopwatch()..start();
     final pdf = pw.Document();
     PdfPageFormat pageFormat = _findPaperSize(orientation);
     pw.PageOrientation pageOrientation = _findOrientation(orientation);
-    final cert = _resizeImage(image, orientation);
+    // final cert = _resizeImage(image, orientation);
+    // print('Image Resizing executed in ${stopwatch.elapsed.inSeconds}');
     pdf.addPage(
       pw.Page(
-        pageTheme: pw.PageTheme(
-          margin: const pw.EdgeInsets.all(0),
-          orientation: pageOrientation,
-          pageFormat: pageFormat,
-        ),
-        build: (context) => pw.FullPage(
+        pageFormat: pageFormat,
+        orientation: pageOrientation,
+        build: (pw.Context context) => pw.FullPage(
           ignoreMargins: true,
           child: pw.Image(
-            pw.MemoryImage(cert),
+            pw.MemoryImage(image),
             fit: pw.BoxFit.fill,
             dpi: 300,
           ),
@@ -32,6 +32,7 @@ class PdfGenerator {
     );
     final pdfFile = File(path);
     await pdfFile.writeAsBytes(await pdf.save());
+    print('Cert Generation executed in ${stopwatch.elapsed.inSeconds}');
   }
 
   static PdfPageFormat _findPaperSize(PageOrientation orientation) {
@@ -61,19 +62,19 @@ class PdfGenerator {
   }
 
   static Uint8List _resizeImage(Uint8List data, PageOrientation orientation) {
-    int width = orientation.width;
-    int height = orientation.height;
+    int width = orientation.width.toInt();
+    int height = orientation.height.toInt();
 
     Uint8List resizedData = data;
     IMG.Image img = IMG.decodeImage(data) as IMG.Image;
 
     IMG.Image resized;
     if (width < height) {
-      resized = IMG.copyResize(img, width: width);
+      resized = IMG.copyResize(img, width: width, height: height);
     } else {
-      resized = IMG.copyResize(img, height: height);
+      resized = IMG.copyResize(img, width: width, height: height);
     }
-    resizedData = Uint8List.fromList(IMG.encodePng(resized));
+    resizedData = Uint8List.fromList(IMG.encodeJpg(resized));
     return resizedData;
   }
 }
