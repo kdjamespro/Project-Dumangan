@@ -637,46 +637,79 @@ class _EditorState extends State<Editor>
                   child: const Text('Generate PDF'),
                   onPressed: () async {
                     SelectedEvent event = context.read<SelectedEvent>();
+                    MyDatabase db = context.read<MyDatabase>();
                     if (event.isEventSet() &&
                         dynamicFields.attributes.isNotEmpty) {
-                      String path =
-                          await context.read<FileHandler>().selectDirectory();
-                      if (path != '') {
-                        List<ParticipantsTableData> list = await context
-                            .read<MyDatabase>()
-                            .getAttendedParticipants(event.eventId);
-                        dynamicFields.hideIndicators();
-                        dynamicFields.setDynamicFieldsData(list, event);
-                        int i = 0;
-                        ProgressController loading =
-                            context.read<ProgressController>();
-                        loading.setOverall(5);
-                        LoadingDialog load = LoadingDialog();
-                        load.showLoadingScreen(
-                          context: context,
-                          title: 'Generating Certificate',
-                        );
-                        for (; i < 5;) {
-                          final stopwatch = Stopwatch()..start();
-                          String fileName = dynamicFields.updateAttributes(i);
-                          String name = Path.join(path, fileName);
-                          var cert = await screenshotController.capture(
-                            pixelRatio: 5,
+                      List<ParticipantsTableData> list =
+                          await db.getAttendedParticipants(event.eventId);
+                      if (list.isNotEmpty) {
+                        String path =
+                            await context.read<FileHandler>().selectDirectory();
+                        if (path != '') {
+                          dynamicFields.hideIndicators();
+                          dynamicFields.setDynamicFieldsData(list, event);
+                          List<CertificatesTableCompanion> certs = [];
+                          int i = 0;
+                          ProgressController loading =
+                              context.read<ProgressController>();
+                          loading.setOverall(list.length);
+                          LoadingDialog load = LoadingDialog();
+                          load.showLoadingScreen(
+                            context: context,
+                            title: 'Generating Certificate',
                           );
-
-                          if (cert != null) {
-                            await PdfGenerator.generatePdf(
-                                cert, name, canvasController.orientation);
-                            print('Sucessful');
+                          int sucessful = 0;
+                          for (; i < list.length;) {
+                            final stopwatch = Stopwatch()..start();
+                            int id = dynamicFields.updateAttributes(i);
+                            String name =
+                                Path.join(path, id.toString() + '.pdf');
+                            var cert = await screenshotController.capture(
+                              pixelRatio: 5,
+                            );
+                            if (cert != null) {
+                              try {
+                                await PdfGenerator.generatePdf(
+                                    cert, name, canvasController.orientation);
+                                certs.add(CertificatesTableCompanion.insert(
+                                    participantsId: id,
+                                    filename: name,
+                                    eventId: event.eventId));
+                                sucessful += 1;
+                              } on FileSystemException catch (e) {
+                                print(e);
+                                await showWarningMessage(
+                                    context: context,
+                                    title: 'Cannot create pdf file',
+                                    message:
+                                        'The file $name is used by another application or process. Please close it before proceeding');
+                                i -= 1;
+                                loading.decrease();
+                              }
+                            }
+                            i += 1;
+                            loading.increase();
+                            print(
+                                'Whole Generation Process executed in ${stopwatch.elapsed.inSeconds}');
                           }
-                          i += 1;
-                          loading.increase();
-                          print(
-                              'Whole Generation Process executed in ${stopwatch.elapsed.inSeconds}');
+                          await db.addCertificates(certs);
+                          await db.updateEventCertificates(
+                              event.eventId, sucessful);
+                          dynamicFields.showIndicators();
+                          dynamicFields.reset();
+                          load.hideLoadingScreen();
+                          loading.reset();
                         }
-                        dynamicFields.showIndicators();
-                        dynamicFields.reset();
-                        load.hideLoadingScreen();
+                      } else {
+                        MotionToast.error(
+                          animationDuration: const Duration(seconds: 1),
+                          animationCurve: Curves.easeOut,
+                          toastDuration: const Duration(seconds: 2),
+                          title: const Text('Certificate Generation Error'),
+                          description:
+                              const Text('Add a participant\'s data first'),
+                          dismissable: true,
+                        ).show(context);
                       }
                     } else {
                       MotionToast.error(

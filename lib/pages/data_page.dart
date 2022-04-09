@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as mat;
+import 'package:project_dumangan/database/database.dart';
+import 'package:project_dumangan/model/gmail_account.dart';
+import 'package:project_dumangan/model/selected_event.dart';
+import 'package:provider/provider.dart';
 
 class DataPage extends StatefulWidget {
   const DataPage({Key? key}) : super(key: key);
@@ -46,13 +52,17 @@ class _DataPageState extends State<DataPage> {
               ),
               floatingActionButton: FloatingActionButton(
                 onPressed: () {
-                  // ignore: avoid_print
-                  print('Text Box');
+                  MyDatabase db = context.read<MyDatabase>();
+                  SelectedEvent event = context.read<SelectedEvent>();
+                  GmailAccount account = context.read<GmailAccount>();
                   fluent.showDialog(
                     barrierDismissible: true,
                     context: context,
                     builder: (context) {
-                      // ignore: dead_code
+                      TextEditingController emailSubject =
+                          TextEditingController();
+                      TextEditingController emailContents =
+                          TextEditingController();
                       return fluent.Container(
                         margin: const fluent.EdgeInsets.all(100),
                         child: Scaffold(
@@ -67,7 +77,6 @@ class _DataPageState extends State<DataPage> {
                                       width: 50,
                                       child: FloatingActionButton(
                                         onPressed: () {
-                                          print("Go Back Button");
                                           fluent.showDialog(
                                             barrierDismissible: true,
                                             context: context,
@@ -84,7 +93,7 @@ class _DataPageState extends State<DataPage> {
                                                       onPressed: () {
                                                         Navigator.pop(context);
                                                       }),
-                                                  Button(
+                                                  FilledButton(
                                                     child:
                                                         const Text('Go Back'),
                                                     onPressed: () {
@@ -113,11 +122,12 @@ class _DataPageState extends State<DataPage> {
                                     const Spacer(),
                                   ],
                                 ),
-                                const fluent.Padding(
-                                  padding:
-                                      EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+                                fluent.Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      0.0, 20.0, 0.0, 0.0),
                                   child: TextField(
-                                    decoration: InputDecoration(
+                                    controller: emailSubject,
+                                    decoration: const InputDecoration(
                                       hintText: "Email Subject",
                                       labelText: "Subject",
                                       labelStyle: TextStyle(
@@ -137,9 +147,10 @@ class _DataPageState extends State<DataPage> {
                                     constraints: BoxConstraints(),
                                     // ignore: prefer_const_constructors
                                     child: SingleChildScrollView(
-                                      child: const TextField(
+                                      child: TextField(
+                                        controller: emailContents,
                                         maxLines: null,
-                                        decoration: InputDecoration(
+                                        decoration: const InputDecoration(
                                           alignLabelWithHint: true,
                                           hintText: "Email Body",
                                           labelText: "Body",
@@ -175,9 +186,43 @@ class _DataPageState extends State<DataPage> {
                                           onPressed: () {
                                             Navigator.pop(context);
                                           }),
-                                      Button(
+                                      FilledButton(
                                           child: const Text('Send'),
-                                          onPressed: () {
+                                          onPressed: () async {
+                                            print(account.signedIn);
+                                            if (account.signedIn) {
+                                              if (event.isEventSet()) {
+                                                List<CertificatesTableData>
+                                                    certs =
+                                                    await db.getCertificates(
+                                                        event.eventId);
+                                                for (CertificatesTableData cert
+                                                    in certs) {
+                                                  String email = await db
+                                                      .getParticipantEmail(
+                                                          cert.participantsId);
+                                                  File certificate =
+                                                      File(cert.filename);
+                                                  if (certificate
+                                                      .existsSync()) {
+                                                    account.sendEmail(
+                                                        emailSubject.text,
+                                                        emailContents.text,
+                                                        email,
+                                                        certificate);
+                                                    await db.updateCertStatus(
+                                                        cert.id);
+                                                  }
+                                                }
+                                              }
+                                            } else {
+                                              fluent.showSnackbar(
+                                                  context,
+                                                  const SnackBar(
+                                                      content: Text(
+                                                          'You are not logged in to your gmail account')));
+                                            }
+
                                             Navigator.pop(context);
                                           })
                                     ],

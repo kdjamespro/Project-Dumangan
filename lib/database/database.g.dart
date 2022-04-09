@@ -757,11 +757,13 @@ class CertificatesTableData extends DataClass
     implements Insertable<CertificatesTableData> {
   final int id;
   final int participantsId;
+  final int eventId;
   final String filename;
   final bool sended;
   CertificatesTableData(
       {required this.id,
       required this.participantsId,
+      required this.eventId,
       required this.filename,
       required this.sended});
   factory CertificatesTableData.fromData(Map<String, dynamic> data,
@@ -772,6 +774,8 @@ class CertificatesTableData extends DataClass
           .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       participantsId: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}participants_id'])!,
+      eventId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}event_id'])!,
       filename: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}filename'])!,
       sended: const BoolType()
@@ -783,6 +787,7 @@ class CertificatesTableData extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['participants_id'] = Variable<int>(participantsId);
+    map['event_id'] = Variable<int>(eventId);
     map['filename'] = Variable<String>(filename);
     map['sended'] = Variable<bool>(sended);
     return map;
@@ -792,6 +797,7 @@ class CertificatesTableData extends DataClass
     return CertificatesTableCompanion(
       id: Value(id),
       participantsId: Value(participantsId),
+      eventId: Value(eventId),
       filename: Value(filename),
       sended: Value(sended),
     );
@@ -803,6 +809,7 @@ class CertificatesTableData extends DataClass
     return CertificatesTableData(
       id: serializer.fromJson<int>(json['id']),
       participantsId: serializer.fromJson<int>(json['participantsId']),
+      eventId: serializer.fromJson<int>(json['eventId']),
       filename: serializer.fromJson<String>(json['filename']),
       sended: serializer.fromJson<bool>(json['sended']),
     );
@@ -813,16 +820,22 @@ class CertificatesTableData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'participantsId': serializer.toJson<int>(participantsId),
+      'eventId': serializer.toJson<int>(eventId),
       'filename': serializer.toJson<String>(filename),
       'sended': serializer.toJson<bool>(sended),
     };
   }
 
   CertificatesTableData copyWith(
-          {int? id, int? participantsId, String? filename, bool? sended}) =>
+          {int? id,
+          int? participantsId,
+          int? eventId,
+          String? filename,
+          bool? sended}) =>
       CertificatesTableData(
         id: id ?? this.id,
         participantsId: participantsId ?? this.participantsId,
+        eventId: eventId ?? this.eventId,
         filename: filename ?? this.filename,
         sended: sended ?? this.sended,
       );
@@ -831,6 +844,7 @@ class CertificatesTableData extends DataClass
     return (StringBuffer('CertificatesTableData(')
           ..write('id: $id, ')
           ..write('participantsId: $participantsId, ')
+          ..write('eventId: $eventId, ')
           ..write('filename: $filename, ')
           ..write('sended: $sended')
           ..write(')'))
@@ -838,13 +852,15 @@ class CertificatesTableData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(id, participantsId, filename, sended);
+  int get hashCode =>
+      Object.hash(id, participantsId, eventId, filename, sended);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is CertificatesTableData &&
           other.id == this.id &&
           other.participantsId == this.participantsId &&
+          other.eventId == this.eventId &&
           other.filename == this.filename &&
           other.sended == this.sended);
 }
@@ -853,30 +869,36 @@ class CertificatesTableCompanion
     extends UpdateCompanion<CertificatesTableData> {
   final Value<int> id;
   final Value<int> participantsId;
+  final Value<int> eventId;
   final Value<String> filename;
   final Value<bool> sended;
   const CertificatesTableCompanion({
     this.id = const Value.absent(),
     this.participantsId = const Value.absent(),
+    this.eventId = const Value.absent(),
     this.filename = const Value.absent(),
     this.sended = const Value.absent(),
   });
   CertificatesTableCompanion.insert({
     this.id = const Value.absent(),
     required int participantsId,
+    required int eventId,
     required String filename,
     this.sended = const Value.absent(),
   })  : participantsId = Value(participantsId),
+        eventId = Value(eventId),
         filename = Value(filename);
   static Insertable<CertificatesTableData> custom({
     Expression<int>? id,
     Expression<int>? participantsId,
+    Expression<int>? eventId,
     Expression<String>? filename,
     Expression<bool>? sended,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (participantsId != null) 'participants_id': participantsId,
+      if (eventId != null) 'event_id': eventId,
       if (filename != null) 'filename': filename,
       if (sended != null) 'sended': sended,
     });
@@ -885,11 +907,13 @@ class CertificatesTableCompanion
   CertificatesTableCompanion copyWith(
       {Value<int>? id,
       Value<int>? participantsId,
+      Value<int>? eventId,
       Value<String>? filename,
       Value<bool>? sended}) {
     return CertificatesTableCompanion(
       id: id ?? this.id,
       participantsId: participantsId ?? this.participantsId,
+      eventId: eventId ?? this.eventId,
       filename: filename ?? this.filename,
       sended: sended ?? this.sended,
     );
@@ -903,6 +927,9 @@ class CertificatesTableCompanion
     }
     if (participantsId.present) {
       map['participants_id'] = Variable<int>(participantsId.value);
+    }
+    if (eventId.present) {
+      map['event_id'] = Variable<int>(eventId.value);
     }
     if (filename.present) {
       map['filename'] = Variable<String>(filename.value);
@@ -918,6 +945,7 @@ class CertificatesTableCompanion
     return (StringBuffer('CertificatesTableCompanion(')
           ..write('id: $id, ')
           ..write('participantsId: $participantsId, ')
+          ..write('eventId: $eventId, ')
           ..write('filename: $filename, ')
           ..write('sended: $sended')
           ..write(')'))
@@ -945,7 +973,12 @@ class $CertificatesTableTable extends CertificatesTable
       'participants_id', aliasedName, false,
       type: const IntType(),
       requiredDuringInsert: true,
-      defaultConstraints: 'REFERENCES participants_table (id)');
+      $customConstraints: 'UNIQUE');
+  final VerificationMeta _eventIdMeta = const VerificationMeta('eventId');
+  @override
+  late final GeneratedColumn<int?> eventId = GeneratedColumn<int?>(
+      'event_id', aliasedName, false,
+      type: const IntType(), requiredDuringInsert: true);
   final VerificationMeta _filenameMeta = const VerificationMeta('filename');
   @override
   late final GeneratedColumn<String?> filename = GeneratedColumn<String?>(
@@ -960,7 +993,8 @@ class $CertificatesTableTable extends CertificatesTable
       defaultConstraints: 'CHECK (sended IN (0, 1))',
       defaultValue: const Constant(false));
   @override
-  List<GeneratedColumn> get $columns => [id, participantsId, filename, sended];
+  List<GeneratedColumn> get $columns =>
+      [id, participantsId, eventId, filename, sended];
   @override
   String get aliasedName => _alias ?? 'certificates_table';
   @override
@@ -981,6 +1015,12 @@ class $CertificatesTableTable extends CertificatesTable
               data['participants_id']!, _participantsIdMeta));
     } else if (isInserting) {
       context.missing(_participantsIdMeta);
+    }
+    if (data.containsKey('event_id')) {
+      context.handle(_eventIdMeta,
+          eventId.isAcceptableOrUnknown(data['event_id']!, _eventIdMeta));
+    } else if (isInserting) {
+      context.missing(_eventIdMeta);
     }
     if (data.containsKey('filename')) {
       context.handle(_filenameMeta,

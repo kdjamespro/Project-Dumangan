@@ -73,17 +73,17 @@ class AttributeText extends ChangeNotifier {
     _setEventsData(event, attr);
   }
 
-  String updateAttributes(int index) {
+  int updateAttributes(int index) {
     if (index < size) {
       for (String field in dynamicFieldData.keys) {
         attributes[field]?.style.controller.text =
             dynamicFieldData[field]?.elementAt(index) ?? '';
       }
-      String certName = _participantIds[index].toString() + '.pdf';
+      int participantsId = _participantIds[index];
       notifyListeners();
-      return certName;
+      return participantsId;
     }
-    return '';
+    return -1;
   }
 
   void _setParticipantsData(List<ParticipantsTableData> participantsInfo,
