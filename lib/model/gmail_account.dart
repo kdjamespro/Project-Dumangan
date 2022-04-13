@@ -12,6 +12,7 @@ class GmailAccount {
     'openid',
     'https://www.googleapis.com/auth/userinfo.profile',
     'https://mail.google.com/',
+    'https://www.googleapis.com/auth/gmail.send',
   ];
   bool _isLoggedIn;
 
@@ -72,6 +73,29 @@ class GmailAccount {
       ..subject = subject
       ..text = userMessage
       ..attachments = [FileAttachment(cert)];
+
+    try {
+      await send(message, smtpServer);
+      print('Email Sent');
+    } on MailerException catch (e) {
+      print(e);
+    }
+  }
+
+  Future sendAnnouncements(
+      String subject, String userMessage, String participantEmail) async {
+    final email = account!.email;
+    final auth = await account!.authentication;
+    final token = auth.accessToken!;
+    final smtpServer = gmailSaslXoauth2(email, token);
+
+    final message = Message()
+      ..from = Address(email)
+      ..recipients = [
+        participantEmail,
+      ]
+      ..subject = subject
+      ..text = userMessage;
 
     try {
       await send(message, smtpServer);

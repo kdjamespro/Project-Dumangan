@@ -96,6 +96,13 @@ class MyDatabase extends _$MyDatabase {
     ).map((row) => row.read<String>('email')).getSingle();
   }
 
+  Future<List<String>> getAllParticipantEmail() async {
+    return await customSelect(
+      'SELECT email FROM participants_table',
+      readsFrom: {participantsTable},
+    ).map((row) => row.read<String>('email')).get();
+  }
+
   Future<List<CertificatesTableData>> getCertificates(int eventsId) async {
     return await (select(certificatesTable)
           ..where((row) => row.eventId.equals(eventsId)))
