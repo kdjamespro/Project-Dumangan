@@ -343,7 +343,7 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                       ),
                     ],
                   ),
-                  margin: EdgeInsets.only(right: 15),
+                  margin: const EdgeInsets.only(right: 15),
                   child: Padding(
                     padding: const EdgeInsets.all(14.0),
                     child: Column(

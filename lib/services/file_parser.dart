@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:csv/csv.dart';
 // ignore: import_of_legacy_library_into_null_safe
-import 'package:excel/excel.dart';
 import 'package:path/path.dart' as p;
 
 class FileParser {
@@ -38,17 +37,6 @@ class FileParser {
       col.putIfAbsent(headers[i], () => contents);
     }
     return col;
-  }
-
-  void _parse_xlsx(file) async {
-    var bytes = File(file.path).readAsBytesSync();
-    var excel = Excel.decodeBytes(bytes);
-    print(excel.getDefaultSheet());
-    List l = excel.tables[excel.getDefaultSheet()]?.rows ?? [];
-    for (var rows in l) {
-      print(rows);
-      //print(table); //sheet Name
-    }
   }
 
   bool _isCsv(File file) {

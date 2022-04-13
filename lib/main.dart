@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_window_close/flutter_window_close.dart';
 import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/attribute_mapping.dart';
 import 'package:project_dumangan/model/gmail_account.dart';
@@ -25,6 +26,7 @@ import 'pages/login_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   open.overrideFor(OperatingSystem.windows, openSQLiteOnWindows);
+
   GmailAccount account = await GmailAccount.create();
   runApp(MultiProvider(
     providers: [
@@ -79,6 +81,9 @@ class _MyHomePageState extends State<MyHomePage>
   int index = 0;
   Image? userPhoto;
   String? userName;
+  var _alertShowing = false;
+  var _index = 0;
+
   void setUserProfile(String url, String name) {
     if (url == '') {
       setState(() {
@@ -91,6 +96,40 @@ class _MyHomePageState extends State<MyHomePage>
         userName = name;
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FlutterWindowClose.setWindowShouldCloseHandler(() async {
+      if (_alertShowing) return false;
+      _alertShowing = true;
+      bool? result = await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return ContentDialog(
+                title: const Text('Do you really want to quit?'),
+                actions: [
+                  Button(
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                        _alertShowing = false;
+                      },
+                      child: const Text('No')),
+                  FilledButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                        _alertShowing = false;
+                      },
+                      child: const Text('Yes')),
+                ]);
+          });
+      if (result == null) {
+        return false;
+      } else {
+        return result;
+      }
+    });
   }
 
   @override
@@ -192,16 +231,6 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 }
-
-// BlocProvider(
-//   create: (context) => EventsBloc(),
-//   child: Builder(builder: (context) {
-//     return BlocProvider.value(
-//       value: BlocProvider.of<EventsBloc>(context),
-//       child: EventPage(),
-//     );
-//   }),
-// ),
 
 class WindowButtons extends StatelessWidget {
   const WindowButtons({Key? key}) : super(key: key);

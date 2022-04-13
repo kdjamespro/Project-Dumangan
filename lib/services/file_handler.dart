@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:csv/csv.dart';
 // ignore: import_of_legacy_library_into_null_safe
-import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -92,13 +91,5 @@ class FileHandler {
         .transform(const CsvToListConverter())
         .toList();
     return fields;
-  }
-
-  void _parse_excel(file) async {
-    var bytes = File(file.path).readAsBytesSync();
-    var excel = Excel.decodeBytes(bytes);
-    for (var table in excel.tables.keys) {
-      print(table); //sheet Name
-    }
   }
 }

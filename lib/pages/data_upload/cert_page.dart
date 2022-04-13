@@ -145,6 +145,7 @@ class _TableState extends State<Table>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    SelectedEvent event = context.read<SelectedEvent>();
     return StreamBuilder(
         stream: Provider.of<MyDatabase>(context, listen: false)
             .getParticipants(context.read<SelectedEvent>().eventId),
@@ -258,6 +259,7 @@ class _TableState extends State<Table>
                                             ));
                                         clearController();
                                         flyoutController.open = false;
+                                        event.increaseParticipants(1);
                                         MotionToast.success(
                                                 dismissable: true,
                                                 animationDuration:
@@ -310,9 +312,15 @@ class _TableState extends State<Table>
                                   for (var row in dataSource.selectedRows) {
                                     await Provider.of<MyDatabase>(context,
                                             listen: false)
-                                        .deleteParticipant(row.id);
+                                        .deleteParticipant(row.id ?? -1);
+                                    if (row.attended) {
+                                      event.decreaseParticipants(1);
+                                    } else {
+                                      event.decreaseAbsentees(1);
+                                    }
                                   }
                                   MotionToast.delete(
+                                          dismissable: true,
                                           animationDuration:
                                               const Duration(seconds: 1),
                                           animationCurve: Curves.easeOut,
@@ -406,7 +414,7 @@ class _TableState extends State<Table>
 }
 
 class TableSource extends mat.DataTableSource {
-  List selectedRows;
+  List<Participant> selectedRows;
   List dataList;
   TableSource({required this.dataList, required this.selectedRows});
 
