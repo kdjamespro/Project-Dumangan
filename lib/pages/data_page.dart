@@ -168,6 +168,7 @@ class _DataPageState extends State<DataPage>
                                         headerStyle: TextStyle(fontSize: 18),
                                         placeholder:
                                             'Enter your email subject here',
+                                        controller: emailSubject,
                                       ),
                                       SizedBox(
                                         height: 20,
@@ -179,6 +180,7 @@ class _DataPageState extends State<DataPage>
                                         headerStyle: TextStyle(fontSize: 18),
                                         placeholder:
                                             'Enter your email body here',
+                                        controller: emailContents,
                                       ),
                                       fluent.SizedBox(
                                         height: 10,
@@ -210,10 +212,51 @@ class _DataPageState extends State<DataPage>
                                                       FilledButton(
                                                           child: const Text(
                                                               'Send'),
-                                                          onPressed: () {
+                                                          onPressed: () async {
+                                                            print(account
+                                                                .signedIn);
+                                                            if (account
+                                                                .signedIn) {
+                                                              if (event
+                                                                  .isEventSet()) {
+                                                                List<CertificatesTableData>
+                                                                    certs =
+                                                                    await db.getCertificates(
+                                                                        event
+                                                                            .eventId);
+                                                                for (CertificatesTableData cert
+                                                                    in certs) {
+                                                                  String email =
+                                                                      await db.getParticipantEmail(
+                                                                          cert.participantsId);
+                                                                  File
+                                                                      certificate =
+                                                                      File(cert
+                                                                          .filename);
+                                                                  if (certificate
+                                                                      .existsSync()) {
+                                                                    account.sendEmail(
+                                                                        emailSubject
+                                                                            .text,
+                                                                        emailContents
+                                                                            .text,
+                                                                        email,
+                                                                        certificate);
+                                                                    await db.updateCertStatus(
+                                                                        cert.id);
+                                                                  }
+                                                                }
+                                                              }
+                                                            } else {
+                                                              fluent.showSnackbar(
+                                                                  context,
+                                                                  const SnackBar(
+                                                                      content: Text(
+                                                                          'You are not logged in to your gmail account')));
+                                                            }
                                                             Navigator.pop(
                                                                 context);
-                                                          })
+                                                          }),
                                                     ],
                                                   );
                                                 },
