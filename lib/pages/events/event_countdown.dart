@@ -37,18 +37,19 @@ class EventCountdown extends StatelessWidget {
                       ),
                     ],
                   ),
-                  width: 250,
-                  height: 200,
+                  width: 200,
+                  height: 220,
                   padding: const EdgeInsets.all(4),
                   child: Container(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             const Icon(FluentIcons.timer),
-                            const SizedBox(
-                              width: 20,
+                            SizedBox(
+                              width: 15,
                             ),
                             Text(
                               'Event Countdown',
@@ -61,12 +62,15 @@ class EventCountdown extends StatelessWidget {
                           margin: const EdgeInsets.symmetric(vertical: 8),
                           child: Column(children: [
                             Container(
-                              height: 120,
-                              width: 150,
-                              color: FluentTheme.of(context)
-                                  .accentColor
-                                  .lightest
-                                  .withOpacity(0.4),
+                              height: 130,
+                              width: 140,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: FluentTheme.of(context)
+                                    .accentColor
+                                    .lightest
+                                    .withOpacity(0.4),
+                              ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [

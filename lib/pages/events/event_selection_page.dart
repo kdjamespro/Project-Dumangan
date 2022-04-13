@@ -184,7 +184,7 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                           ],
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 0,
                         ),
                         SizedBox(
                           width: 630,
