@@ -370,6 +370,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.3"
+  flutter_font_picker:
+    dependency: "direct main"
+    description:
+      name: flutter_font_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.1"
   flutter_lints:
     dependency: "direct dev"
     description:

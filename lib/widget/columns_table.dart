@@ -51,6 +51,9 @@ class _ColumnsTableState extends State<ColumnsTable> {
                         .removeAll();
                   },
                 ),
+                SizedBox(
+                  width: 20,
+                ),
                 FilledButton(
                     child: const Text('Match File'),
                     onPressed: () {

@@ -18,6 +18,7 @@ class DataPage extends StatefulWidget {
 class _DataPageState extends State<DataPage>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
+  final emailBodyController = ScrollController();
 
   @override
   void initState() {
@@ -60,6 +61,8 @@ class _DataPageState extends State<DataPage>
                 ],
               ),
               floatingActionButton: FloatingActionButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
                 onPressed: () {
                   MyDatabase db = context.read<MyDatabase>();
                   SelectedEvent event = context.read<SelectedEvent>();
@@ -77,14 +80,20 @@ class _DataPageState extends State<DataPage>
                         child: Scaffold(
                           appBar: TabBar(
                             controller: _controller,
-                            tabs: [
-                              fluent.Text(
-                                "SEND EMAIL",
-                                style: TextStyle(color: mat.Colors.black),
+                            tabs: const [
+                              fluent.Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: fluent.Text(
+                                  "Send Certificate",
+                                  style: TextStyle(color: mat.Colors.black),
+                                ),
                               ),
-                              fluent.Text(
-                                "ANNOUNCEMENTS",
-                                style: TextStyle(color: mat.Colors.black),
+                              fluent.Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: fluent.Text(
+                                  "Send Announcements",
+                                  style: TextStyle(color: mat.Colors.black),
+                                ),
                               ),
                             ],
                           ),
@@ -92,25 +101,104 @@ class _DataPageState extends State<DataPage>
                             Scaffold(
                               body: fluent.Padding(
                                 padding: const EdgeInsets.all(20.0),
-                                child: Column(
-                                  // ignore: prefer_const_literals_to_create_immutables
-                                  children: [
-                                    fluent.Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 50,
-                                          child: FloatingActionButton(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    // ignore: prefer_const_literals_to_create_immutables
+                                    children: [
+                                      fluent.Row(
+                                        children: [
+                                          fluent.IconButton(
+                                            icon: Icon(
+                                              fluent.FluentIcons.return_key,
+                                              size: 20,
+                                            ),
                                             onPressed: () {
                                               print("Go Back Button");
                                               fluent.showDialog(
-                                                barrierDismissible: true,
+                                                // barrierDismissible: true,
                                                 context: context,
                                                 builder: (context) {
                                                   return ContentDialog(
                                                     title: const Text(
-                                                        'Do you want to go back?'),
+                                                        'Do you want to exit email composition?'),
                                                     content: const Text(
                                                         'All changes will be discarded.'),
+                                                    actions: [
+                                                      Button(
+                                                        child: const Text(
+                                                            'Discard email'),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .popUntil((route) =>
+                                                                  route
+                                                                      .isFirst);
+                                                        },
+                                                      ),
+                                                      FilledButton(
+                                                          child: const Text(
+                                                              'Continue Editing'),
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          }),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
+                                          ),
+                                          const fluent.Padding(
+                                            padding: EdgeInsets.only(left: 8.0),
+                                            child: Text(
+                                              'Compose Email',
+                                              style: fluent.TextStyle(
+                                                  fontSize: 18),
+                                            ),
+                                          ),
+                                          const Spacer(),
+                                        ],
+                                      ),
+                                      const fluent.Padding(
+                                        padding: EdgeInsets.fromLTRB(
+                                            0.0, 20.0, 0.0, 0.0),
+                                      ),
+                                      // ignore: prefer_const_constructors
+                                      TextBox(
+                                        header: 'Subject',
+                                        headerStyle: TextStyle(fontSize: 18),
+                                        placeholder:
+                                            'Enter your email subject here',
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      TextBox(
+                                        scrollController: emailBodyController,
+                                        maxLines: 12,
+                                        header: 'Body',
+                                        headerStyle: TextStyle(fontSize: 18),
+                                        placeholder:
+                                            'Enter your email body here',
+                                      ),
+                                      fluent.SizedBox(
+                                        height: 10,
+                                      ),
+                                      fluent.Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Container(),
+                                          FilledButton(
+                                            onPressed: () {
+                                              fluent.showDialog(
+                                                // barrierDismissible: true,
+                                                context: context,
+                                                builder: (context) {
+                                                  return ContentDialog(
+                                                    title:
+                                                        const Text('Send all?'),
+                                                    content: const Text(
+                                                        'Are you sure you want to send all content'),
                                                     actions: [
                                                       Button(
                                                           child: const Text(
@@ -119,114 +207,58 @@ class _DataPageState extends State<DataPage>
                                                             Navigator.pop(
                                                                 context);
                                                           }),
-                                                      Button(
-                                                        child: const Text(
-                                                            'Go Back'),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .popUntil((route) =>
-                                                                  route
-                                                                      .isFirst);
-                                                        },
-                                                      ),
+                                                      FilledButton(
+                                                          child: const Text(
+                                                              'Send'),
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          })
                                                     ],
                                                   );
                                                 },
                                               );
                                             },
-                                            backgroundColor:
-                                                const fluent.Color.fromARGB(
-                                                    255, 146, 146, 146),
-                                            child: const Icon(
-                                                Icons.cancel_rounded),
-                                          ),
-                                        ),
-                                        const fluent.Spacer(),
-                                        const SizedBox(
-                                          child: Text(
-                                            'Compose Email',
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                      ],
-                                    ),
-                                    const fluent.Padding(
-                                      padding: EdgeInsets.fromLTRB(
-                                          0.0, 20.0, 0.0, 0.0),
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                          hintText: "Email Subject",
-                                          labelText: "Subject",
-                                          labelStyle: TextStyle(
-                                            fontSize: 18,
-                                          ),
-                                          border: OutlineInputBorder(),
-                                          contentPadding:
-                                              fluent.EdgeInsets.all(20.0),
-                                        ),
-                                        maxLength: 70,
-                                      ),
-                                    ),
-                                    // ignore: prefer_const_constructors
-                                    Flexible(
-                                      child: Container(
-                                        // ignore: prefer_const_constructors
-                                        constraints: BoxConstraints(),
-                                        // ignore: prefer_const_constructors
-                                        child: SingleChildScrollView(
-                                          child: const TextField(
-                                            maxLines: null,
-                                            decoration: InputDecoration(
-                                              alignLabelWithHint: true,
-                                              hintText: "Email Body",
-                                              labelText: "Body",
-                                              labelStyle: TextStyle(
-                                                fontSize: 17,
-                                              ),
-                                              border: OutlineInputBorder(
-                                                  borderSide: BorderSide(),
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(4.0)),
-                                                  gapPadding: 4.0),
+                                            child: fluent.Row(
+                                              children: const [
+                                                fluent.Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 3,
+                                                      horizontal: 10),
+                                                  child: fluent.Text(
+                                                    "Send",
+                                                    style: fluent.TextStyle(
+                                                        fontSize: 15),
+                                                  ),
+                                                ),
+                                                fluent.SizedBox(
+                                                  width: 3,
+                                                ),
+                                                fluent.Padding(
+                                                  padding: EdgeInsets.all(2.0),
+                                                  child: Icon(
+                                                    FluentIcons.send,
+                                                    size: 15,
+                                                  ),
+                                                ),
+                                                fluent.SizedBox(
+                                                  width: 5,
+                                                )
+                                              ],
                                             ),
                                           ),
-                                        ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                              floatingActionButton: FloatingActionButton(
-                                onPressed: () {
-                                  fluent.showDialog(
-                                    barrierDismissible: true,
-                                    context: context,
-                                    builder: (context) {
-                                      return ContentDialog(
-                                        title: const Text('Send all?'),
-                                        content: const Text(
-                                            'Are you sure you want to send all content'),
-                                        actions: [
-                                          Button(
-                                              child: const Text('Cancel'),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              }),
-                                          Button(
-                                              child: const Text('Send'),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              })
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                backgroundColor:
-                                    const Color.fromRGBO(99, 158, 231, 1.0),
-                                child: const Icon(Icons.send),
-                              ),
+                              // floatingActionButton: FloatingActionButton(
+                              //
+                              //   backgroundColor:
+                              //       const Color.fromRGBO(99, 158, 231, 1.0),
+                              //   child: const Icon(Icons.send),
+                              // ),
                             ),
                             fluent.Column(
                               children: [
@@ -235,142 +267,6 @@ class _DataPageState extends State<DataPage>
                             )
                           ]),
                         ),
-
-                        // child: Scaffold(
-                        //   body: fluent.Padding(
-                        //     padding: const EdgeInsets.all(20.0),
-                        //     child: Column(
-                        //       // ignore: prefer_const_literals_to_create_immutables
-                        //       children: [
-                        //         fluent.Row(
-                        //           children: [
-                        //             SizedBox(
-                        //               width: 50,
-                        //               child: FloatingActionButton(
-                        //                 onPressed: () {
-                        //                   print("Go Back Button");
-                        //                   fluent.showDialog(
-                        //                     barrierDismissible: true,
-                        //                     context: context,
-                        //                     builder: (context) {
-                        //                       return ContentDialog(
-                        //                         title: const Text(
-                        //                             'Do you want to go back?'),
-                        //                         content: const Text(
-                        //                             'All changes will be discarded.'),
-                        //                         actions: [
-                        //                           Button(
-                        //                               child:
-                        //                                   const Text('Cancel'),
-                        //                               onPressed: () {
-                        //                                 Navigator.pop(context);
-                        //                               }),
-                        //                           Button(
-                        //                             child:
-                        //                                 const Text('Go Back'),
-                        //                             onPressed: () {
-                        //                               Navigator.of(context)
-                        //                                   .popUntil((route) =>
-                        //                                       route.isFirst);
-                        //                             },
-                        //                           ),
-                        //                         ],
-                        //                       );
-                        //                     },
-                        //                   );
-                        //                 },
-                        //                 backgroundColor:
-                        //                     const fluent.Color.fromARGB(
-                        //                         255, 146, 146, 146),
-                        //                 child: const Icon(Icons.cancel_rounded),
-                        //               ),
-                        //             ),
-                        //             const fluent.Spacer(),
-                        //             const SizedBox(
-                        //               child: Text(
-                        //                 'Compose Email',
-                        //               ),
-                        //             ),
-                        //             const Spacer(),
-                        //           ],
-                        //         ),
-                        //         const fluent.Padding(
-                        //           padding:
-                        //               EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
-                        //           child: TextField(
-                        //             decoration: InputDecoration(
-                        //               hintText: "Email Subject",
-                        //               labelText: "Subject",
-                        //               labelStyle: TextStyle(
-                        //                 fontSize: 18,
-                        //               ),
-                        //               border: OutlineInputBorder(),
-                        //               contentPadding:
-                        //                   fluent.EdgeInsets.all(20.0),
-                        //             ),
-                        //             maxLength: 70,
-                        //           ),
-                        //         ),
-                        //         // ignore: prefer_const_constructors
-                        //         Flexible(
-                        //           child: Container(
-                        //             // ignore: prefer_const_constructors
-                        //             constraints: BoxConstraints(),
-                        //             // ignore: prefer_const_constructors
-                        //             child: SingleChildScrollView(
-                        //               child: const TextField(
-                        //                 maxLines: null,
-                        //                 decoration: InputDecoration(
-                        //                   alignLabelWithHint: true,
-                        //                   hintText: "Email Body",
-                        //                   labelText: "Body",
-                        //                   labelStyle: TextStyle(
-                        //                     fontSize: 17,
-                        //                   ),
-                        //                   border: OutlineInputBorder(
-                        //                       borderSide: BorderSide(),
-                        //                       borderRadius: BorderRadius.all(
-                        //                           Radius.circular(4.0)),
-                        //                       gapPadding: 4.0),
-                        //                 ),
-                        //               ),
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   ),
-                        //   floatingActionButton: FloatingActionButton(
-                        //     onPressed: () {
-                        //       fluent.showDialog(
-                        //         barrierDismissible: true,
-                        //         context: context,
-                        //         builder: (context) {
-                        //           return ContentDialog(
-                        //             title: const Text('Send all?'),
-                        //             content: const Text(
-                        //                 'Are you sure you want to send all content'),
-                        //             actions: [
-                        //               Button(
-                        //                   child: const Text('Cancel'),
-                        //                   onPressed: () {
-                        //                     Navigator.pop(context);
-                        //                   }),
-                        //               Button(
-                        //                   child: const Text('Send'),
-                        //                   onPressed: () {
-                        //                     Navigator.pop(context);
-                        //                   })
-                        //             ],
-                        //           );
-                        //         },
-                        //       );
-                        //     },
-                        //     backgroundColor:
-                        //         const Color.fromRGBO(99, 158, 231, 1.0),
-                        //     child: const Icon(Icons.send),
-                        //   ),
-                        // ),
                       );
                     },
                   );

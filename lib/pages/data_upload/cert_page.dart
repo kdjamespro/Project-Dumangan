@@ -398,17 +398,18 @@ class _TableState extends State<Table>
                   ),
                 ),
               );
+            default:
+              return DataTable2(
+                columns: const [
+                  DataColumn2(label: Text('Id')),
+                  DataColumn2(label: Text('Full Name')),
+                  DataColumn2(label: Text('Email')),
+                  DataColumn2(label: Text('Organization')),
+                  DataColumn2(label: Text('Attended')),
+                ],
+                rows: [],
+              );
           }
-          return DataTable2(
-            columns: const [
-              DataColumn2(label: Text('Id')),
-              DataColumn2(label: Text('Full Name')),
-              DataColumn2(label: Text('Email')),
-              DataColumn2(label: Text('Organization')),
-              DataColumn2(label: Text('Attended')),
-            ],
-            rows: [],
-          );
         });
   }
 }

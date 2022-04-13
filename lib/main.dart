@@ -108,7 +108,8 @@ class _MyHomePageState extends State<MyHomePage>
           context: context,
           builder: (context) {
             return ContentDialog(
-                title: const Text('Do you really want to quit?'),
+                title:
+                    const Text('Do you really want to close the application?'),
                 actions: [
                   Button(
                       onPressed: () {
