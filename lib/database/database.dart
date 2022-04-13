@@ -126,8 +126,16 @@ class MyDatabase extends _$MyDatabase {
     ));
   }
 
+  Future<void> increaseParticipantCount(int eventId, int increase) {
+    return customUpdate(
+      'UPDATE events_table SET participants = participants + 1 WHERE event_id = ?',
+      variables: [Variable.withInt(eventId)],
+    );
+  }
+
   Future<void> addParticipant(ParticipantsTableCompanion participant) {
-    return into(participantsTable).insert(participant);
+    into(participantsTable).insert(participant);
+    return increaseParticipantCount(participant.eventsId.value, 1);
   }
 
   Future<void> addBatchParticipants(List<Insertable> queryList) async {
@@ -163,18 +171,30 @@ class MyDatabase extends _$MyDatabase {
   }
 
   Future deleteParticipant(int participantId) {
-    return (delete(participantsTable)
-          ..where((tbl) => tbl.id.equals(participantId)))
-        .go();
+    if (participantId < 0) {
+      return Future(() {});
+    } else {
+      return (delete(participantsTable)
+            ..where((tbl) => tbl.id.equals(participantId)))
+          .go();
+    }
   }
 
   Future deleteEvent(int eventId) {
     return (delete(eventsTable)..where((tbl) => tbl.id.equals(eventId))).go();
   }
 
-  Stream<int> eventParticipants(int eventId) {
+  Stream<int> eventParticipantsCount(int eventId) {
     return customSelect(
       'SELECT participants FROM events_table WHERE events_id = ?',
+      variables: [Variable.withInt(eventId)],
+      readsFrom: {eventsTable},
+    ).map((row) => row.read<int>('participants')).watchSingle();
+  }
+
+  Stream<int> eventAbsenteesCount(int eventId) {
+    return customSelect(
+      'SELECT absentees FROM events_table WHERE events_id = ?',
       variables: [Variable.withInt(eventId)],
       readsFrom: {eventsTable},
     ).map((row) => row.read<int>('participants')).watchSingle();

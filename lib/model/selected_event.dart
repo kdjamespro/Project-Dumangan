@@ -44,6 +44,22 @@ class SelectedEvent {
     _eventAbsentees = absent;
   }
 
+  void increaseParticipants(int num) {
+    _eventParticipants += num;
+  }
+
+  void decreaseParticipants(int num) {
+    _eventParticipants -= num;
+  }
+
+  void increaseAbsentees(int num) {
+    _eventParticipants += num;
+  }
+
+  void decreaseAbsentees(int num) {
+    _eventParticipants -= num;
+  }
+
   int get eventId => _eventId;
 
   String get eventName => _eventName;

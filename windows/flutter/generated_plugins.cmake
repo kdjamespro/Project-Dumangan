@@ -6,9 +6,9 @@ list(APPEND FLUTTER_PLUGIN_LIST
   bitsdojo_window_windows
   desktop_drop
   flutter_acrylic
+  flutter_window_close
   printing
   url_launcher_windows
-  window_manager
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)
