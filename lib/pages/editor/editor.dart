@@ -21,11 +21,15 @@ import 'package:project_dumangan/services/warning_message.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:string_validator/string_validator.dart';
+// <<<<<<< HEAD
 import 'package:flutter_font_picker/flutter_font_picker.dart';
 
+// =======
+// >>>>>>> e6525fa895a686c6ba3648c66e0ad97c0a974da2
 import '/services/file_handler.dart';
 import 'attribute_menu.dart';
 import 'attribute_text.dart';
+import 'package:project_dumangan/pages/editor/image_archive.dart';
 
 class Editor extends StatefulWidget {
   const Editor({Key? key}) : super(key: key);
@@ -258,79 +262,122 @@ class _EditorState extends State<Editor>
         ),
         Container(
           // color: Color.fromARGB(255, 37, 38, 39),
-          color: mat.Colors.black54,
+          color: mat.Colors.black38,
           child: SizedBox(
-              width: 70,
+              width: 80,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  MenuButton(
-                    color: menuIndex == 0
-                        ? FluentTheme.of(context)
-                            .accentColor
-                            .lightest
-                            .withOpacity(0.4)
-                        : null,
-                    label: 'Font',
-                    menuIcon: const Icon(
-                      FluentIcons.font,
-                      color: Colors.black,
-                      size: 25,
+                  Container(
+                    margin: EdgeInsets.only(left: 7, top: 10, bottom: 10),
+                    decoration: BoxDecoration(
+                      color: menuIndex == 0
+                          ? Color.fromARGB(255, 249, 249, 249)
+                          : null,
+                      borderRadius: menuIndex == 0
+                          ? BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              bottomLeft: Radius.circular(12))
+                          : null,
                     ),
-                    onPress: () {
-                      changeMenu(0);
-                    },
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  MenuButton(
-                    color: menuIndex == 1
-                        ? FluentTheme.of(context)
-                            .accentColor
-                            .lightest
-                            .withOpacity(0.8)
-                        : null,
-                    label: 'Templates',
-                    menuIcon: const Icon(
-                      FluentIcons.file_image,
-                      size: 23,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 7, top: 8),
+                      child: MenuButton(
+                        color: menuIndex == 0
+                            ? Color.fromARGB(255, 249, 249, 249)
+                            : null,
+                        label: 'Font',
+                        menuIcon: const Icon(
+                          FluentIcons.font,
+                          color: Colors.black,
+                          size: 25,
+                        ),
+                        onPress: () {
+                          changeMenu(0);
+                        },
+                      ),
                     ),
-                    onPress: () {
-                      changeMenu(1);
-                    },
                   ),
-                  MenuButton(
-                    color: menuIndex == 2
-                        ? FluentTheme.of(context)
-                            .accentColor
-                            .lightest
-                            .withOpacity(0.8)
-                        : null,
-                    label: 'Document\n Size',
-                    menuIcon: const Icon(
-                      FluentIcons.size_legacy,
-                      size: 23,
+                  Container(
+                    margin: EdgeInsets.only(left: 7),
+                    padding: const EdgeInsets.only(left: 7, top: 8),
+                    decoration: BoxDecoration(
+                      color: menuIndex == 1
+                          ? Color.fromARGB(255, 249, 249, 249)
+                          : null,
+                      borderRadius: menuIndex == 1
+                          ? BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              bottomLeft: Radius.circular(12))
+                          : null,
                     ),
-                    onPress: () {
-                      changeMenu(2);
-                    },
+                    child: MenuButton(
+                      color: menuIndex == 1
+                          ? Color.fromARGB(255, 249, 249, 249)
+                          : null,
+                      label: 'Templates',
+                      menuIcon: const Icon(
+                        FluentIcons.file_image,
+                        size: 23,
+                      ),
+                      onPress: () {
+                        changeMenu(1);
+                      },
+                    ),
                   ),
-                  MenuButton(
-                    color: menuIndex == 3
-                        ? FluentTheme.of(context)
-                            .accentColor
-                            .lightest
-                            .withOpacity(0.8)
-                        : null,
-                    label: 'Dynamic\n Fields',
-                    menuIcon: const Icon(
-                      FluentIcons.add_field,
-                      size: 30,
+                  Container(
+                    margin: EdgeInsets.only(left: 5, top: 10, bottom: 10),
+                    padding: const EdgeInsets.only(left: 7),
+                    decoration: BoxDecoration(
+                      color: menuIndex == 2
+                          ? Color.fromARGB(255, 249, 249, 249)
+                          : null,
+                      borderRadius: menuIndex == 2
+                          ? BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              bottomLeft: Radius.circular(12))
+                          : null,
                     ),
-                    onPress: () {
-                      changeMenu(3);
-                    },
+                    child: MenuButton(
+                      color: menuIndex == 2
+                          ? Color.fromARGB(255, 249, 249, 249)
+                          : null,
+                      label: 'Document\n Size',
+                      menuIcon: const Icon(
+                        FluentIcons.size_legacy,
+                        size: 23,
+                      ),
+                      onPress: () {
+                        changeMenu(2);
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(left: 7, top: 10, bottom: 10),
+                    padding: const EdgeInsets.only(left: 7),
+                    decoration: BoxDecoration(
+                      color: menuIndex == 3
+                          ? Color.fromARGB(255, 249, 249, 249)
+                          : null,
+                      borderRadius: menuIndex == 3
+                          ? BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              bottomLeft: Radius.circular(12))
+                          : null,
+                    ),
+                    child: MenuButton(
+                      color: menuIndex == 3
+                          ? Color.fromARGB(255, 249, 249, 249)
+                          : null,
+                      label: 'Dynamic\n Fields',
+                      menuIcon: const Icon(
+                        FluentIcons.add_field,
+                        size: 30,
+                      ),
+                      onPress: () {
+                        changeMenu(3);
+                      },
+                    ),
                   ),
                 ],
               )),
@@ -712,6 +759,7 @@ class _EditorState extends State<Editor>
           ),
         ),
         Flexible(
+// <<<<<<< HEAD
           child: Container(
             margin: EdgeInsets.only(top: 6, bottom: 6),
             width: double.infinity,
@@ -737,6 +785,36 @@ class _EditorState extends State<Editor>
             ),
           ),
         ),
+
+        // Flexible(
+        //   child: Button(
+        //     child: const Text('Delete All Templates'),
+        //     onPressed: () {
+        //       fluent.showDialog(
+        //         barrierDismissible: true,
+        //         context: context,
+        //         builder: (context) {
+        //           return ContentDialog(
+        //             title: const Text('Delete Templates'),
+        //             content: const Text('This process cannot be undone.'),
+        //             actions: [
+        //               Button(
+        //                   child: const Text('Cancel'),
+        //                   onPressed: () {
+        //                     Navigator.pop(context);
+        //                   }),
+        //               Button(
+        //                 child: const Text('Delete'),
+        //                 onPressed: () {},
+        //               ),
+        //             ],
+        //           );
+        //         },
+        //       );
+        //     },
+        //   ),
+        // ),
+// >>>>>>> e6525fa895a686c6ba3648c66e0ad97c0a974da2
         ChangeNotifierProvider(
             create: (context) => ProgressController(),
             builder: (context, _) {
@@ -847,6 +925,7 @@ class _EditorState extends State<Editor>
       barrierDismissible: true,
       context: context,
       builder: (context) => mat.AlertDialog(
+// <<<<<<< HEAD
         content: Container(
           height: 500,
           width: 700,
@@ -866,6 +945,27 @@ class _EditorState extends State<Editor>
                       }),
                   Text(
                     'Font Color Selection',
+// =======
+//         title: const mat.Text(""),
+//         content: Column(
+//           mainAxisAlignment: MainAxisAlignment.spaceAround,
+//           children: [
+//             mat.Row(
+//               children: [
+//                 fluent.IconButton(
+//                     icon: const Icon(
+//                       FluentIcons.return_key,
+//                       color: mat.Colors.black,
+//                       size: 20,
+//                     ),
+//                     onPressed: () {
+//                       Navigator.pop(context);
+//                     }),
+//                 const fluent.Padding(
+//                   padding: EdgeInsets.all(20.0),
+//                   child: Text(
+//                     'Compose Email',
+// >>>>>>> e6525fa895a686c6ba3648c66e0ad97c0a974da2
                   ),
                 ],
               ),

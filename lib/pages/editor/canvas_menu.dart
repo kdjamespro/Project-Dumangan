@@ -32,52 +32,55 @@ class _CanvasMenuState extends State<CanvasMenu>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Flexible(
-          child: Text('Page Size: '),
-        ),
-        const SizedBox(height: 5),
-        Row(
-          children: List.generate(pageSize.length, (index) {
-            return Container(
-              margin: const EdgeInsets.only(right: 16.0),
-              child: RadioButton(
-                checked: _selectedPageSize == index,
-                onChanged: (toggle) {
-                  setState(() => _selectedPageSize = index);
-                  page.changeSize(pageSize[_selectedPageSize],
-                      orientation[_selectedOrientation]);
-                },
-                content: Text(pageSize[index]),
-              ),
-            );
-          }),
-        ),
-        const SizedBox(height: 20),
-        const Flexible(
-          child: Text('Orientation: '),
-        ),
-        const SizedBox(height: 5),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: List.generate(orientation.length, (index) {
-            return Container(
-              margin: const EdgeInsets.only(right: 16.0),
-              child: RadioButton(
-                checked: _selectedOrientation == index,
-                onChanged: (toggle) {
-                  setState(() => _selectedOrientation = index);
-                  page.changeSize(pageSize[_selectedPageSize],
-                      orientation[_selectedOrientation]);
-                },
-                content: Text(orientation[index]),
-              ),
-            );
-          }),
-        ),
-      ],
+    return Container(
+      color: Color.fromARGB(255, 249, 249, 249),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Flexible(
+            child: Text('Page Size: '),
+          ),
+          const SizedBox(height: 5),
+          Row(
+            children: List.generate(pageSize.length, (index) {
+              return Container(
+                margin: const EdgeInsets.only(right: 16.0),
+                child: RadioButton(
+                  checked: _selectedPageSize == index,
+                  onChanged: (toggle) {
+                    setState(() => _selectedPageSize = index);
+                    page.changeSize(pageSize[_selectedPageSize],
+                        orientation[_selectedOrientation]);
+                  },
+                  content: Text(pageSize[index]),
+                ),
+              );
+            }),
+          ),
+          const SizedBox(height: 20),
+          const Flexible(
+            child: Text('Orientation: '),
+          ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: List.generate(orientation.length, (index) {
+              return Container(
+                margin: const EdgeInsets.only(right: 16.0),
+                child: RadioButton(
+                  checked: _selectedOrientation == index,
+                  onChanged: (toggle) {
+                    setState(() => _selectedOrientation = index);
+                    page.changeSize(pageSize[_selectedPageSize],
+                        orientation[_selectedOrientation]);
+                  },
+                  content: Text(orientation[index]),
+                ),
+              );
+            }),
+          ),
+        ],
+      ),
     );
   }
 }
