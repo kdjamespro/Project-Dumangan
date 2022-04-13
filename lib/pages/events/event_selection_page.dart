@@ -287,6 +287,8 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                       return const Center(
                                         child: ProgressRing(),
                                       );
+                                    case ConnectionState.none:
+                                      return Container();
                                   }
                                   return Container();
                                 },
@@ -387,7 +389,7 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                               event.name,
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: mat.Colors.white,
                                   fontSize: 15,
                                   letterSpacing: 1,
@@ -399,7 +401,7 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                             child: Text(
                               dateTimeFormatter(event.date.toString())
                                   .toString(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: mat.Colors.white,
                                 fontSize: 15,
                               ),
