@@ -42,4 +42,8 @@ class CrossCheckingProcess extends CrossCheckingEvent {
   });
 }
 
-class DbLoaded extends CrossCheckingEvent {}
+class DbLoaded extends CrossCheckingEvent {
+  final int participants;
+  final int absentees;
+  DbLoaded({required this.participants, required this.absentees});
+}

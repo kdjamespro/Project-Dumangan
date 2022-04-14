@@ -37,7 +37,8 @@ class CrossCheckingBloc extends Bloc<CrossCheckingEvent, CrossCheckingState> {
       await _crossCheck(event, emit);
     });
     on<DbLoaded>((event, emit) async {
-      emit(const CrossCheckingFinished());
+      emit(CrossCheckingFinished(
+          participants: event.participants, absentees: event.absentees));
     });
   }
 
@@ -74,6 +75,8 @@ class CrossCheckingBloc extends Bloc<CrossCheckingEvent, CrossCheckingState> {
 
   Future<void> _crossCheck(CrossCheckingProcess event, Emitter emit) async {
     await loading(emit);
+    int participants = 0;
+    int absentees = 0;
     List key1 = event.attributeMap.getKeys();
     List val1 = event.attributeMap.getValues();
     Map regData = {};
@@ -83,7 +86,6 @@ class CrossCheckingBloc extends Bloc<CrossCheckingEvent, CrossCheckingState> {
 
     if (event.isEnabled) {
       Map crossData = {};
-
       List key2 = event.crossCheckMap!.getKeys();
       List val2 = event.crossCheckMap!.getValues();
 
@@ -93,18 +95,21 @@ class CrossCheckingBloc extends Bloc<CrossCheckingEvent, CrossCheckingState> {
       CrossChecker check = CrossChecker(
           regData: regData, crossData: crossData, eventId: event.eventId);
       check.crossCheck();
+      participants = check.participants.length;
+      absentees = check.absentees.length;
       await db.addBatchParticipants(check.participants);
       await db.addBatchParticipants(check.absentees);
-      await db.updateEvent(
-          event.eventId, check.participants.length, check.absentees.length);
+      await db.updateEvent(event.eventId, participants, absentees);
     } else {
       MapParticipants query =
           MapParticipants(regData: regData, eventId: event.eventId);
       await db.addBatchParticipants(query.participants);
+      participants = query.participants.length;
       await db.updateEvent(event.eventId, query.participants.length, 0);
     }
 
-    emit(const CrossCheckingFinished());
+    emit(CrossCheckingFinished(
+        participants: participants, absentees: absentees));
   }
 
   Future<void> loading(Emitter emit) async {

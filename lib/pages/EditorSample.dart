@@ -16,7 +16,10 @@ class EditorSample extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             return ChangeNotifierProvider(
               create: (context) => snapshot.data as ArchiveList,
-              child: const Editor(),
+              child: const ScaffoldPage(
+                content: Editor(),
+                padding: EdgeInsets.all(0),
+              ),
             );
           }
           return Container();

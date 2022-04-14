@@ -24,65 +24,73 @@ class CertPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SelectedEvent event = context.read<SelectedEvent>();
-    return BlocProvider<CrossCheckingBloc>(
-      create: (context) => CrossCheckingBloc(
-          db: Provider.of<MyDatabase>(context, listen: false)),
-      child: ScaffoldPage(
-        content: BlocConsumer<CrossCheckingBloc, CrossCheckingState>(
-          builder: (context, state) {
-            if (state is CrossCheckingLoading) {
-              return const Center(
-                child: ProgressRing(
-                  strokeWidth: 8,
-                ),
-              );
-            }
-            if (state is CrossCheckingAttribute) {
-              return ColumnsTable(
-                data: state.data,
-                crossCheck: state.isEnabled,
-                file: state.crossCheckFile,
-              );
-            } else if (state is CrossCheckingMapping) {
-              return CrossCheckingTable(
-                data: state.data,
-                crossCheck: state.isEnabled,
-                crossCheckData: state.crossCheckingData,
-              );
-            } else if (state is CrossCheckingFinished) {
-              return const Table();
-            } else {
-              return const FileUploader();
-            }
-          },
-          listener: (context, state) {
-            if (state is CrossCheckingError) {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return ContentDialog(
-                      title: const Text('File Uploading Error'),
-                      content: const Text(
-                          'The file you uploaded is empty or it exceeded the maximum column count of 100'),
-                      actions: [
-                        SizedBox(
-                          width: 100,
-                          child: FilledButton(
-                            child: const Text('Ok'),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            style: FluentTheme.of(context)
-                                .buttonTheme
-                                .filledButtonStyle,
+    return ScaffoldPage(
+      content: BlocProvider<CrossCheckingBloc>(
+        create: (context) => CrossCheckingBloc(
+            db: Provider.of<MyDatabase>(context, listen: false)),
+        child: ScaffoldPage(
+          content: BlocConsumer<CrossCheckingBloc, CrossCheckingState>(
+            builder: (context, state) {
+              if (state is CrossCheckingLoading) {
+                return const Center(
+                  child: ProgressRing(
+                    strokeWidth: 8,
+                  ),
+                );
+              }
+              if (state is CrossCheckingAttribute) {
+                return ColumnsTable(
+                  data: state.data,
+                  crossCheck: state.isEnabled,
+                  file: state.crossCheckFile,
+                );
+              } else if (state is CrossCheckingMapping) {
+                return CrossCheckingTable(
+                  data: state.data,
+                  crossCheck: state.isEnabled,
+                  crossCheckData: state.crossCheckingData,
+                );
+              } else if (state is CrossCheckingFinished) {
+                context
+                    .read<SelectedEvent>()
+                    .updateAttendance(state.participants, state.absentees);
+
+                return Table(
+                  eventId: event.eventId,
+                );
+              } else {
+                return const FileUploader();
+              }
+            },
+            listener: (context, state) {
+              if (state is CrossCheckingError) {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return ContentDialog(
+                        title: const Text('File Uploading Error'),
+                        content: const Text(
+                            'The file you uploaded is empty or it exceeded the maximum column count of 100'),
+                        actions: [
+                          SizedBox(
+                            width: 100,
+                            child: FilledButton(
+                              child: const Text('Ok'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              style: FluentTheme.of(context)
+                                  .buttonTheme
+                                  .filledButtonStyle,
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  });
-              context.read<CrossCheckingBloc>().add(CrossChekingInitialize());
-            }
-          },
+                        ],
+                      );
+                    });
+                context.read<CrossCheckingBloc>().add(CrossChekingInitialize());
+              }
+            },
+          ),
         ),
       ),
     );
@@ -90,24 +98,22 @@ class CertPage extends StatelessWidget {
 }
 
 class Table extends StatefulWidget {
-  const Table({Key? key}) : super(key: key);
-
+  const Table({Key? key, required this.eventId}) : super(key: key);
+  final int eventId;
   @override
   _TableState createState() => _TableState();
 }
 
-class _TableState extends State<Table>
-    with AutomaticKeepAliveClientMixin<Table> {
-  @override
-  bool get wantKeepAlive => true;
+class _TableState extends State<Table> {
   List selectedRow = [];
   bool isLoaded = false;
   final FlyoutController flyoutController = FlyoutController();
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController organizationController = TextEditingController();
-  int _rowsPerPage1 = 10;
   int _rowsPerPage = 10;
+  int _rowsPerPage1 = 10;
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -142,20 +148,28 @@ class _TableState extends State<Table>
     }
   }
 
+  void changeRows(int num) {
+    setState(() {
+      _rowsPerPage = num;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     SelectedEvent event = context.read<SelectedEvent>();
+    MyDatabase db = context.read<MyDatabase>();
     return StreamBuilder(
-        stream: Provider.of<MyDatabase>(context, listen: false)
-            .getParticipants(context.read<SelectedEvent>().eventId),
+        stream: db.getParticipants(event.eventId),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               return const Center(
-                child: ProgressRing(),
+                child: ProgressRing(
+                  strokeWidth: 8.0,
+                ),
               );
             case ConnectionState.active:
+            case ConnectionState.done:
               List<ParticipantsTableData> data =
                   snapshot.data as List<ParticipantsTableData>;
               getData(data);
@@ -166,7 +180,6 @@ class _TableState extends State<Table>
               _rowsPerPage = isItemLessThanRowsPerPage
                   ? tableItemsCount
                   : defaultRowsPerPage;
-              print(dataSource.rowCount);
               return mat.Material(
                 color: FluentTheme.of(context).scaffoldBackgroundColor,
                 child: mat.Container(
@@ -241,25 +254,30 @@ class _TableState extends State<Table>
                                     child: const Text('Add New Participants'),
                                     onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        int eventId = context
-                                            .read<SelectedEvent>()
-                                            .eventId;
-                                        await context
-                                            .read<MyDatabase>()
-                                            .addParticipant(
-                                                ParticipantsTableCompanion(
-                                              eventsId: drift.Value(eventId),
-                                              fullName: drift.Value(
-                                                  fullNameController.text),
-                                              email: drift.Value(
-                                                  emailController.text),
-                                              organization: drift.Value(
-                                                  organizationController.text),
-                                              attended: const drift.Value(true),
-                                            ));
+                                        await db.addParticipant(
+                                            ParticipantsTableCompanion(
+                                          eventsId: drift.Value(event.eventId),
+                                          fullName: drift.Value(
+                                              fullNameController.text),
+                                          email:
+                                              drift.Value(emailController.text),
+                                          organization: drift.Value(
+                                              organizationController.text),
+                                          attended: const drift.Value(true),
+                                        ));
+                                        event.increaseParticipants(1);
+                                        await db.updateEvent(
+                                            event.eventId,
+                                            event.eventParticipants,
+                                            event.eventAbsentees);
+                                        setState(() {
+                                          _rowsPerPage = tableItemsCount <
+                                                  defaultRowsPerPage
+                                              ? tableItemsCount
+                                              : defaultRowsPerPage;
+                                        });
                                         clearController();
                                         flyoutController.open = false;
-                                        event.increaseParticipants(1);
                                         MotionToast.success(
                                                 dismissable: true,
                                                 animationDuration:
@@ -309,15 +327,45 @@ class _TableState extends State<Table>
                                     message:
                                         'Do you want to delete the $selectedCount selected rows?');
                                 if (proceed) {
+                                  List<int> rows = [];
+                                  int deletedParticipants = 0;
+                                  int deletedAbsentees = 0;
                                   for (var row in dataSource.selectedRows) {
-                                    await Provider.of<MyDatabase>(context,
-                                            listen: false)
-                                        .deleteParticipant(row.id ?? -1);
+                                    rows.add(row.id ?? -1);
                                     if (row.attended) {
-                                      event.decreaseParticipants(1);
+                                      deletedParticipants += 1;
                                     } else {
-                                      event.decreaseAbsentees(1);
+                                      deletedAbsentees += 1;
                                     }
+                                  }
+                                  print(deletedParticipants);
+                                  print(deletedAbsentees);
+                                  event.updateAttendance(
+                                      event.eventParticipants -
+                                          deletedParticipants,
+                                      event.eventAbsentees - deletedAbsentees);
+                                  await db.updateEvent(
+                                      event.eventId,
+                                      event.eventParticipants,
+                                      event.eventAbsentees);
+                                  await db.batchDeleteParticipants(rows);
+                                  if (event.eventParticipants == 0 &&
+                                      event.eventAbsentees == 0) {
+                                    Provider.of<AttributeMapping>(context,
+                                            listen: false)
+                                        .removeAll();
+                                    Provider.of<CrossCheckMapping>(context,
+                                            listen: false)
+                                        .removeAll();
+                                    event.updateAttendance(0, 0);
+                                    await db.updateEvent(
+                                        event.eventId,
+                                        event.eventParticipants,
+                                        event.eventAbsentees);
+                                    await db.deleteParticipants(event.eventId);
+                                    context
+                                        .read<CrossCheckingBloc>()
+                                        .add(CrossChekingInitialize());
                                   }
                                   MotionToast.delete(
                                           dismissable: true,
@@ -360,11 +408,12 @@ class _TableState extends State<Table>
                                 Provider.of<CrossCheckMapping>(context,
                                         listen: false)
                                     .removeAll();
-                                int eventId =
-                                    context.read<SelectedEvent>().eventId;
-                                await Provider.of<MyDatabase>(context,
-                                        listen: false)
-                                    .deleteParticipants(eventId);
+                                event.updateAttendance(0, 0);
+                                await db.updateEvent(
+                                    event.eventId,
+                                    event.eventParticipants,
+                                    event.eventAbsentees);
+                                await db.deleteParticipants(event.eventId);
                                 context
                                     .read<CrossCheckingBloc>()
                                     .add(CrossChekingInitialize());
@@ -476,10 +525,8 @@ class TableSource extends mat.DataTableSource {
   int get rowCount => dataList.length;
 
   @override
-  // TODO: implement isRowCountApproximate
   bool get isRowCountApproximate => false;
 
   @override
-  // TODO: implement selectedRowCount
   int get selectedRowCount => selectedRows.length;
 }

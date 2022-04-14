@@ -135,14 +135,13 @@ class MyDatabase extends _$MyDatabase {
 
   Future<void> increaseParticipantCount(int eventId, int increase) {
     return customUpdate(
-      'UPDATE events_table SET participants = participants + 1 WHERE event_id = ?',
+      'UPDATE events_table SET participants = participants + 1 WHERE events_id = ?',
       variables: [Variable.withInt(eventId)],
     );
   }
 
   Future<void> addParticipant(ParticipantsTableCompanion participant) {
-    into(participantsTable).insert(participant);
-    return increaseParticipantCount(participant.eventsId.value, 1);
+    return into(participantsTable).insert(participant);
   }
 
   Future<void> addBatchParticipants(List<Insertable> queryList) async {
@@ -175,6 +174,10 @@ class MyDatabase extends _$MyDatabase {
   Future deleteParticipants(int id) {
     return (delete(participantsTable)..where((tbl) => tbl.eventsId.equals(id)))
         .go();
+  }
+
+  Future batchDeleteParticipants(List<int> rows) async {
+    return (delete(participantsTable)..where((tbl) => tbl.id.isIn(rows))).go();
   }
 
   Future deleteParticipant(int participantId) {
