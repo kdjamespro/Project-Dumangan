@@ -43,13 +43,19 @@ class _FileUploaderState extends State<FileUploader> {
 
   @override
   Widget build(BuildContext context) {
-    int eventId = context.read<SelectedEvent>().eventId;
+    SelectedEvent event = context.read<SelectedEvent>();
     return FutureBuilder(
-        future: Provider.of<MyDatabase>(context).getParticipantsCount(eventId),
+        future: Provider.of<MyDatabase>(context)
+            .getParticipantsCount(event.eventId),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            if (snapshot.data as int > 0) {
-              context.read<CrossCheckingBloc>().add(DbLoaded());
+            print((snapshot.data as int > 0 && event.eventParticipants > 0) ||
+                event.eventAbsentees > 0);
+            if ((snapshot.data as int > 0 && event.eventParticipants > 0) ||
+                event.eventAbsentees > 0) {
+              context.read<CrossCheckingBloc>().add(DbLoaded(
+                  participants: event.eventParticipants,
+                  absentees: event.eventAbsentees));
             } else {
               return SingleChildScrollView(
                 child: Column(

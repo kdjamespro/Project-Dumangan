@@ -38,19 +38,61 @@ class Editor extends StatefulWidget {
   _EditorState createState() => _EditorState();
 }
 
-// <<<<<<< HEAD
-// class _EditorState extends State<Editor> with AutomaticKeepAliveClientMixin {
-//   final autoSuggestBox = TextEditingController();
-//   ScreenshotController screenshotController = ScreenshotController();
-//   String fontSelector = "Calibri";
-//   String selectedFont = "Current Font";
-//   // String styleFontStyle = "";
-//   // String styleFontColor = "";
-//   double _styleFontSize = 12;
-//   Color fontColorPicker = const Color(0xff443a49);
-//   FontWeight fontWeightSelector = FontWeight.normal;
-//   late AttributeText dynamicFields;
-// =======
+final List<String> _myGoogleFonts = [
+  "Abril Fatface",
+  "Aclonica",
+  "Alegreya Sans",
+  "Architects Daughter",
+  "Archivo",
+  "Archivo Narrow",
+  "Bebas Neue",
+  "Bitter",
+  "Bree Serif",
+  "Bungee",
+  "Cabin",
+  "Cairo",
+  "Coda",
+  "Comfortaa",
+  "Comic Neue",
+  "Cousine",
+  "Croissant One",
+  "Faster One",
+  "Forum",
+  "Great Vibes",
+  "Heebo",
+  "Inconsolata",
+  "Josefin Slab",
+  "Lato",
+  "Libre Baskerville",
+  "Lobster",
+  "Lora",
+  "Merriweather",
+  "Montserrat",
+  "Mukta",
+  "Nunito",
+  "Offside",
+  "Open Sans",
+  "Oswald",
+  "Overlock",
+  "Pacifico",
+  "Playfair Display",
+  "Poppins",
+  "Raleway",
+  "Roboto",
+  "Roboto Mono",
+  "Source Sans Pro",
+  "Space Mono",
+  "Spicy Rice",
+  "Squada One",
+  "Sue Ellen Francisco",
+  "Trade Winds",
+  "Ubuntu",
+  "Varela",
+  "Vollkorn",
+  "Work Sans",
+  "Zilla Slab"
+];
+
 final autoSuggestBox = TextEditingController();
 String fontSelector = "Calibri";
 String selectedFont = "Current Font";
@@ -72,85 +114,17 @@ AttributeText dynamicFields = AttributeText();
 class _EditorState extends State<Editor>
     with AutomaticKeepAliveClientMixin<Editor> {
   ScreenshotController screenshotController = ScreenshotController();
-  // String fontSelector = "Calibri";
-  // String selectedFont = "Lato";
-  // String styleFontStyle = "";
-  // String styleFontColor = "";
-  // double _styleFontSize = 12;
-  // Color fontColorPicker = const Color(0xff443a49);
-  // FontWeight fontWeightSelector = FontWeight.normal;
-// >>>>>>> 4256ad7f65315b9c276985ecc4add0f4c5117cbf
-
-  // Color color = Colors.red;
-  // Color pickerColor = const Color(0xff443a49);
-  // Color currentColor = const Color(0xff443a49);
-  // int menuIndex = 0;
-  // File image = File('');
   late FontStyleController styleController;
   late FlyoutController fontSelection;
   late TextEditingController fontValue;
+  late TextEditingController fontFamily;
 
-// <<<<<<< HEAD
   String _selectedFont = "Roboto";
-  TextStyle? _selectedFontTextStyle;
-  List<String> _myGoogleFonts = [
-    "Abril Fatface",
-    "Aclonica",
-    "Alegreya Sans",
-    "Architects Daughter",
-    "Archivo",
-    "Archivo Narrow",
-    "Bebas Neue",
-    "Bitter",
-    "Bree Serif",
-    "Bungee",
-    "Cabin",
-    "Cairo",
-    "Coda",
-    "Comfortaa",
-    "Comic Neue",
-    "Cousine",
-    "Croissant One",
-    "Faster One",
-    "Forum",
-    "Great Vibes",
-    "Heebo",
-    "Inconsolata",
-    "Josefin Slab",
-    "Lato",
-    "Libre Baskerville",
-    "Lobster",
-    "Lora",
-    "Merriweather",
-    "Montserrat",
-    "Mukta",
-    "Nunito",
-    "Offside",
-    "Open Sans",
-    "Oswald",
-    "Overlock",
-    "Pacifico",
-    "Playfair Display",
-    "Poppins",
-    "Raleway",
-    "Roboto",
-    "Roboto Mono",
-    "Source Sans Pro",
-    "Space Mono",
-    "Spicy Rice",
-    "Squada One",
-    "Sue Ellen Francisco",
-    "Trade Winds",
-    "Ubuntu",
-    "Varela",
-    "Vollkorn",
-    "Work Sans",
-    "Zilla Slab"
-  ];
-// =======
+
   @override
   void initState() {
     fontValue = TextEditingController(text: '');
+    fontFamily = TextEditingController(text: '');
     fontSelection = FlyoutController();
     late FontStyleController styleController;
     dynamicFields.setChangeController(changeFontController);
@@ -159,7 +133,6 @@ class _EditorState extends State<Editor>
     super.initState();
   }
 
-// >>>>>>> 4256ad7f65315b9c276985ecc4add0f4c5117cbf
   changeFontController(FontStyleController controller) {
     styleController = controller;
     Color selectedColor = styleController.textStyle.color ?? pickerColor;
@@ -168,6 +141,8 @@ class _EditorState extends State<Editor>
       fontColorPicker = selectedColor;
       _styleFontSize = styleController.textStyle.fontSize ?? _styleFontSize;
       fontValue.text = '${_styleFontSize.toInt()}';
+      _selectedFont = styleController.textStyle.fontFamily ?? _selectedFont;
+      fontFamily.text = _selectedFont;
     });
   }
 
@@ -431,7 +406,7 @@ class _EditorState extends State<Editor>
               child: Container(
                 child: TextBox(
                   readOnly: true,
-                  placeholder: '$selectedFont',
+                  controller: fontFamily,
                 ),
               ),
             ),

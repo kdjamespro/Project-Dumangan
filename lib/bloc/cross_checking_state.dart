@@ -46,5 +46,9 @@ class CrossCheckingMapping extends CrossCheckingState {
 }
 
 class CrossCheckingFinished extends CrossCheckingState {
-  const CrossCheckingFinished() : super();
+  final int participants;
+  final int absentees;
+  const CrossCheckingFinished(
+      {required this.participants, required this.absentees})
+      : super();
 }

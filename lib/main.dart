@@ -82,7 +82,6 @@ class _MyHomePageState extends State<MyHomePage>
   Image? userPhoto;
   String? userName;
   var _alertShowing = false;
-  var _index = 0;
 
   void setUserProfile(String url, String name) {
     if (url == '') {
