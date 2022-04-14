@@ -29,7 +29,6 @@ import 'package:flutter_font_picker/flutter_font_picker.dart';
 import '/services/file_handler.dart';
 import 'attribute_menu.dart';
 import 'attribute_text.dart';
-import 'package:project_dumangan/pages/editor/image_archive.dart';
 
 class Editor extends StatefulWidget {
   const Editor({Key? key}) : super(key: key);
@@ -126,7 +125,6 @@ class _EditorState extends State<Editor>
     fontValue = TextEditingController(text: '');
     fontFamily = TextEditingController(text: '');
     fontSelection = FlyoutController();
-    late FontStyleController styleController;
     dynamicFields.setChangeController(changeFontController);
     canvasController.addListener(changeCanvasSize);
     dynamicFields.addListener(updateTextBox);
@@ -244,13 +242,13 @@ class _EditorState extends State<Editor>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(left: 7, top: 10, bottom: 10),
+                    margin: const EdgeInsets.only(left: 7, top: 10, bottom: 10),
                     decoration: BoxDecoration(
                       color: menuIndex == 0
-                          ? Color.fromARGB(255, 249, 249, 249)
+                          ? const Color.fromARGB(255, 249, 249, 249)
                           : null,
                       borderRadius: menuIndex == 0
-                          ? BorderRadius.only(
+                          ? const BorderRadius.only(
                               topLeft: Radius.circular(12),
                               bottomLeft: Radius.circular(12))
                           : null,
@@ -259,7 +257,7 @@ class _EditorState extends State<Editor>
                       padding: const EdgeInsets.only(left: 7, top: 8),
                       child: MenuButton(
                         color: menuIndex == 0
-                            ? Color.fromARGB(255, 249, 249, 249)
+                            ? const Color.fromARGB(255, 249, 249, 249)
                             : null,
                         label: 'Font',
                         menuIcon: const Icon(
@@ -274,21 +272,21 @@ class _EditorState extends State<Editor>
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 7),
+                    margin: const EdgeInsets.only(left: 7),
                     padding: const EdgeInsets.only(left: 7, top: 8),
                     decoration: BoxDecoration(
                       color: menuIndex == 1
-                          ? Color.fromARGB(255, 249, 249, 249)
+                          ? const Color.fromARGB(255, 249, 249, 249)
                           : null,
                       borderRadius: menuIndex == 1
-                          ? BorderRadius.only(
+                          ? const BorderRadius.only(
                               topLeft: Radius.circular(12),
                               bottomLeft: Radius.circular(12))
                           : null,
                     ),
                     child: MenuButton(
                       color: menuIndex == 1
-                          ? Color.fromARGB(255, 249, 249, 249)
+                          ? const Color.fromARGB(255, 249, 249, 249)
                           : null,
                       label: 'Templates',
                       menuIcon: const Icon(
@@ -301,21 +299,21 @@ class _EditorState extends State<Editor>
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 5, top: 10, bottom: 10),
+                    margin: const EdgeInsets.only(left: 5, top: 10, bottom: 10),
                     padding: const EdgeInsets.only(left: 7),
                     decoration: BoxDecoration(
                       color: menuIndex == 2
-                          ? Color.fromARGB(255, 249, 249, 249)
+                          ? const Color.fromARGB(255, 249, 249, 249)
                           : null,
                       borderRadius: menuIndex == 2
-                          ? BorderRadius.only(
+                          ? const BorderRadius.only(
                               topLeft: Radius.circular(12),
                               bottomLeft: Radius.circular(12))
                           : null,
                     ),
                     child: MenuButton(
                       color: menuIndex == 2
-                          ? Color.fromARGB(255, 249, 249, 249)
+                          ? const Color.fromARGB(255, 249, 249, 249)
                           : null,
                       label: 'Document\n Size',
                       menuIcon: const Icon(
@@ -328,21 +326,21 @@ class _EditorState extends State<Editor>
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 7, top: 10, bottom: 10),
+                    margin: const EdgeInsets.only(left: 7, top: 10, bottom: 10),
                     padding: const EdgeInsets.only(left: 7),
                     decoration: BoxDecoration(
                       color: menuIndex == 3
-                          ? Color.fromARGB(255, 249, 249, 249)
+                          ? const Color.fromARGB(255, 249, 249, 249)
                           : null,
                       borderRadius: menuIndex == 3
-                          ? BorderRadius.only(
+                          ? const BorderRadius.only(
                               topLeft: Radius.circular(12),
                               bottomLeft: Radius.circular(12))
                           : null,
                     ),
                     child: MenuButton(
                       color: menuIndex == 3
-                          ? Color.fromARGB(255, 249, 249, 249)
+                          ? const Color.fromARGB(255, 249, 249, 249)
                           : null,
                       label: 'Dynamic\n Fields',
                       menuIcon: const Icon(
@@ -410,11 +408,11 @@ class _EditorState extends State<Editor>
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             Button(
-                child: Text('Open Font picker'),
+                child: const Text('Open Font picker'),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -603,7 +601,7 @@ class _EditorState extends State<Editor>
               child: Container(
                 decoration: BoxDecoration(
                   color: fontColorPicker,
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(5),
                     bottomLeft: Radius.circular(5),
                   ),
@@ -616,9 +614,9 @@ class _EditorState extends State<Editor>
               },
             ),
             Button(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 100, top: 2, bottom: 2),
-                  child: const Text('Open color picker'),
+                child: const Padding(
+                  padding: EdgeInsets.only(right: 100, top: 2, bottom: 2),
+                  child: Text('Open color picker'),
                 ),
                 // Set onPressed to null to disable the button
                 onPressed: () {
@@ -716,9 +714,9 @@ class _EditorState extends State<Editor>
           child: Container(
             width: double.infinity,
             child: Button(
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: const Text('Upload Image'),
+              child: const Padding(
+                padding: EdgeInsets.all(4.0),
+                child: Text('Upload Image'),
               ),
               onPressed: () async {
                 final picked =
@@ -736,7 +734,7 @@ class _EditorState extends State<Editor>
         Flexible(
 // <<<<<<< HEAD
           child: Container(
-            margin: EdgeInsets.only(top: 6, bottom: 6),
+            margin: const EdgeInsets.only(top: 6, bottom: 6),
             width: double.infinity,
             child: Button(
               onPressed: () async {
@@ -753,43 +751,13 @@ class _EditorState extends State<Editor>
                   ).show(context);
                 }
               },
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
+              child: const Padding(
+                padding: EdgeInsets.all(4.0),
                 child: Text("Save Template"),
               ),
             ),
           ),
         ),
-
-        // Flexible(
-        //   child: Button(
-        //     child: const Text('Delete All Templates'),
-        //     onPressed: () {
-        //       fluent.showDialog(
-        //         barrierDismissible: true,
-        //         context: context,
-        //         builder: (context) {
-        //           return ContentDialog(
-        //             title: const Text('Delete Templates'),
-        //             content: const Text('This process cannot be undone.'),
-        //             actions: [
-        //               Button(
-        //                   child: const Text('Cancel'),
-        //                   onPressed: () {
-        //                     Navigator.pop(context);
-        //                   }),
-        //               Button(
-        //                 child: const Text('Delete'),
-        //                 onPressed: () {},
-        //               ),
-        //             ],
-        //           );
-        //         },
-        //       );
-        //     },
-        //   ),
-        // ),
-// >>>>>>> e6525fa895a686c6ba3648c66e0ad97c0a974da2
         ChangeNotifierProvider(
             create: (context) => ProgressController(),
             builder: (context, _) {
@@ -918,37 +886,16 @@ class _EditorState extends State<Editor>
                       onPressed: () {
                         Navigator.pop(context);
                       }),
-                  Text(
+                  const Text(
                     'Font Color Selection',
-// =======
-//         title: const mat.Text(""),
-//         content: Column(
-//           mainAxisAlignment: MainAxisAlignment.spaceAround,
-//           children: [
-//             mat.Row(
-//               children: [
-//                 fluent.IconButton(
-//                     icon: const Icon(
-//                       FluentIcons.return_key,
-//                       color: mat.Colors.black,
-//                       size: 20,
-//                     ),
-//                     onPressed: () {
-//                       Navigator.pop(context);
-//                     }),
-//                 const fluent.Padding(
-//                   padding: EdgeInsets.all(20.0),
-//                   child: Text(
-//                     'Compose Email',
-// >>>>>>> e6525fa895a686c6ba3648c66e0ad97c0a974da2
                   ),
                 ],
               ),
               buildColorPicker(),
               Button(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: const Text('Select Color'),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Select Color'),
                   ),
                   // Set onPressed to null to disable the button
                   onPressed: () {

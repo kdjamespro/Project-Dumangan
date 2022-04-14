@@ -74,6 +74,10 @@ class MyDatabase extends _$MyDatabase {
     return select(eventsTable).watch();
   }
 
+  Future<List<EventsTableData>> getEventList() {
+    return select(eventsTable).get();
+  }
+
   Stream<List<ParticipantsTableData>> getParticipants(int eventsId) {
     return (select(participantsTable)
           ..where((row) => row.eventsId.equals(eventsId)))

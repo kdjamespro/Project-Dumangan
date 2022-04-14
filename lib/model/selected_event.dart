@@ -27,6 +27,7 @@ class SelectedEvent {
     _eventParticipants = event.participants;
     _eventAbsentees = event.absentees;
     _eventDate = event.date;
+    _certificatesGenerated = event.certificatesGenerated;
   }
 
   void clearEvent() {

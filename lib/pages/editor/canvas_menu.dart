@@ -33,7 +33,7 @@ class _CanvasMenuState extends State<CanvasMenu>
   Widget build(BuildContext context) {
     super.build(context);
     return Container(
-      color: Color.fromARGB(255, 249, 249, 249),
+      color: const Color.fromARGB(255, 249, 249, 249),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

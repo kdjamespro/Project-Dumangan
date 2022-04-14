@@ -8,6 +8,7 @@ import 'package:project_dumangan/pages/events/event_countdown.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path/path.dart' as Path;
+import 'package:project_dumangan/services/pdf_generator.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -17,13 +18,13 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final pdf = pw.Document();
   @override
   Widget build(BuildContext context) {
     SelectedEvent event = context.read<SelectedEvent>();
     MyDatabase db = context.read<MyDatabase>();
     db.updateEvent(
         event.eventId, event.eventParticipants, event.eventAbsentees);
+
     return mat.SafeArea(
       child: FluentApp(
         debugShowCheckedModeBanner: false,
@@ -59,9 +60,11 @@ class _DashboardPageState extends State<DashboardPage> {
                             Text('Generate \nEvent Report'),
                           ],
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          PdfGenerator.generateReport(event);
+                        },
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       SizedBox(
@@ -121,23 +124,18 @@ class _DashboardPageState extends State<DashboardPage> {
                                               .title,
                                         ),
                                       ),
-                                      Divider(
+                                      const Divider(
                                         size: double.infinity,
                                       ),
-                                      SizedBox(height: 25),
+                                      const SizedBox(height: 25),
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          StreamBuilder<Object>(
-                                              stream: db.eventParticipantsCount(
-                                                  event.eventId),
-                                              builder: (context, snapshot) {
-                                                return DashStats(
-                                                    context,
-                                                    "Total Count\nof Registration",
-                                                    '${event.eventParticipants + event.eventAbsentees}');
-                                              }),
+                                          DashStats(
+                                              context,
+                                              "Total Count\nof Registration",
+                                              '${event.eventParticipants + event.eventAbsentees}'),
                                           DashStats(
                                               context,
                                               "Total Count\nof Participants",
@@ -149,7 +147,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                           DashStats(
                                               context,
                                               "Total Number of \nCertificates Generated",
-                                              "120"),
+                                              "${event.certficatesGenerated}"),
                                           // DashStats(
                                           //     context, "Average Rate of Events", "4.5"),
                                         ],
@@ -200,7 +198,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                         ),
                       ),
-                      Divider(
+                      const Divider(
                         size: double.infinity,
                       ),
                       mat.Material(
@@ -213,12 +211,6 @@ class _DashboardPageState extends State<DashboardPage> {
                             ColumnData("Event Attendees"),
                           ],
                           rows: <mat.DataRow>[
-                            RowData(
-                                context,
-                                "This is a sample Event Name rrrrrrrrrrrr rrrrrrrrrrrrrrr rrrrrrrr rrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrrrfor the table (2022)",
-                                "March 20, 2022",
-                                "0",
-                                "250"),
                             RowData(
                                 context,
                                 "This is a sample Event Name for the table (2022)",

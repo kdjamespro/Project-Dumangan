@@ -10,7 +10,6 @@ import 'package:project_dumangan/model/attribute_mapping.dart';
 import 'package:project_dumangan/model/gmail_account.dart';
 import 'package:project_dumangan/pages/EditorSample.dart';
 import 'package:project_dumangan/pages/help_page.dart';
-import 'package:project_dumangan/pages/setting_page.dart';
 import 'package:project_dumangan/services/file_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sqlite3/open.dart';
