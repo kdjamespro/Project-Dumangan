@@ -63,7 +63,7 @@ class EventCountdown extends StatelessWidget {
                           child: Column(children: [
                             Container(
                               height: 130,
-                              width: 140,
+                              width: 130,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
                                 color: FluentTheme.of(context)

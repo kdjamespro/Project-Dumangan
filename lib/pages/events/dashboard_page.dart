@@ -5,6 +5,9 @@ import 'package:project_dumangan/bloc/bloc/events_bloc.dart';
 import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/selected_event.dart';
 import 'package:project_dumangan/pages/events/event_countdown.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:path/path.dart' as Path;
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -14,6 +17,7 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  final pdf = pw.Document();
   @override
   Widget build(BuildContext context) {
     SelectedEvent event = context.read<SelectedEvent>();
@@ -63,6 +67,26 @@ class _DashboardPageState extends State<DashboardPage> {
                   margin: const EdgeInsets.symmetric(vertical: 16.0),
                   child: Column(
                     children: [
+                      // Button(
+                      //   onPressed: () async {
+                      //     print("Button clicked");
+                      //     Future<void> main() async {
+                      //       final pdf = pw.Document();
+                      //
+                      //       pdf.addPage(
+                      //         pw.Page(
+                      //           build: (pw.Context context) => pw.Center(
+                      //             child: pw.Text('Hello World!'),
+                      //           ),
+                      //         ),
+                      //       );
+                      //
+                      //       final file = File('example.pdf');
+                      //       await file.writeAsBytes(await pdf.save());
+                      //     }
+                      //   },
+                      //   child: Text("Generate Report"),
+                      // ),
                       Text(
                         'Event\'s summary',
                         style: FluentTheme.of(context).typography.title,

@@ -20,7 +20,8 @@ class DataPage extends StatefulWidget {
 class _DataPageState extends State<DataPage>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
-  final emailBodyController = ScrollController();
+  TextEditingController emailSubjectAnnoucement = TextEditingController();
+  TextEditingController emailContentsAnnoucement = TextEditingController();
 
   @override
   void initState() {
@@ -77,10 +78,7 @@ class _DataPageState extends State<DataPage>
                           TextEditingController();
                       TextEditingController emailContents =
                           TextEditingController();
-                      TextEditingController emailSubjectAnnoucement =
-                          TextEditingController();
-                      TextEditingController emailContentsAnnoucement =
-                          TextEditingController();
+
                       return fluent.Container(
                         margin: const fluent.EdgeInsets.all(100),
                         child: Scaffold(
@@ -151,7 +149,7 @@ class _DataPageState extends State<DataPage>
                                       const fluent.Padding(
                                         padding: EdgeInsets.only(left: 8.0),
                                         child: Text(
-                                          'Compose Email',
+                                          'Compose Email for Certificates',
                                           style: fluent.TextStyle(fontSize: 18),
                                         ),
                                       ),
@@ -194,9 +192,10 @@ class _DataPageState extends State<DataPage>
                                             context: context,
                                             builder: (context) {
                                               return ContentDialog(
-                                                title: const Text('Send all?'),
+                                                title: const Text(
+                                                    'Send certificates to all?'),
                                                 content: const Text(
-                                                    'Are you sure you want to send all content'),
+                                                    'Are you sure you want to send all the certificates?'),
                                                 actions: [
                                                   Button(
                                                       child:
@@ -205,7 +204,8 @@ class _DataPageState extends State<DataPage>
                                                         Navigator.pop(context);
                                                       }),
                                                   FilledButton(
-                                                      child: const Text('Send'),
+                                                      child: const Text(
+                                                          'Send All'),
                                                       onPressed: () async {
                                                         print(account.signedIn);
                                                         if (account.signedIn) {
@@ -320,7 +320,7 @@ class _DataPageState extends State<DataPage>
                                             builder: (context) {
                                               return ContentDialog(
                                                 title: const Text(
-                                                    'Do you want to exit email composition?'),
+                                                    'Do you want to exit email announcement composition?'),
                                                 content: const Text(
                                                     'All changes will be discarded.'),
                                                 actions: [
@@ -348,7 +348,7 @@ class _DataPageState extends State<DataPage>
                                       const fluent.Padding(
                                         padding: EdgeInsets.only(left: 8.0),
                                         child: Text(
-                                          'Compose Email',
+                                          'Compose Email for Announcements',
                                           style: fluent.TextStyle(fontSize: 18),
                                         ),
                                       ),
@@ -391,9 +391,10 @@ class _DataPageState extends State<DataPage>
                                             context: context,
                                             builder: (context) {
                                               return ContentDialog(
-                                                title: const Text('Send all?'),
+                                                title: const Text(
+                                                    'Send Announcement to all?'),
                                                 content: const Text(
-                                                    'Are you sure you want to send all content'),
+                                                    'Are you sure you want to send announcement to all?'),
                                                 actions: [
                                                   Button(
                                                       child:
@@ -402,7 +403,8 @@ class _DataPageState extends State<DataPage>
                                                         Navigator.pop(context);
                                                       }),
                                                   FilledButton(
-                                                      child: const Text('Send'),
+                                                      child: const Text(
+                                                          'Send all'),
                                                       onPressed: () async {
                                                         if (account.signedIn) {
                                                           print(
@@ -596,4 +598,4 @@ class _DataPageState extends State<DataPage>
   }
 }
 
-// 
+//

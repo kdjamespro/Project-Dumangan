@@ -310,23 +310,49 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
     return Row(
       children: events
           .map((event) => GestureDetector(
-                onTap: () async {
-                  int selectedEventId = await Navigator.push(
-                    context,
-                    FluentPageRoute(
-                      builder: (_) => EventInfo(
-                        event: event,
-                      ),
-                    ),
+                // onTap: () async {
+                //   int selectedEventId = await Navigator.push(
+                //     context,
+                //     FluentPageRoute(
+                //       builder: (_) => EventInfo(
+                //         event: event,
+                //       ),
+                //     ),
+                //   );
+                //   if (selectedEventId >= 0) {
+                //     context.read<SelectedEvent>().setEvent(event);
+                //     context.read<EventsBloc>().add(LoadEvent(
+                //         eventId: selectedEventId,
+                //         db: context.read<MyDatabase>()));
+                //     print('Selected Event: $selectedEventId');
+                //     print('Event: ${event.id}');
+                //   }
+                // },
+                onTap: () {
+                  showDialog(
+                    // barrierDismissible: true,
+                    context: context,
+                    builder: (context) {
+                      return ContentDialog(
+                        title: const Text('Do you want to select this event?'),
+                        content: const Text(
+                            'This event would be used to specify what event to be used in creat.'),
+                        actions: [
+                          Button(
+                            child: const Text('Cancel'),
+                            onPressed: () {
+                              Navigator.pop(context, -1);
+                            },
+                          ),
+                          FilledButton(
+                              child: const Text('Select event'),
+                              onPressed: () {
+                                Navigator.pop(context, event.id);
+                              }),
+                        ],
+                      );
+                    },
                   );
-                  if (selectedEventId >= 0) {
-                    context.read<SelectedEvent>().setEvent(event);
-                    context.read<EventsBloc>().add(LoadEvent(
-                        eventId: selectedEventId,
-                        db: context.read<MyDatabase>()));
-                    print('Selected Event: $selectedEventId');
-                    print('Event: ${event.id}');
-                  }
                 },
                 child: Container(
                   width: 225,
