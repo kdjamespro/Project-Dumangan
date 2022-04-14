@@ -6,6 +6,7 @@ import 'package:image/image.dart' as IMG;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:project_dumangan/model/canvas_controller.dart';
+import 'package:printing/printing.dart';
 
 class PdfGenerator {
   static generatePdf(
@@ -49,6 +50,18 @@ class PdfGenerator {
     } else {
       return PdfPageFormat.letter.portrait;
     }
+  }
+
+  static Future<Uint8List?> getPdfThumbnail(String path) async {
+    final file = File(path);
+    if (file.existsSync()) {
+      await for (var page
+          in Printing.raster(file.readAsBytesSync(), pages: [0], dpi: 72)) {
+        final image = await page.toPng(); // ...or page.toPng()
+        return image;
+      }
+    }
+    return null;
   }
 
   static pw.PageOrientation _findOrientation(PageOrientation orientation) {
