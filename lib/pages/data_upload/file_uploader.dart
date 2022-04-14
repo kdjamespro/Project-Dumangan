@@ -28,10 +28,10 @@ class _FileUploaderState extends State<FileUploader> {
   FileParser parser = FileParser();
   bool _crossCheck = false;
   PickerContainer filePicker1 = PickerContainer(
-    caption: 'Drop a csv file or click to upload for Attedance Form',
+    caption: 'Drop a csv file or click \nto upload for Attendance Form',
   );
   PickerContainer filePicker2 = PickerContainer(
-      caption: 'Drop a csv file or click to upload for Registration Form');
+      caption: 'Drop a csv file or click \nto upload for Registration Form');
 
   bool isFileReady() {
     if (_crossCheck) {
@@ -117,7 +117,11 @@ class _FileUploaderState extends State<FileUploader> {
                         },
                         listener: (context, state) {}),
                     FilledButton(
-                        child: const Text('Upload Data'),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 16),
+                          child: const Text('Upload Data'),
+                        ),
                         onPressed: () {
                           int eventId = context.read<SelectedEvent>().eventId;
                           if (!isFileReady()) {
@@ -292,49 +296,47 @@ class _PickerContainerState extends State<PickerContainer> {
                     height: MediaQuery.of(context).size.height / 2,
                     color: _dragging ? Colors.grey[50] : null,
                     child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 60),
-                        child: widget._fileExists
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  FileIcon(_getName(widget._file), size: 90),
-                                  Expanded(
-                                    flex: 4,
-                                    child: AutoSizeText(
-                                      _getName(widget._file),
-                                      style: FluentTheme.of(context)
-                                          .typography
-                                          .bodyLarge,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                      child: widget._fileExists
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                FileIcon(_getName(widget._file), size: 90),
+                                Expanded(
+                                  flex: 4,
+                                  child: AutoSizeText(
+                                    _getName(widget._file),
+                                    style: FluentTheme.of(context)
+                                        .typography
+                                        .bodyLarge,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: FittedBox(
+                                    fit: BoxFit.none,
+                                    child: IconButton(
+                                      onPressed: () => {
+                                        setState(() {
+                                          widget._fileExists = false;
+                                          widget.removeFile();
+                                        })
+                                      },
+                                      icon:
+                                          const Icon(FluentIcons.chrome_close),
                                     ),
                                   ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: FittedBox(
-                                      fit: BoxFit.none,
-                                      child: IconButton(
-                                        onPressed: () => {
-                                          setState(() {
-                                            widget._fileExists = false;
-                                            widget.removeFile();
-                                          })
-                                        },
-                                        icon: const Icon(
-                                            FluentIcons.chrome_close),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : AutoSizeText(
-                                widget.caption,
-                                style: FluentTheme.of(context).typography.title,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                      ),
+                                ),
+                              ],
+                            )
+                          : AutoSizeText(
+                              widget.caption,
+                              style: FluentTheme.of(context).typography.title,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                     ),
                   ),
                 ),

@@ -313,14 +313,14 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
           .map((event) => GestureDetector(
                 onTap: () async {
                   int selectedEventId = await showDialog<int>(
-                        // barrierDismissible: true,
+                        barrierDismissible: true,
                         context: context,
                         builder: (context) {
                           return ContentDialog(
                             title:
                                 const Text('Do you want to select this event?'),
                             content: const Text(
-                                'This event would be used to specify what event to be used in creat.'),
+                                'This event would be used to specify what event to be used in this session.'),
                             actions: [
                               Button(
                                 child: const Text('Cancel'),

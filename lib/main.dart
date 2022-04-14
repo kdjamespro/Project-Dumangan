@@ -175,11 +175,11 @@ class _MyHomePageState extends State<MyHomePage>
             ),
             PaneItem(
               icon: const Icon(FluentIcons.check_mark),
-              title: const Text('Generate'),
+              title: const Text('Cross-check'),
             ),
             PaneItem(
               icon: const Icon(FluentIcons.edit),
-              title: const Text('Edit'),
+              title: const Text('Edit & Generate'),
             ),
 
             PaneItem(
@@ -187,10 +187,10 @@ class _MyHomePageState extends State<MyHomePage>
               title: const Text('Send'),
             ),
 
-            PaneItem(
-              icon: const Icon(FluentIcons.settings),
-              title: const Text('Settings'),
-            ),
+            // PaneItem(
+            //   icon: const Icon(FluentIcons.settings),
+            //   title: const Text('Settings'),
+            // ),
 
             PaneItem(
               icon: const Icon(FluentIcons.help),
@@ -224,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage>
           const CertPage(),
           const EditorSample(),
           const DataPage(),
-          const Settigs_page(),
+          // const Settigs_page(),
           const HelpPage(),
           LoginPage(setInfo: setUserProfile),
         ],

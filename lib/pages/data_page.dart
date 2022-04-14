@@ -71,7 +71,7 @@ class _DataPageState extends State<DataPage>
                   SelectedEvent event = context.read<SelectedEvent>();
                   GmailAccount account = context.read<GmailAccount>();
                   fluent.showDialog(
-                    barrierDismissible: true,
+                    // barrierDismissible: true,
                     context: context,
                     builder: (context) {
                       TextEditingController emailSubject =

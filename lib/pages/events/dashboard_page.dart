@@ -40,17 +40,36 @@ class _DashboardPageState extends State<DashboardPage> {
                   alignment: Alignment.topLeft,
                   child: Row(
                     children: [
-                      Text(
-                        event.eventName,
-                        style: FluentTheme.of(context).typography.titleLarge,
+                      Expanded(
+                        child: Text(
+                          event.eventName,
+                          overflow: TextOverflow.ellipsis,
+                          style: FluentTheme.of(context).typography.titleLarge,
+                        ),
                       ),
                       const Spacer(),
+                      Button(
+                        child: Row(
+                          children: const [
+                            Icon(
+                              FluentIcons.generate,
+                              size: 20,
+                            ),
+                            SizedBox(width: 10),
+                            Text('Generate \nEvent Report'),
+                          ],
+                        ),
+                        onPressed: () {},
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
                       SizedBox(
                         child: FilledButton(
                             child: Row(
                               children: const [
                                 Icon(FluentIcons.cancel),
-                                SizedBox(width: 20),
+                                SizedBox(width: 10),
                                 Text('Select/Add \nAnother Event'),
                               ],
                             ),
@@ -62,95 +81,97 @@ class _DashboardPageState extends State<DashboardPage> {
                     ],
                   ),
                 ),
-                const EventCountdown(),
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Column(
-                    children: [
-                      // Button(
-                      //   onPressed: () async {
-                      //     print("Button clicked");
-                      //     Future<void> main() async {
-                      //       final pdf = pw.Document();
-                      //
-                      //       pdf.addPage(
-                      //         pw.Page(
-                      //           build: (pw.Context context) => pw.Center(
-                      //             child: pw.Text('Hello World!'),
-                      //           ),
-                      //         ),
-                      //       );
-                      //
-                      //       final file = File('example.pdf');
-                      //       await file.writeAsBytes(await pdf.save());
-                      //     }
-                      //   },
-                      //   child: Text("Generate Report"),
-                      // ),
-                      Text(
-                        'Event\'s summary',
-                        style: FluentTheme.of(context).typography.title,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 8, 20, 0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: mat.Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color.fromRGBO(203, 202, 202, 1.0)
-                                    .withOpacity(0.4),
-                                spreadRadius: 2,
-                                blurRadius: 3,
-                                offset: const Offset(
-                                    2, 1), // changes position of shadow
+                Row(
+                  children: [
+                    const EventCountdown(),
+                    Expanded(
+                      child: Container(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 35, 20, 0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: mat.Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color.fromRGBO(
+                                              203, 202, 202, 1.0)
+                                          .withOpacity(0.4),
+                                      spreadRadius: 2,
+                                      blurRadius: 3,
+                                      offset: const Offset(
+                                          2, 1), // changes position of shadow
+                                    ),
+                                  ],
+                                ),
+                                width: double.infinity,
+                                height: 220,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          'Event\'s summary',
+                                          style: FluentTheme.of(context)
+                                              .typography
+                                              .title,
+                                        ),
+                                      ),
+                                      Divider(
+                                        size: double.infinity,
+                                      ),
+                                      SizedBox(height: 25),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          StreamBuilder<Object>(
+                                              stream: db.eventParticipantsCount(
+                                                  event.eventId),
+                                              builder: (context, snapshot) {
+                                                return DashStats(
+                                                    context,
+                                                    "Total Count\nof Registration",
+                                                    '${event.eventParticipants + event.eventAbsentees}');
+                                              }),
+                                          DashStats(
+                                              context,
+                                              "Total Count\nof Participants",
+                                              '${event.eventParticipants - event.eventAbsentees}'),
+                                          DashStats(
+                                              context,
+                                              "Total Count\nof Absentees",
+                                              '${event.eventAbsentees}'),
+                                          DashStats(
+                                              context,
+                                              "Total Number of \nCertificates Generated",
+                                              "120"),
+                                          // DashStats(
+                                          //     context, "Average Rate of Events", "4.5"),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ],
-                          ),
-                          width: double.infinity,
-                          height: 150,
-                          padding: const EdgeInsets.all(4),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                StreamBuilder<Object>(
-                                    stream: db
-                                        .eventParticipantsCount(event.eventId),
-                                    builder: (context, snapshot) {
-                                      return DashStats(
-                                          context,
-                                          "Total Number of Registration",
-                                          '${event.eventParticipants + event.eventAbsentees}');
-                                    }),
-                                DashStats(
-                                    context,
-                                    "Total Number of Participants",
-                                    '${event.eventParticipants - event.eventAbsentees}'),
-                                DashStats(context, "Total Number of Absentees",
-                                    '${event.eventAbsentees}'),
-                                DashStats(
-                                    context,
-                                    "Total Number of Certificates Generated",
-                                    "120"),
-                                // DashStats(
-                                //     context, "Average Rate of Events", "4.5"),
-                              ],
                             ),
-                          ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 Container(
                   width: double.infinity,
-                  margin: const EdgeInsets.only(right: 20),
+                  margin:
+                      const EdgeInsets.only(right: 20, left: 20, bottom: 20),
                   // padding: EdgeInsets.only(right: 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
@@ -166,52 +187,66 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                     ],
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16.0, horizontal: 8.0),
-                    child: mat.Material(
-                      color: mat.Colors.white,
-                      child: mat.DataTable(
-                        columns: <mat.DataColumn>[
-                          ColumnData("Event Name"),
-                          ColumnData("Event Date"),
-                          ColumnData("Event Absentees"),
-                          ColumnData("Event Attendees"),
-                        ],
-                        rows: <mat.DataRow>[
-                          RowData(
-                              context,
-                              "This is a sample Event Name rrrrrrrrrrrr rrrrrrrrrrrrrrr rrrrrrrr rrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrrrfor the table (2022)",
-                              "March 20, 2022",
-                              "0",
-                              "250"),
-                          RowData(
-                              context,
-                              "This is a sample Event Name for the table (2022)",
-                              "March 20, 2022",
-                              "0",
-                              "250"),
-                          RowData(
-                              context,
-                              "This is a sample Event Name rrrrrrrrrrrr rrrrrrrrrrrrrrr rrrrrrrr rrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrrrfor the table (2022)",
-                              "March 20, 2022",
-                              "0",
-                              "250"),
-                          RowData(
-                              context,
-                              "This is a sample Event Name rrrrrrrrrrrr rrrrrrrrrrrrrrr rrrrrrrr rrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrrrfor the table (2022)",
-                              "March 20, 2022",
-                              "0",
-                              "250"),
-                          RowData(
-                              context,
-                              "This is a sample Event Name for the table (2022)",
-                              "March 20, 2022",
-                              "0",
-                              "250"),
-                        ],
+
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Text(
+                            'List of Events',
+                            style: FluentTheme.of(context).typography.title,
+                          ),
+                        ),
                       ),
-                    ),
+                      Divider(
+                        size: double.infinity,
+                      ),
+                      mat.Material(
+                        color: mat.Colors.white,
+                        child: mat.DataTable(
+                          columns: <mat.DataColumn>[
+                            ColumnData("Event Name"),
+                            ColumnData("Event Date"),
+                            ColumnData("Event Absentees"),
+                            ColumnData("Event Attendees"),
+                          ],
+                          rows: <mat.DataRow>[
+                            RowData(
+                                context,
+                                "This is a sample Event Name rrrrrrrrrrrr rrrrrrrrrrrrrrr rrrrrrrr rrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrrrfor the table (2022)",
+                                "March 20, 2022",
+                                "0",
+                                "250"),
+                            RowData(
+                                context,
+                                "This is a sample Event Name for the table (2022)",
+                                "March 20, 2022",
+                                "0",
+                                "250"),
+                            RowData(
+                                context,
+                                "This is a sample Event Name rrrrrrrrrrrr rrrrrrrrrrrrrrr rrrrrrrr rrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrrrfor the table (2022)",
+                                "March 20, 2022",
+                                "0",
+                                "250"),
+                            RowData(
+                                context,
+                                "This is a sample Event Name rrrrrrrrrrrr rrrrrrrrrrrrrrr rrrrrrrr rrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrrrfor the table (2022)",
+                                "March 20, 2022",
+                                "0",
+                                "250"),
+                            RowData(
+                                context,
+                                "This is a sample Event Name for the table (2022)",
+                                "March 20, 2022",
+                                "0",
+                                "250"),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -263,7 +298,11 @@ class _DashboardPageState extends State<DashboardPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(header, style: FluentTheme.of(context).typography.bodyLarge),
+          Text(
+            header,
+            style: FluentTheme.of(context).typography.bodyLarge,
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(
             height: 20,
           ),
