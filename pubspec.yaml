@@ -84,12 +84,21 @@ flutter:
   uses-material-design: true
 
   assets:
+<<<<<<< HEAD
+    - lib/image/certificate_template.png
+    - lib/image/certificate.png
+    - lib/image/conference.png
+    - lib/image/certificate.svg
+    - lib/image/conference.svg
+    - lib/image/sync.svg
+=======
     - assets/images/certificate_template.png
     - assets/images/banner.png
     - assets/images/certificate.png
     - assets/images/conference.png
     - assets/images//certificate.svg
     - assets/images//conference.svg
+>>>>>>> 16387f8ee6547eedbe03a81fddc8c51dd19707e4
 
 
   fonts:
