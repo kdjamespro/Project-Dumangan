@@ -182,7 +182,7 @@ class _DataPageState extends State<DataPage>
                                   height: 20,
                                 ),
                                 TextBox(
-                                  maxLines: 12,
+                                  maxLines: null,
                                   header: 'Body',
                                   headerStyle: const TextStyle(fontSize: 18),
                                   placeholder: 'Enter your email body here',
