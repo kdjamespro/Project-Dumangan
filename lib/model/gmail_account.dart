@@ -60,8 +60,9 @@ class GmailAccount {
     await GoogleSignIn().signOut();
   }
 
-  Future sendEmail(String subject, String userMessage, String participantEmail,
-      File cert) async {
+  Future<bool> sendEmail(String subject, String userMessage,
+      String participantEmail, File cert) async {
+    bool successful = false;
     final email = account!.email;
     final auth = await account!.authentication;
     final token = auth.accessToken!;
@@ -79,15 +80,18 @@ class GmailAccount {
 
     try {
       await send(message, smtpServer);
+      successful = true;
       print('Email Sent');
     } on MailerException catch (e) {
+      successful = false;
       print(e);
-      // sendingColor = Colors.red;
     }
+    return successful;
   }
 
   Future sendAnnouncements(
       String subject, String userMessage, String participantEmail) async {
+    bool successful = false;
     final email = account!.email;
     final auth = await account!.authentication;
     final token = auth.accessToken!;
@@ -103,9 +107,12 @@ class GmailAccount {
 
     try {
       await send(message, smtpServer);
+      successful = true;
       print('Email Sent');
     } on MailerException catch (e) {
+      successful = false;
       print(e);
     }
+    return successful;
   }
 }

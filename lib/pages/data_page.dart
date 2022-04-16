@@ -45,17 +45,17 @@ class _DataPageState extends State<DataPage>
           child: Scaffold(
             backgroundColor: mat.Color.fromARGB(1, 249, 249, 249),
             body: event.isEventSet()
-                ? fluent.FutureBuilder(
-                    future: db.getCertificates(event.eventId),
+                ? fluent.StreamBuilder(
+                    stream: db.watchCertificates(event.eventId),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         switch (snapshot.connectionState) {
-                          case ConnectionState.active:
                           case ConnectionState.waiting:
                             return const Center(
                               child: ProgressRing(strokeWidth: 8.0),
                             );
                           case ConnectionState.done:
+                          case ConnectionState.active:
                             List<CertificatesTableData> certs =
                                 snapshot.data as List<CertificatesTableData>;
                             if (certs.isNotEmpty) {
@@ -66,8 +66,8 @@ class _DataPageState extends State<DataPage>
                                 mainAxisSpacing: 20,
                                 crossAxisSpacing: 20,
                                 children: certs.map((e) {
-                                  return certificateCard(
-                                      context, '', e.filename, e.filename);
+                                  return certificateCard(context, '',
+                                      e.filename, e.filename, e.sended);
                                 }).toList(),
                               );
                             }
@@ -235,31 +235,21 @@ class _DataPageState extends State<DataPage>
                                                                     .filename);
                                                             if (certificate
                                                                 .existsSync()) {
-                                                              account.sendEmail(
-                                                                  emailSubject
-                                                                      .text,
-                                                                  emailContents
-                                                                      .text,
-                                                                  email,
-                                                                  certificate);
-
-                                                              await db
-                                                                  .updateCertStatus(
-                                                                      cert.id);
-                                                            }
-                                                            if (cert.sended ==
-                                                                true) {
-                                                              setState(() {
-                                                                sendingColor =
-                                                                    mat.Colors
-                                                                        .green;
-                                                              });
-                                                            } else {
-                                                              setState(() {
-                                                                sendingColor =
-                                                                    mat.Colors
-                                                                        .red;
-                                                              });
+                                                              if (!cert
+                                                                  .sended) {
+                                                                bool successful = await account.sendEmail(
+                                                                    emailSubject
+                                                                        .text,
+                                                                    emailContents
+                                                                        .text,
+                                                                    email,
+                                                                    certificate);
+                                                                if (successful) {
+                                                                  await db
+                                                                      .updateCertStatus(
+                                                                          cert.id);
+                                                                }
+                                                              }
                                                             }
                                                           }
                                                         } else {
@@ -519,8 +509,8 @@ class _DataPageState extends State<DataPage>
     );
   }
 
-  fluent.Stack certificateCard(
-      fluent.BuildContext context, String name, String email, String path) {
+  fluent.Stack certificateCard(fluent.BuildContext context, String name,
+      String email, String path, bool sended) {
     return Stack(
       children: [
         Container(
@@ -533,7 +523,10 @@ class _DataPageState extends State<DataPage>
                         case ConnectionState.done:
                           Uint8List? img = snapshot.data as Uint8List?;
                           if (img == null) {
-                            return Container();
+                            return Container(
+                              child: const Text(
+                                  'File does not exists in the indicated path'),
+                            );
                           } else {
                             return fluent.Image.memory(
                               img,
@@ -546,10 +539,15 @@ class _DataPageState extends State<DataPage>
                             child: ProgressRing(),
                           );
                         default:
-                          return Container();
+                          return Container(
+                            child: const Text(
+                                'File does not exists in the indicated path'),
+                          );
                       }
                     }
-                    return Container();
+                    return Container(
+                        child: const Text(
+                            'File does not exists in the indicated path'));
                   })),
         ),
         Container(
@@ -587,7 +585,7 @@ class _DataPageState extends State<DataPage>
                       Expanded(
                         child: Text(
                           email,
-                          style: TextStyle(fontSize: 12),
+                          style: const TextStyle(fontSize: 12),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -607,7 +605,7 @@ class _DataPageState extends State<DataPage>
               borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(12),
                   bottomRight: Radius.circular(12)),
-              color: sendingColor,
+              color: sended ? mat.Colors.green : mat.Colors.red,
             ),
           ),
         ),
