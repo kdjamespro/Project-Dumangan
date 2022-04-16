@@ -93,7 +93,7 @@ final List<String> _myGoogleFonts = [
 ];
 
 final autoSuggestBox = TextEditingController();
-String fontSelector = "Calibri";
+String fontSelector = "Roboto";
 String selectedFont = "Current Font";
 String styleFontStyle = "";
 String styleFontColor = "";
@@ -140,7 +140,7 @@ class _EditorState extends State<Editor>
       _styleFontSize = styleController.textStyle.fontSize ?? _styleFontSize;
       fontValue.text = '${_styleFontSize.toInt()}';
       _selectedFont = styleController.textStyle.fontFamily ?? _selectedFont;
-      fontFamily.text = _selectedFont;
+      fontFamily.text = styleController.fontFamily;
     });
   }
 
@@ -421,14 +421,13 @@ class _EditorState extends State<Editor>
                             recentsCount: 2,
                             onFontChanged: (font) {
                               setState(() {
+                                font.fontStyle;
                                 selectedFont = font.fontFamily;
-                                styleController.changeFontStyle(selectedFont);
-
-                                // _selectedFont = font.fontFamily;
-                                // _selectedFontTextStyle = font.toTextStyle();
+                                styleController.changeFontStyle(
+                                    selectedFont, font.toTextStyle());
+                                _selectedFont = font.fontFamily;
+                                fontFamily.text = _selectedFont;
                               });
-                              print(
-                                  "${font.fontFamily} with font weight ${font.fontWeight} and font style ${font.fontStyle}. FontSpec: ${font.toFontSpec()}");
                             },
                             googleFonts: _myGoogleFonts)),
                   );
@@ -732,7 +731,6 @@ class _EditorState extends State<Editor>
           ),
         ),
         Flexible(
-// <<<<<<< HEAD
           child: Container(
             margin: const EdgeInsets.only(top: 6, bottom: 6),
             width: double.infinity,
@@ -869,7 +867,6 @@ class _EditorState extends State<Editor>
       barrierDismissible: true,
       context: context,
       builder: (context) => mat.AlertDialog(
-// <<<<<<< HEAD
         content: Container(
           height: 500,
           width: 700,

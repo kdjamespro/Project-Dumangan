@@ -6,8 +6,10 @@ class FontStyleController extends ChangeNotifier {
   TextStyle textStyle = const TextStyle(
     fontSize: 12,
     color: Colors.black,
-    fontFamily: 'Calibri',
+    fontFamily: 'Roboto',
   );
+  String _fontFamily = 'Roboto';
+
   late TextEditingController controller;
 
   FontStyleController({required this.controller});
@@ -23,12 +25,15 @@ class FontStyleController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void changeFontStyle(String selectedFamily) {
+  void changeFontStyle(String selectedFamily, TextStyle style) {
     textStyle = GoogleFonts.getFont(
       selectedFamily,
-      textStyle: textStyle.copyWith(fontFamily: selectedFamily),
+      textStyle: textStyle.copyWith(
+          fontFamily: selectedFamily,
+          fontWeight: style.fontWeight,
+          fontStyle: style.fontStyle),
     );
-
+    _fontFamily = selectedFamily;
     notifyListeners();
   }
 
@@ -63,6 +68,8 @@ class FontStyleController extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  String get fontFamily => _fontFamily;
 
   void changeFontAlignment(TextAlign selected) {
     alignment = selected;
