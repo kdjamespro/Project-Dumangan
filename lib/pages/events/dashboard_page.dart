@@ -22,7 +22,6 @@ class _DashboardPageState extends State<DashboardPage> {
     MyDatabase db = context.read<MyDatabase>();
     db.updateEvent(
         event.eventId, event.eventParticipants, event.eventAbsentees);
-
     return mat.SafeArea(
       child: FluentApp(
         debugShowCheckedModeBanner: false,
@@ -57,8 +56,10 @@ class _DashboardPageState extends State<DashboardPage> {
                           Text('Generate \nEvent Report'),
                         ],
                       ),
-                      onPressed: () {
-                        PdfGenerator.generateReport(event);
+                      onPressed: () async {
+                        List<ParticipantsTableData> absentees =
+                            await db.getAbsentees(event.eventId);
+                        PdfGenerator.generateReport(event, absentees);
                       },
                     ),
                     const SizedBox(
