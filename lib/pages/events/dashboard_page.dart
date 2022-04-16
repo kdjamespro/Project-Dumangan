@@ -136,7 +136,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                         DashStats(
                                             context,
                                             "Total Count\nof Participants",
-                                            '${event.eventParticipants - event.eventAbsentees}'),
+                                            '${event.eventParticipants}'),
                                         DashStats(
                                             context,
                                             "Total Count\nof Absentees",
@@ -163,7 +163,7 @@ class _DashboardPageState extends State<DashboardPage> {
               const SizedBox(
                 height: 20,
               ),
-              Expanded(child: EventTable()),
+              const Expanded(child: EventTable()),
             ],
           ),
         ),
