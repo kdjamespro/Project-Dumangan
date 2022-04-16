@@ -832,6 +832,7 @@ class _EditorState extends State<Editor>
                             await db.addCertificates(certs);
                             await db.updateEventCertificates(
                                 event.eventId, sucessful);
+                            event.updateCertificatesCount(sucessful);
                             dynamicFields.showIndicators();
                             dynamicFields.reset();
                             load.hideLoadingScreen();

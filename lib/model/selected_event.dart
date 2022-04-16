@@ -61,6 +61,10 @@ class SelectedEvent {
     _eventParticipants -= num;
   }
 
+  void updateCertificatesCount(int num) {
+    _certificatesGenerated = num;
+  }
+
   int get eventId => _eventId;
 
   String get eventName => _eventName;
