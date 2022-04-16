@@ -28,93 +28,94 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     GmailAccount acc = context.read<GmailAccount>();
-    return Stack(alignment: Alignment.center, children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-              child: SvgPicture.asset("lib/image/conference.svg",
-                  width: 500, height: 500)),
-          Expanded(
-              child: SvgPicture.asset("lib/image/certificate.svg",
-                  width: 500, height: 500)),
-        ],
-      ),
-      Center(
-        child: Container(
-          width: 250,
-          height: 250,
-          decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.2),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 200,
-                height: 50,
-                child: Button(
-                  child: const Align(
-                      alignment: Alignment.center, child: Text("Sample")),
-                  onPressed: () {
-                    showDialog(
-                      barrierDismissible: true,
-                      context: context,
-                      builder: (context) {
-                        return ContentDialog(
-                          title: const Text("Sample"),
-                          content: const Text('Sample'),
-                          actions: [
-                            Button(
-                              child: const Text('Sample'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                            FilledButton(
-                                child: const Text('Sample'),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                }),
-                          ],
-                        );
-                      },
-                    );
-                  },
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        //SizedBox(width: 150),
+        Flexible(
+          child: Container(
+            width: 250,
+            height: 150,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.blue.withOpacity(0.9),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // SizedBox(
+                //   width: 225,
+                //   height: 50,
+                //   child: Button(
+                //     child: const Align(
+                //         alignment: Alignment.center, child: Text("Sample")),
+                //     onPressed: () {
+                //       showDialog(
+                //         barrierDismissible: true,
+                //         context: context,
+                //         builder: (context) {
+                //           return ContentDialog(
+                //             title: const Text("Sample"),
+                //             content: const Text('Sample'),
+                //             actions: [
+                //               Button(
+                //                 child: const Text('Sample'),
+                //                 onPressed: () {
+                //                   Navigator.pop(context);
+                //                 },
+                //               ),
+                //               FilledButton(
+                //                   child: const Text('Sample'),
+                //                   onPressed: () {
+                //                     Navigator.pop(context);
+                //                   }),
+                //             ],
+                //           );
+                //         },
+                //       );
+                //     },
+                //   ),
+                // ),
+                // SizedBox(height: 15),
+                SizedBox(
+                  width: 225,
+                  height: 50,
+                  child: Button(
+                      child: const Align(
+                          alignment: Alignment.center, child: Text('Sign in')),
+                      onPressed: () async {
+                        List<String> info = await acc.signIn();
+                        print(acc.signedIn);
+                        widget.setInfo(info[0], info[1]);
+                      }),
                 ),
-              ),
-              SizedBox(height: 15),
-              SizedBox(
-                width: 200,
-                height: 50,
-                child: Button(
+                SizedBox(height: 20),
+                SizedBox(
+                  width: 225,
+                  height: 50,
+                  child: Button(
                     child: const Align(
-                        alignment: Alignment.center, child: Text('Sign in')),
+                        alignment: Alignment.center, child: Text('Logout')),
                     onPressed: () async {
-                      List<String> info = await acc.signIn();
-                      print(acc.signedIn);
-                      widget.setInfo(info[0], info[1]);
-                    }),
-              ),
-              SizedBox(height: 15),
-              SizedBox(
-                width: 200,
-                height: 50,
-                child: Button(
-                  child: const Align(
-                      alignment: Alignment.center, child: Text('Logout')),
-                  onPressed: () async {
-                    await acc.signOut();
-                    widget.setInfo('', '');
-                  },
+                      await acc.signOut();
+                      widget.setInfo('', '');
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    ]);
+        // Expanded(
+        //     child: SvgPicture.asset("lib/image/conference.svg",
+        //         width: 200, height: 200)),
+        Expanded(
+          child:
+              SvgPicture.asset("lib/image/sync.svg", width: 250, height: 250),
+        ),
+      ],
+    );
   }
 }

@@ -89,6 +89,7 @@ flutter:
     - lib/image/conference.png
     - lib/image/certificate.svg
     - lib/image/conference.svg
+    - lib/image/sync.svg
 
 
   fonts:
