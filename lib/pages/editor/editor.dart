@@ -443,6 +443,7 @@ class _EditorState extends State<Editor>
           alignment: Alignment.centerLeft,
           child: Text('Font size selector'),
         ),
+
         SizedBox(
           // The default width is 200.
           // The slider does not have its own widget, so you have to add it yourself.

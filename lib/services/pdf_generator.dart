@@ -112,9 +112,10 @@ class PdfGenerator {
           )
           .toList());
     } else {
+      pw.SizedBox(height: 40);
       absent.add(pw.Text(
-          'Your event has a perfect attendance! Congratulations!',
-          style: pw.TextStyle(fontSize: 30, fontWeight: pw.FontWeight.bold),
+          'Your event has a perfect attendance!\n\nCongratulations!',
+          style: pw.TextStyle(fontSize: 25, fontWeight: pw.FontWeight.bold),
           textAlign: pw.TextAlign.center));
     }
     final banner = (await rootBundle.load('assets/images/banner.png'))

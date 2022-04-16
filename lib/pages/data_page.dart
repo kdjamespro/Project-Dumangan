@@ -13,7 +13,7 @@ import 'package:project_dumangan/services/pdf_generator.dart';
 import 'package:project_dumangan/services/warning_message.dart';
 import 'package:provider/provider.dart';
 
-Color sendingColor = mat.Colors.indigoAccent;
+Color sendingColor = mat.Colors.red;
 
 class DataPage extends StatefulWidget {
   const DataPage({Key? key}) : super(key: key);
@@ -75,7 +75,13 @@ class _DataPageState extends State<DataPage>
                       }
                       return Container();
                     })
-                : Container(),
+                : const Center(
+                    child: Text(
+                      "It seems like you haven't selected an event yet.\nPlease Select an event.",
+                      textAlign: fluent.TextAlign.center,
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
             floatingActionButton: FloatingActionButton(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
@@ -182,7 +188,7 @@ class _DataPageState extends State<DataPage>
                                   height: 20,
                                 ),
                                 TextBox(
-                                  maxLines: 12,
+                                  maxLines: null,
                                   header: 'Body',
                                   headerStyle: const TextStyle(fontSize: 18),
                                   placeholder: 'Enter your email body here',
