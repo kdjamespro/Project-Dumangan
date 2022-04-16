@@ -101,9 +101,10 @@ class PdfGenerator {
               ]))
           .toList());
     } else {
+      SizedBox(height: 40);
       absent.add(pw.Text(
-          'Your event has a perfect attendance! Congratulations!',
-          style: pw.TextStyle(fontSize: 30, fontWeight: pw.FontWeight.bold),
+          'Your event has a perfect attendance!\n\nCongratulations!',
+          style: pw.TextStyle(fontSize: 25, fontWeight: pw.FontWeight.bold),
           textAlign: pw.TextAlign.center));
     }
     // List<pw.Row> absent = List.generate(
@@ -137,20 +138,20 @@ class PdfGenerator {
               pw.Text(
                 event.eventName,
                 style:
-                    pw.TextStyle(fontSize: 28, fontWeight: pw.FontWeight.bold),
+                    pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
               ),
             ], mainAxisAlignment: pw.MainAxisAlignment.center),
             pw.SizedBox(height: 15),
             pw.Text(
               'Event Date: ${event.eventDate}',
-              style: const pw.TextStyle(fontSize: 16),
+              style: const pw.TextStyle(fontSize: 12),
               textAlign: pw.TextAlign.left,
             ),
             pw.Text(
               event.eventLocation.trim().isEmpty
                   ? 'Event Location: No Data Provided'
                   : 'Event Location: ${event.eventLocation}',
-              style: const pw.TextStyle(fontSize: 16),
+              style: const pw.TextStyle(fontSize: 12),
               textAlign: pw.TextAlign.left,
             ),
             pw.SizedBox(height: 30),
@@ -158,17 +159,17 @@ class PdfGenerator {
               event.eventDescription.trim().isEmpty
                   ? 'Event Description: No Data Provided'
                   : 'Event Description:\n${event.eventDescription}',
-              style: const pw.TextStyle(fontSize: 16),
+              style: const pw.TextStyle(fontSize: 12),
               textAlign: pw.TextAlign.left,
             ),
             pw.SizedBox(height: 45),
             pw.Text(
               'Total Event Participants: ${event.eventParticipants}',
-              style: const pw.TextStyle(fontSize: 14),
+              style: const pw.TextStyle(fontSize: 12),
             ),
             pw.Text(
               'Total Event Absentees: ${event.eventAbsentees}',
-              style: const pw.TextStyle(fontSize: 14),
+              style: const pw.TextStyle(fontSize: 12),
             ),
             pw.SizedBox(height: 30),
           ]),

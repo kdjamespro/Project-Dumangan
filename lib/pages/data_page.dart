@@ -75,7 +75,13 @@ class _DataPageState extends State<DataPage>
                       }
                       return Container();
                     })
-                : Container(),
+                : const Center(
+                    child: Text(
+                      "It seems like you haven't selected an event yet.\nPlease Select an event.",
+                      textAlign: fluent.TextAlign.center,
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
             floatingActionButton: FloatingActionButton(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
