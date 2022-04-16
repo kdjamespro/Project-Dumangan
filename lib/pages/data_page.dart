@@ -13,7 +13,7 @@ import 'package:project_dumangan/services/pdf_generator.dart';
 import 'package:project_dumangan/services/warning_message.dart';
 import 'package:provider/provider.dart';
 
-Color sendingColor = mat.Colors.indigoAccent;
+Color sendingColor = mat.Colors.red;
 
 class DataPage extends StatefulWidget {
   const DataPage({Key? key}) : super(key: key);
