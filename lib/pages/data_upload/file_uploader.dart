@@ -6,6 +6,7 @@ import 'package:desktop_drop/desktop_drop.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_icon/file_icon.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path/path.dart' as p;
 import 'package:project_dumangan/database/database.dart';
@@ -306,6 +307,13 @@ class _PickerContainerState extends State<PickerContainer> {
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                Container(
+                                  child: Icon(
+                                    FluentIcons.table,
+                                    color: Colors.green.lightest,
+                                    size: 90,
+                                  ),
+                                ),
                                 FileIcon(_getName(widget._file), size: 90),
                                 Expanded(
                                   flex: 4,

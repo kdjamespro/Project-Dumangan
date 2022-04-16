@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as mat;
+import 'package:mailer/mailer.dart';
 import 'package:motion_toast/motion_toast.dart';
 import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/gmail_account.dart';
@@ -12,6 +12,8 @@ import 'package:project_dumangan/model/selected_event.dart';
 import 'package:project_dumangan/services/pdf_generator.dart';
 import 'package:project_dumangan/services/warning_message.dart';
 import 'package:provider/provider.dart';
+
+Color sendingColor = mat.Colors.indigoAccent;
 
 class DataPage extends StatefulWidget {
   const DataPage({Key? key}) : super(key: key);
@@ -240,9 +242,24 @@ class _DataPageState extends State<DataPage>
                                                                       .text,
                                                                   email,
                                                                   certificate);
+
                                                               await db
                                                                   .updateCertStatus(
                                                                       cert.id);
+                                                            }
+                                                            if (cert.sended ==
+                                                                true) {
+                                                              setState(() {
+                                                                sendingColor =
+                                                                    mat.Colors
+                                                                        .green;
+                                                              });
+                                                            } else {
+                                                              setState(() {
+                                                                sendingColor =
+                                                                    mat.Colors
+                                                                        .red;
+                                                              });
                                                             }
                                                           }
                                                         } else {
@@ -537,14 +554,14 @@ class _DataPageState extends State<DataPage>
         ),
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: <Color>[
-                const fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.7),
-                const fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.9),
-                const fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.9),
+                const fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.0),
+                const fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.2),
+                const fluent.Color.fromARGB(0, 255, 255, 255).withOpacity(.8),
                 const fluent.Color.fromARGB(246, 255, 255, 255)
                     .withOpacity(1.0),
               ],
@@ -565,46 +582,16 @@ class _DataPageState extends State<DataPage>
               padding: const EdgeInsets.all(16.0),
               child: Wrap(
                 children: [
-                  Column(
+                  Row(
                     children: [
-                      Align(
-                        alignment: Alignment.bottomLeft,
+                      Expanded(
                         child: Text(
-                          name,
-                          style: TextStyle(fontSize: 14),
-                          maxLines: 1,
+                          email,
+                          style: TextStyle(fontSize: 12),
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Align(
-                            alignment: Alignment.bottomLeft,
-                            child: Text(
-                              email,
-                              style: TextStyle(fontSize: 12),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              fluent.IconButton(
-                                icon: const Icon(FluentIcons.send),
-                                onPressed: () {
-                                  showSnackbar(
-                                    context,
-                                    const Snackbar(
-                                      content: Text('FileName has been sent'),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          )
-                        ],
-                      )
                     ],
                   ),
                 ],
@@ -612,9 +599,19 @@ class _DataPageState extends State<DataPage>
             ),
           ),
         ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            height: 5,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12)),
+              color: sendingColor,
+            ),
+          ),
+        ),
       ],
     );
   }
 }
-
-//
