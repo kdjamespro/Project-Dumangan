@@ -113,6 +113,12 @@ class MyDatabase extends _$MyDatabase {
         .get();
   }
 
+  Stream<List<CertificatesTableData>> watchCertificates(int eventsId) {
+    return (select(certificatesTable)
+          ..where((row) => row.eventId.equals(eventsId)))
+        .watch();
+  }
+
   Future<void> addEvent(EventsTableCompanion event) {
     return into(eventsTable).insert(event);
   }
