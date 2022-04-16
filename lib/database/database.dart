@@ -92,6 +92,13 @@ class MyDatabase extends _$MyDatabase {
         .get();
   }
 
+  Future<List<ParticipantsTableData>> getAbsentees(int eventsId) async {
+    return await (select(participantsTable)
+          ..where((row) =>
+              row.eventsId.equals(eventsId) & row.attended.equals(false)))
+        .get();
+  }
+
   Future<String> getParticipantEmail(int participantId) async {
     return await customSelect(
       'SELECT email FROM participants_table WHERE id = ?',

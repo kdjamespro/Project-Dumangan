@@ -41,7 +41,7 @@ class _EventTableState extends State<EventTable> {
                   child: PaginatedDataTable2(
                     source: TableSource(eventList: eventsList),
                     header: Text(
-                      'Event\'s Participants',
+                      'All Events',
                       style: FluentTheme.of(context).typography.subtitle,
                     ),
                     columns: const [
