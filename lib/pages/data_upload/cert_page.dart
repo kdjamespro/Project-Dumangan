@@ -267,9 +267,10 @@ class _TableState extends State<Table> {
                                         ));
                                         event.increaseParticipants(1);
                                         await db.updateEvent(
-                                            event.eventId,
-                                            event.eventParticipants,
-                                            event.eventAbsentees);
+                                          event.eventId,
+                                          event.eventParticipants,
+                                          event.eventAbsentees,
+                                        );
                                         setState(() {
                                           _rowsPerPage = tableItemsCount <
                                                   defaultRowsPerPage

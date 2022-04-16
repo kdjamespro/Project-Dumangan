@@ -244,7 +244,7 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
           Flexible(
             flex: 1,
             child: Container(
-              padding: EdgeInsets.only(bottom: 14, left: 12),
+              padding: const EdgeInsets.only(bottom: 14, left: 12),
               child: Scrollbar(
                 isAlwaysShown: false,
                 controller: _firstController,
@@ -259,7 +259,7 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                       // Uncomment this is you want to check is the item was added
                       // reverse: true,
                       controller: _firstController,
-                      padding: EdgeInsets.only(bottom: 20),
+                      padding: const EdgeInsets.only(bottom: 20),
                       scrollDirection: Axis.horizontal,
                       //Change this to show how many contents are there to show
                       itemCount: 1,
@@ -280,13 +280,12 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                       if (snapshot.data != null) {
                                         List<EventsTableData> events = snapshot
                                             .data as List<EventsTableData>;
-                                        print(events.length);
-                                        return EventCard(events);
+                                        return eventCard(events);
                                       }
                                       break;
                                     case ConnectionState.waiting:
                                       return const Center(
-                                        child: ProgressRing(),
+                                        child: ProgressRing(strokeWidth: 8),
                                       );
                                     case ConnectionState.none:
                                       return Container();
@@ -307,46 +306,55 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
     );
   }
 
-  Row EventCard(List<EventsTableData> events) {
+  Row eventCard(List<EventsTableData> events) {
+    List<Widget> eventsCards = mapEvents(events);
+
     return Row(
-      children: events
-          .map((event) => GestureDetector(
-                onTap: () async {
-                  int selectedEventId = await showDialog<int>(
-                        barrierDismissible: true,
-                        context: context,
-                        builder: (context) {
-                          return ContentDialog(
-                            title:
-                                const Text('Do you want to select this event?'),
-                            content: const Text(
-                                'This event would be used to specify what event to be used in this session.'),
-                            actions: [
-                              Button(
-                                child: const Text('Cancel'),
+      children: eventsCards,
+    );
+  }
+
+  List<Widget> mapEvents(List<EventsTableData> event) {
+    return event
+        .map((event) => GestureDetector(
+              onTap: () async {
+                int selectedEventId = await showDialog<int>(
+                      barrierDismissible: true,
+                      context: context,
+                      builder: (context) {
+                        return ContentDialog(
+                          title:
+                              const Text('Do you want to select this event?'),
+                          content: const Text(
+                              'This event would be used to specify what event to be used in this session.'),
+                          actions: [
+                            Button(
+                              child: const Text('Cancel'),
+                              onPressed: () {
+                                Navigator.pop(context, -1);
+                              },
+                            ),
+                            FilledButton(
+                                child: const Text('Select event'),
                                 onPressed: () {
-                                  Navigator.pop(context, -1);
-                                },
-                              ),
-                              FilledButton(
-                                  child: const Text('Select event'),
-                                  onPressed: () {
-                                    Navigator.pop(context, event.id);
-                                  }),
-                            ],
-                          );
-                        },
-                      ) ??
-                      -1;
-                  if (selectedEventId >= 0) {
-                    context.read<SelectedEvent>().setEvent(event);
-                    context.read<EventsBloc>().add(LoadEvent(
-                        eventId: selectedEventId,
-                        db: context.read<MyDatabase>()));
-                    print('Selected Event: $selectedEventId');
-                    print('Event: ${event.id}');
-                  }
-                },
+                                  Navigator.pop(context, event.id);
+                                }),
+                          ],
+                        );
+                      },
+                    ) ??
+                    -1;
+                if (selectedEventId >= 0) {
+                  context.read<SelectedEvent>().setEvent(event);
+                  context.read<EventsBloc>().add(LoadEvent(
+                      eventId: selectedEventId,
+                      db: context.read<MyDatabase>()));
+                  print('Selected Event: $selectedEventId');
+                  print('Event: ${event.id}');
+                }
+              },
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
                 child: Container(
                   width: 225,
                   height: 225,
@@ -429,9 +437,9 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                         ]),
                   ),
                 ),
-              ))
-          .toList(),
-    );
+              ),
+            ))
+        .toList();
   }
 
   String dateTimeFormatter(String dateTime) {

@@ -5,9 +5,6 @@ import 'package:project_dumangan/bloc/bloc/events_bloc.dart';
 import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/selected_event.dart';
 import 'package:project_dumangan/pages/events/event_countdown.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:path/path.dart' as Path;
 import 'package:project_dumangan/services/pdf_generator.dart';
 
 class DashboardPage extends StatefulWidget {
