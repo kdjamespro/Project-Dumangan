@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart' as p;
 import 'package:image/image.dart' as IMG;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/canvas_controller.dart';
 import 'package:printing/printing.dart';
 import 'package:project_dumangan/model/selected_event.dart';
@@ -79,125 +80,108 @@ class PdfGenerator {
     }
   }
 
-  static void generateReport(SelectedEvent event) async {
+  static void generateReport(
+      SelectedEvent event, List<ParticipantsTableData> absentees) async {
     final pdf = pw.Document();
-
-    final attedanceData = [
-      ['Event Participants', event.eventParticipants],
-      ['Event Absentees', event.eventAbsentees]
-    ];
+    List<pw.Widget> absent = [];
+    if (absentees.isNotEmpty) {
+      absent.add(
+          pw.Text('Absentees List', style: const pw.TextStyle(fontSize: 22)));
+      absent.addAll(absentees
+          .map((participant) => pw.Column(children: [
+                pw.Row(children: [
+                  pw.Text(participant.fullName),
+                  pw.SizedBox(width: 40),
+                  pw.Text(participant.email),
+                  pw.Spacer(),
+                ]),
+                pw.SizedBox(
+                  height: 10,
+                )
+              ]))
+          .toList());
+    } else {
+      SizedBox(height: 40);
+      absent.add(pw.Text(
+          'Your event has a perfect attendance!\n\nCongratulations!',
+          style: pw.TextStyle(fontSize: 25, fontWeight: pw.FontWeight.bold),
+          textAlign: pw.TextAlign.center));
+    }
+    // List<pw.Row> absent = List.generate(
+    //   100,
+    //   (index) => pw.Row(
+    //     children: [
+    //       pw.Expanded(
+    //         child: pw.Text(
+    //           'JOSÉ PROTACIO RIZAL MERCADO Y ALONSO REALONDA@gmail.com',
+    //         ),
+    //       ),
+    //       pw.SizedBox(width: 40),
+    //       pw.Text(
+    //         'JOSÉ PROTACIO RIZAL MERCADO Y ALONSO REALONDA@gmail.com',
+    //       ),
+    //       pw.Expanded(
+    //         child: pw.Text(
+    //           'JOSÉ PROTACIO RIZAL MERCADO Y ALONSO REALONDA@gmail.com',
+    //         ),
+    //       ),
+    //       pw.Spacer(),
+    //     ],
+    //   ),
+    // );
     const baseColor = PdfColors.cyan;
-    final chart1 = pw.Chart(
-      left: pw.Container(
-        alignment: pw.Alignment.topCenter,
-        margin: const pw.EdgeInsets.only(right: 2, top: 5),
-        child: pw.Transform.rotateBox(
-          angle: pi / 2,
-          child: pw.Text('Participants'),
-        ),
-      ),
-      overlay: pw.ChartLegend(
-        position: const pw.Alignment(-.7, 1),
-        decoration: pw.BoxDecoration(
-          color: PdfColors.white,
-          border: pw.Border.all(
-            color: PdfColors.black,
-            width: .5,
-          ),
-        ),
-      ),
-      grid: pw.CartesianGrid(
-        xAxis: pw.FixedAxis.fromStrings(
-          List<String>.generate(attedanceData.length,
-              (index) => attedanceData[index][0] as String),
-          marginStart: 15,
-          marginEnd: 15,
-          ticks: true,
-        ),
-        yAxis: pw.FixedAxis(
-          [0, 1, 2, 3, 4, 5, 10],
-          format: (v) => '$v',
-          divisions: true,
-        ),
-      ),
-      datasets: [
-        pw.BarDataSet(
-          color: PdfColors.blue100,
-          legend: 'Participants',
-          width: 20,
-          offset: -10,
-          borderColor: baseColor,
-          data: [pw.LineChartValue(0, event.eventParticipants.toDouble())],
-        ),
-        pw.BarDataSet(
-            color: PdfColors.amber100,
-            legend: 'Absentees',
-            width: 20,
-            offset: 10,
-            borderColor: PdfColors.amber,
-            data: [pw.LineChartValue(1, 8)]),
-      ],
-    );
     pdf.addPage(
-      pw.Page(build: (pw.Context context) {
-        return pw.Column(children: [
-          pw.Row(children: [
+      pw.MultiPage(build: (pw.Context context) {
+        return <pw.Widget>[
+          pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+            pw.Row(children: [
+              pw.Text(
+                event.eventName,
+                style:
+                    pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+              ),
+            ], mainAxisAlignment: pw.MainAxisAlignment.center),
+            pw.SizedBox(height: 15),
             pw.Text(
-              event.eventName,
-              style: pw.TextStyle(fontSize: 28, fontWeight: pw.FontWeight.bold),
+              'Event Date: ${event.eventDate}',
+              style: const pw.TextStyle(fontSize: 12),
+              textAlign: pw.TextAlign.left,
             ),
-          ], mainAxisAlignment: pw.MainAxisAlignment.center),
-          pw.SizedBox(height: 15),
-          pw.Text(
-            event.eventDate,
-            style: const pw.TextStyle(fontSize: 16),
-          ),
-          pw.SizedBox(height: 30),
-          pw.Row(children: [
+            pw.Text(
+              event.eventLocation.trim().isEmpty
+                  ? 'Event Location: No Data Provided'
+                  : 'Event Location: ${event.eventLocation}',
+              style: const pw.TextStyle(fontSize: 12),
+              textAlign: pw.TextAlign.left,
+            ),
+            pw.SizedBox(height: 30),
+            pw.Text(
+              event.eventDescription.trim().isEmpty
+                  ? 'Event Description: No Data Provided'
+                  : 'Event Description:\n${event.eventDescription}',
+              style: const pw.TextStyle(fontSize: 12),
+              textAlign: pw.TextAlign.left,
+            ),
+            pw.SizedBox(height: 45),
             pw.Text(
               'Total Event Participants: ${event.eventParticipants}',
-              style: const pw.TextStyle(fontSize: 14),
+              style: const pw.TextStyle(fontSize: 12),
             ),
-            pw.Spacer(),
             pw.Text(
               'Total Event Absentees: ${event.eventAbsentees}',
-              style: const pw.TextStyle(fontSize: 14),
+              style: const pw.TextStyle(fontSize: 12),
             ),
+            pw.SizedBox(height: 30),
           ]),
-          pw.SizedBox(height: 20),
-          pw.Column(children: [
-            pw.Text('Absentees List', style: const pw.TextStyle(fontSize: 22)),
-            pw.Table(
-              children: [
-                pw.TableRow(
-                  children: [
-                    pw.Center(child: pw.Text('Name')),
-                    pw.Center(child: pw.Text('Email')),
-                  ],
-                ),
-                pw.TableRow(children: [
-                  pw.Center(child: pw.Text('Tony')),
-                  pw.Center(child: pw.Text('Stark')),
-                ]),
-                pw.TableRow(children: [
-                  pw.Center(child: pw.Text('Peter')),
-                  pw.Center(child: pw.Text('Parker')),
-                ]),
-              ],
-              border: pw.TableBorder.all(),
-              defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
-            ),
-          ])
-        ]);
+          ...absent
+        ];
       }),
     );
-    String filename = '';
+
     Directory? path = await p.getDownloadsDirectory();
-    if (path != null) {
-      filename = path.path;
-    }
-    filename += 'reports.pdf';
-    print(filename);
+    String filename = '${event.eventName}_reports.pdf'
+        .replaceAll(RegExp(r'[~"#%&*:<>?/\\{|}]+'), '');
+    filename = path!.path + '/' + filename;
     final pdfFile = File(filename);
     final Uri uri = Uri.file(filename);
     await pdfFile.writeAsBytes(await pdf.save());
