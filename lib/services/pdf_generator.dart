@@ -1,9 +1,8 @@
 import 'dart:core';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:math';
+import 'package:flutter/services.dart';
 
-import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart' as p;
 import 'package:image/image.dart' as IMG;
 import 'package:pdf/pdf.dart';
@@ -80,102 +79,106 @@ class PdfGenerator {
     }
   }
 
-  static void generateReport(
+  static Future<void> generateReport(
       SelectedEvent event, List<ParticipantsTableData> absentees) async {
     final pdf = pw.Document();
     List<pw.Widget> absent = [];
+    final marginSide =
+        pw.EdgeInsets.symmetric(horizontal: PdfPageFormat.a4.marginRight);
     if (absentees.isNotEmpty) {
-      absent.add(
-          pw.Text('Absentees List', style: const pw.TextStyle(fontSize: 22)));
+      absent.add(pw.Container(
+        margin: marginSide,
+        child:
+            pw.Text('Absentees List', style: const pw.TextStyle(fontSize: 22)),
+      ));
       absent.addAll(absentees
-          .map((participant) => pw.Column(children: [
-                pw.Row(children: [
-                  pw.Text(participant.fullName),
-                  pw.SizedBox(width: 40),
-                  pw.Text(participant.email),
-                  pw.Spacer(),
-                ]),
-                pw.SizedBox(
-                  height: 10,
-                )
-              ]))
+          .map(
+            (participant) => pw.Container(
+              margin: marginSide,
+              child: pw.Column(
+                children: [
+                  pw.Row(children: [
+                    pw.Text(participant.fullName),
+                    pw.SizedBox(width: 40),
+                    pw.Text(participant.email),
+                    pw.Spacer(),
+                  ]),
+                  pw.SizedBox(
+                    height: 10,
+                  ),
+                ],
+              ),
+            ),
+          )
           .toList());
     } else {
-      SizedBox(height: 40);
+      pw.SizedBox(height: 40);
       absent.add(pw.Text(
           'Your event has a perfect attendance!\n\nCongratulations!',
           style: pw.TextStyle(fontSize: 25, fontWeight: pw.FontWeight.bold),
           textAlign: pw.TextAlign.center));
     }
-    // List<pw.Row> absent = List.generate(
-    //   100,
-    //   (index) => pw.Row(
-    //     children: [
-    //       pw.Expanded(
-    //         child: pw.Text(
-    //           'JOSÉ PROTACIO RIZAL MERCADO Y ALONSO REALONDA@gmail.com',
-    //         ),
-    //       ),
-    //       pw.SizedBox(width: 40),
-    //       pw.Text(
-    //         'JOSÉ PROTACIO RIZAL MERCADO Y ALONSO REALONDA@gmail.com',
-    //       ),
-    //       pw.Expanded(
-    //         child: pw.Text(
-    //           'JOSÉ PROTACIO RIZAL MERCADO Y ALONSO REALONDA@gmail.com',
-    //         ),
-    //       ),
-    //       pw.Spacer(),
-    //     ],
-    //   ),
-    // );
-    const baseColor = PdfColors.cyan;
+    final banner = (await rootBundle.load('assets/images/banner.png'))
+        .buffer
+        .asUint8List();
+
     pdf.addPage(
-      pw.MultiPage(build: (pw.Context context) {
-        return <pw.Widget>[
-          pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-            pw.Row(children: [
-              pw.Text(
-                event.eventName,
-                style:
-                    pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+      pw.MultiPage(
+          build: (pw.Context context) {
+            return <pw.Widget>[
+              pw.Container(
+                margin: marginSide,
+                child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Row(children: [
+                        pw.Text(
+                          event.eventName,
+                          style: pw.TextStyle(
+                              fontSize: 28, fontWeight: pw.FontWeight.bold),
+                        ),
+                      ], mainAxisAlignment: pw.MainAxisAlignment.center),
+                      pw.SizedBox(height: 15),
+                      pw.Text(
+                        'Event Date: ${event.eventDate}',
+                        style: const pw.TextStyle(fontSize: 16),
+                        textAlign: pw.TextAlign.left,
+                      ),
+                      pw.Text(
+                        event.eventLocation.trim().isEmpty
+                            ? 'Event Location: No Data Provided'
+                            : 'Event Location: ${event.eventLocation}',
+                        style: const pw.TextStyle(fontSize: 16),
+                        textAlign: pw.TextAlign.left,
+                      ),
+                      pw.SizedBox(height: 30),
+                      pw.Text(
+                        event.eventDescription.trim().isEmpty
+                            ? 'Event Description: No Data Provided'
+                            : 'Event Description:\n${event.eventDescription}',
+                        style: const pw.TextStyle(fontSize: 16),
+                        textAlign: pw.TextAlign.left,
+                      ),
+                      pw.SizedBox(height: 45),
+                      pw.Text(
+                        'Total Event Participants: ${event.eventParticipants}',
+                        style: const pw.TextStyle(fontSize: 14),
+                      ),
+                      pw.Text(
+                        'Total Event Absentees: ${event.eventAbsentees}',
+                        style: const pw.TextStyle(fontSize: 14),
+                      ),
+                      pw.SizedBox(height: 30),
+                    ]),
               ),
-            ], mainAxisAlignment: pw.MainAxisAlignment.center),
-            pw.SizedBox(height: 15),
-            pw.Text(
-              'Event Date: ${event.eventDate}',
-              style: const pw.TextStyle(fontSize: 12),
-              textAlign: pw.TextAlign.left,
-            ),
-            pw.Text(
-              event.eventLocation.trim().isEmpty
-                  ? 'Event Location: No Data Provided'
-                  : 'Event Location: ${event.eventLocation}',
-              style: const pw.TextStyle(fontSize: 12),
-              textAlign: pw.TextAlign.left,
-            ),
-            pw.SizedBox(height: 30),
-            pw.Text(
-              event.eventDescription.trim().isEmpty
-                  ? 'Event Description: No Data Provided'
-                  : 'Event Description:\n${event.eventDescription}',
-              style: const pw.TextStyle(fontSize: 12),
-              textAlign: pw.TextAlign.left,
-            ),
-            pw.SizedBox(height: 45),
-            pw.Text(
-              'Total Event Participants: ${event.eventParticipants}',
-              style: const pw.TextStyle(fontSize: 12),
-            ),
-            pw.Text(
-              'Total Event Absentees: ${event.eventAbsentees}',
-              style: const pw.TextStyle(fontSize: 12),
-            ),
-            pw.SizedBox(height: 30),
-          ]),
-          ...absent
-        ];
-      }),
+              ...absent,
+            ];
+          },
+          header: (pw.Context context) {
+            return pw.Container(child: pw.Image(pw.MemoryImage(banner)));
+          },
+          pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.all(0)),
     );
 
     Directory? path = await p.getDownloadsDirectory();
@@ -191,22 +194,5 @@ class PdfGenerator {
         throw 'Could not launch $uri';
       }
     }
-  }
-
-  static Uint8List _resizeImage(Uint8List data, PageOrientation orientation) {
-    int width = orientation.width.toInt();
-    int height = orientation.height.toInt();
-
-    Uint8List resizedData = data;
-    IMG.Image img = IMG.decodeImage(data) as IMG.Image;
-
-    IMG.Image resized;
-    if (width < height) {
-      resized = IMG.copyResize(img, width: width, height: height);
-    } else {
-      resized = IMG.copyResize(img, width: width, height: height);
-    }
-    resizedData = Uint8List.fromList(IMG.encodeJpg(resized));
-    return resizedData;
   }
 }
