@@ -10,7 +10,6 @@ import 'event_table.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
-
   @override
   _DashboardPageState createState() => _DashboardPageState();
 }
@@ -59,7 +58,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       onPressed: () async {
                         List<ParticipantsTableData> absentees =
                             await db.getAbsentees(event.eventId);
-                        PdfGenerator.generateReport(event, absentees);
+                        await PdfGenerator.generateReport(event, absentees);
                       },
                     ),
                     const SizedBox(
