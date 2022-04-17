@@ -50,7 +50,6 @@ class CrossChecker {
 
           if (index >= 0) {
             // Add the participants if the email is not the same
-            print('Comparing');
             if (!(possibleParticipants[index]['Email'] == regEmails[i])) {
               possibleParticipants.add({
                 'Full Name': regNames[i],
