@@ -40,13 +40,17 @@ class GmailAccount {
   Future<List<String>> signIn() async {
     List<String> userInfo = [];
 
-    account = await GoogleSignIn(scopes: _scopes).signIn();
-    if (account != null) {
-      String email = account?.email ?? '';
-      String imageUrl = account?.photoUrl ?? '';
-      print(await account?.authHeaders);
-      userInfo.add(imageUrl);
-      userInfo.add(email);
+    try {
+      account = await GoogleSignIn(scopes: _scopes).signIn();
+      if (account != null) {
+        String email = account?.email ?? '';
+        String imageUrl = account?.photoUrl ?? '';
+        print(await account?.authHeaders);
+        userInfo.add(imageUrl);
+        userInfo.add(email);
+      }
+    } catch (error) {
+      return userInfo;
     }
     _isLoggedIn = await _checkSignedIn();
     return userInfo;
@@ -58,6 +62,7 @@ class GmailAccount {
 
   Future<void> signOut() async {
     await GoogleSignIn().signOut();
+    _isLoggedIn = false;
   }
 
   Future<bool> sendEmail(String subject, String userMessage,
