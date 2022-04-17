@@ -10,7 +10,6 @@ import 'event_table.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
-
   @override
   _DashboardPageState createState() => _DashboardPageState();
 }
@@ -35,51 +34,54 @@ class _DashboardPageState extends State<DashboardPage> {
             children: [
               Align(
                 alignment: Alignment.topLeft,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        event.eventName,
-                        overflow: TextOverflow.ellipsis,
-                        style: FluentTheme.of(context).typography.titleLarge,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 20.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          event.eventName,
+                          overflow: TextOverflow.ellipsis,
+                          style: FluentTheme.of(context).typography.titleLarge,
+                        ),
                       ),
-                    ),
-                    const Spacer(),
-                    Button(
-                      child: Row(
-                        children: const [
-                          Icon(
-                            FluentIcons.generate,
-                            size: 20,
-                          ),
-                          SizedBox(width: 10),
-                          Text('Generate \nEvent Report'),
-                        ],
+                      const Spacer(),
+                      Button(
+                        child: Row(
+                          children: const [
+                            Icon(
+                              FluentIcons.generate,
+                              size: 20,
+                            ),
+                            SizedBox(width: 10),
+                            Text('Generate \nEvent Report'),
+                          ],
+                        ),
+                        onPressed: () async {
+                          List<ParticipantsTableData> absentees =
+                              await db.getAbsentees(event.eventId);
+                          await PdfGenerator.generateReport(event, absentees);
+                        },
                       ),
-                      onPressed: () async {
-                        List<ParticipantsTableData> absentees =
-                            await db.getAbsentees(event.eventId);
-                        PdfGenerator.generateReport(event, absentees);
-                      },
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    SizedBox(
-                      child: FilledButton(
-                          child: Row(
-                            children: const [
-                              Icon(FluentIcons.cancel),
-                              SizedBox(width: 10),
-                              Text('Select/Add \nAnother Event'),
-                            ],
-                          ),
-                          onPressed: () {
-                            event.clearEvent();
-                            context.read<EventsBloc>().add(SelectEvent());
-                          }),
-                    )
-                  ],
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      SizedBox(
+                        child: FilledButton(
+                            child: Row(
+                              children: const [
+                                Icon(FluentIcons.cancel),
+                                SizedBox(width: 10),
+                                Text('Select/Add \nAnother Event'),
+                              ],
+                            ),
+                            onPressed: () {
+                              event.clearEvent();
+                              context.read<EventsBloc>().add(SelectEvent());
+                            }),
+                      )
+                    ],
+                  ),
                 ),
               ),
               Row(
@@ -137,7 +139,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                         DashStats(
                                             context,
                                             "Total Count\nof Participants",
-                                            '${event.eventParticipants - event.eventAbsentees}'),
+                                            '${event.eventParticipants}'),
                                         DashStats(
                                             context,
                                             "Total Count\nof Absentees",
@@ -164,7 +166,7 @@ class _DashboardPageState extends State<DashboardPage> {
               const SizedBox(
                 height: 20,
               ),
-              Expanded(child: EventTable()),
+              const Expanded(child: EventTable()),
             ],
           ),
         ),

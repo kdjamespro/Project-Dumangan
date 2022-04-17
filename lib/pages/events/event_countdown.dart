@@ -11,7 +11,7 @@ class EventCountdown extends StatelessWidget {
   Widget build(BuildContext context) {
     SelectedEvent event = context.read<SelectedEvent>();
     return Container(
-        margin: const EdgeInsets.symmetric(vertical: 16.0),
+        margin: const EdgeInsets.symmetric(vertical: 0.0),
         padding: const EdgeInsets.only(left: 20.0),
         child: mat.Column(
             mainAxisAlignment: MainAxisAlignment.start,

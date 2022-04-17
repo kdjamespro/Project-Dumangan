@@ -82,7 +82,7 @@ class _DataPageState extends State<DataPage>
                       fluent.Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SvgPicture.asset(
-                          "lib/image/choose2.svg",
+                          "assets/images/choose2.svg",
                           height: 200,
                           width: 200,
                         ),
@@ -96,432 +96,453 @@ class _DataPageState extends State<DataPage>
                       ),
                     ],
                   ),
-            floatingActionButton: FloatingActionButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              onPressed: () {
-                GmailAccount account = context.read<GmailAccount>();
-                fluent.showDialog(
-                  barrierDismissible: true,
-                  context: context,
-                  builder: (context) {
-                    TextEditingController emailSubject =
-                        TextEditingController();
-                    TextEditingController emailContents =
-                        TextEditingController();
+            floatingActionButton: fluent.Container(
+              width: 100,
+              child: FloatingActionButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                onPressed: () {
+                  GmailAccount account = context.read<GmailAccount>();
+                  fluent.showDialog(
+                    barrierDismissible: true,
+                    context: context,
+                    builder: (context) {
+                      TextEditingController emailSubject =
+                          TextEditingController();
+                      TextEditingController emailContents =
+                          TextEditingController();
 
-                    return fluent.Container(
-                      margin: const fluent.EdgeInsets.all(100),
-                      child: Scaffold(
-                        appBar: TabBar(
-                          controller: _controller,
-                          tabs: const [
-                            fluent.Padding(
-                              padding: EdgeInsets.all(12.0),
-                              child: fluent.Text(
-                                "Send Certificate",
-                                style: TextStyle(color: mat.Colors.black),
+                      return fluent.Container(
+                        margin: const fluent.EdgeInsets.all(100),
+                        child: Scaffold(
+                          appBar: TabBar(
+                            controller: _controller,
+                            tabs: const [
+                              fluent.Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: fluent.Text(
+                                  "Send Certificate",
+                                  style: TextStyle(color: mat.Colors.black),
+                                ),
                               ),
-                            ),
-                            fluent.Padding(
-                              padding: EdgeInsets.all(12.0),
-                              child: fluent.Text(
-                                "Send Announcements",
-                                style: TextStyle(color: mat.Colors.black),
+                              fluent.Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: fluent.Text(
+                                  "Send Announcements",
+                                  style: TextStyle(color: mat.Colors.black),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        body: TabBarView(controller: _controller, children: [
-                          fluent.Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              // ignore: prefer_const_literals_to_create_immutables
-                              children: [
-                                fluent.Row(
-                                  children: [
-                                    fluent.IconButton(
-                                      icon: const Icon(
-                                        fluent.FluentIcons.return_key,
-                                        size: 20,
-                                      ),
-                                      onPressed: () {
-                                        fluent.showDialog(
-                                          // barrierDismissible: true,
-                                          context: context,
-                                          builder: (context) {
-                                            return ContentDialog(
-                                              title: const Text(
-                                                  'Do you want to exit email composition?'),
-                                              content: const Text(
-                                                  'All changes will be discarded.'),
-                                              actions: [
-                                                Button(
-                                                  child: const Text(
-                                                      'Discard email'),
-                                                  onPressed: () {
-                                                    Navigator.of(context)
-                                                        .popUntil((route) =>
-                                                            route.isFirst);
-                                                  },
-                                                ),
-                                                FilledButton(
+                            ],
+                          ),
+                          body: TabBarView(controller: _controller, children: [
+                            fluent.Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Column(
+                                // ignore: prefer_const_literals_to_create_immutables
+                                children: [
+                                  fluent.Row(
+                                    children: [
+                                      fluent.IconButton(
+                                        icon: const Icon(
+                                          fluent.FluentIcons.return_key,
+                                          size: 20,
+                                        ),
+                                        onPressed: () {
+                                          fluent.showDialog(
+                                            // barrierDismissible: true,
+                                            context: context,
+                                            builder: (context) {
+                                              return ContentDialog(
+                                                title: const Text(
+                                                    'Do you want to exit email composition?'),
+                                                content: const Text(
+                                                    'All changes will be discarded.'),
+                                                actions: [
+                                                  Button(
                                                     child: const Text(
-                                                        'Continue Editing'),
+                                                        'Discard email'),
                                                     onPressed: () {
-                                                      Navigator.pop(context);
-                                                    }),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                    ),
-                                    const fluent.Padding(
-                                      padding: EdgeInsets.only(left: 8.0),
-                                      child: Text(
-                                        'Compose Email for Certificates',
-                                        style: fluent.TextStyle(fontSize: 18),
+                                                      Navigator.of(context)
+                                                          .popUntil((route) =>
+                                                              route.isFirst);
+                                                    },
+                                                  ),
+                                                  FilledButton(
+                                                      child: const Text(
+                                                          'Continue Editing'),
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      }),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
                                       ),
-                                    ),
-                                    const Spacer(),
-                                  ],
-                                ),
-                                const fluent.Padding(
-                                  padding:
-                                      EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
-                                ),
-                                // ignore: prefer_const_constructors
-                                TextBox(
-                                  header: 'Subject',
-                                  headerStyle: const TextStyle(fontSize: 18),
-                                  placeholder: 'Enter your email subject here',
-                                  controller: emailSubject,
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                TextBox(
-                                  maxLines: 12,
-                                  header: 'Body',
-                                  headerStyle: const TextStyle(fontSize: 18),
-                                  placeholder: 'Enter your email body here',
-                                  controller: emailContents,
-                                ),
-                                const fluent.SizedBox(
-                                  height: 10,
-                                ),
-                                fluent.Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Container(),
-                                    FilledButton(
-                                      onPressed: () {
-                                        fluent.showDialog(
-                                          // barrierDismissible: true,
-                                          context: context,
-                                          builder: (context) {
-                                            return ContentDialog(
-                                              title: const Text(
-                                                  'Send certificates to all?'),
-                                              content: const Text(
-                                                  'Are you sure you want to send all the certificates?'),
-                                              actions: [
-                                                Button(
-                                                    child: const Text('Cancel'),
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    }),
-                                                FilledButton(
-                                                    child:
-                                                        const Text('Send All'),
-                                                    onPressed: () async {
-                                                      print(account.signedIn);
-                                                      if (account.signedIn) {
-                                                        if (event
-                                                            .isEventSet()) {
-                                                          List<CertificatesTableData>
-                                                              certs =
-                                                              await db.getCertificates(
-                                                                  event
-                                                                      .eventId);
-                                                          for (CertificatesTableData cert
-                                                              in certs) {
-                                                            String email = await db
-                                                                .getParticipantEmail(
-                                                                    cert.participantsId);
-                                                            File certificate =
-                                                                File(cert
-                                                                    .filename);
-                                                            if (certificate
-                                                                .existsSync()) {
-                                                              if (!cert
-                                                                  .sended) {
-                                                                bool successful = await account.sendEmail(
-                                                                    emailSubject
-                                                                        .text,
-                                                                    emailContents
-                                                                        .text,
-                                                                    email,
-                                                                    certificate);
-                                                                if (successful) {
-                                                                  await db
-                                                                      .updateCertStatus(
-                                                                          cert.id);
+                                      const fluent.Padding(
+                                        padding: EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          'Compose Email for Certificates',
+                                          style: fluent.TextStyle(fontSize: 18),
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                    ],
+                                  ),
+                                  const fluent.Padding(
+                                    padding: EdgeInsets.fromLTRB(
+                                        0.0, 20.0, 0.0, 0.0),
+                                  ),
+                                  // ignore: prefer_const_constructors
+                                  TextBox(
+                                    header: 'Subject',
+                                    headerStyle: const TextStyle(fontSize: 18),
+                                    placeholder:
+                                        'Enter your email subject here',
+                                    controller: emailSubject,
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  TextBox(
+                                    maxLines: null,
+                                    header: 'Body',
+                                    headerStyle: const TextStyle(fontSize: 18),
+                                    placeholder: 'Enter your email body here',
+                                    controller: emailContents,
+                                  ),
+                                  const fluent.SizedBox(
+                                    height: 10,
+                                  ),
+                                  fluent.Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Container(),
+                                      FilledButton(
+                                        onPressed: () {
+                                          fluent.showDialog(
+                                            // barrierDismissible: true,
+                                            context: context,
+                                            builder: (context) {
+                                              return ContentDialog(
+                                                title: const Text(
+                                                    'Send certificates to all?'),
+                                                content: const Text(
+                                                    'Are you sure you want to send all the certificates?'),
+                                                actions: [
+                                                  Button(
+                                                      child:
+                                                          const Text('Cancel'),
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      }),
+                                                  FilledButton(
+                                                      child: const Text(
+                                                          'Send All'),
+                                                      onPressed: () async {
+                                                        print(account.signedIn);
+                                                        if (account.signedIn) {
+                                                          if (event
+                                                              .isEventSet()) {
+                                                            List<CertificatesTableData>
+                                                                certs =
+                                                                await db.getCertificates(
+                                                                    event
+                                                                        .eventId);
+                                                            for (CertificatesTableData cert
+                                                                in certs) {
+                                                              String email = await db
+                                                                  .getParticipantEmail(
+                                                                      cert.participantsId);
+                                                              File certificate =
+                                                                  File(cert
+                                                                      .filename);
+                                                              if (certificate
+                                                                  .existsSync()) {
+                                                                if (!cert
+                                                                    .sended) {
+                                                                  bool successful = await account.sendEmail(
+                                                                      emailSubject
+                                                                          .text,
+                                                                      emailContents
+                                                                          .text,
+                                                                      email,
+                                                                      certificate);
+                                                                  if (successful) {
+                                                                    await db.updateCertStatus(
+                                                                        cert.id);
+                                                                  }
                                                                 }
                                                               }
                                                             }
+                                                          } else {
+                                                            await showWarningMessage(
+                                                                context:
+                                                                    context,
+                                                                title:
+                                                                    'No Event Selected',
+                                                                message:
+                                                                    'Please selected an event first');
+                                                            Navigator.of(
+                                                                    context)
+                                                                .popUntil((route) =>
+                                                                    route
+                                                                        .isFirst);
                                                           }
                                                         } else {
                                                           await showWarningMessage(
                                                               context: context,
                                                               title:
-                                                                  'No Event Selected',
+                                                                  'Gmail Account Error',
                                                               message:
-                                                                  'Please selected an event first');
-                                                          Navigator.of(context)
-                                                              .popUntil((route) =>
-                                                                  route
-                                                                      .isFirst);
+                                                                  'You are not logged In with your gmail account');
                                                         }
-                                                      } else {
-                                                        await showWarningMessage(
-                                                            context: context,
-                                                            title:
-                                                                'Gmail Account Error',
-                                                            message:
-                                                                'You are not logged In with your gmail account');
-                                                      }
-                                                      Navigator.of(context)
-                                                          .popUntil((route) =>
-                                                              route.isFirst);
-                                                    })
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                      child: fluent.Row(
-                                        children: const [
-                                          fluent.Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 3, horizontal: 10),
-                                            child: fluent.Text(
-                                              "Send",
-                                              style: fluent.TextStyle(
-                                                  fontSize: 15),
+                                                        Navigator.of(context)
+                                                            .popUntil((route) =>
+                                                                route.isFirst);
+                                                      })
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: fluent.Row(
+                                          children: const [
+                                            fluent.Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 3, horizontal: 10),
+                                              child: fluent.Text(
+                                                "Send",
+                                                style: fluent.TextStyle(
+                                                    fontSize: 15),
+                                              ),
                                             ),
-                                          ),
-                                          fluent.SizedBox(
-                                            width: 3,
-                                          ),
-                                          fluent.Padding(
-                                            padding: EdgeInsets.all(2.0),
-                                            child: Icon(
-                                              FluentIcons.send,
-                                              size: 15,
+                                            fluent.SizedBox(
+                                              width: 3,
                                             ),
-                                          ),
-                                          fluent.SizedBox(
-                                            width: 5,
-                                          )
-                                        ],
+                                            fluent.Padding(
+                                              padding: EdgeInsets.all(2.0),
+                                              child: Icon(
+                                                FluentIcons.send,
+                                                size: 15,
+                                              ),
+                                            ),
+                                            fluent.SizedBox(
+                                              width: 5,
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          fluent.Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                              // ignore: prefer_const_literals_to_create_immutables
-                              children: [
-                                fluent.Row(
-                                  children: [
-                                    fluent.IconButton(
-                                      icon: const Icon(
-                                        fluent.FluentIcons.return_key,
-                                        size: 20,
-                                      ),
-                                      onPressed: () {
-                                        fluent.showDialog(
-                                          // barrierDismissible: true,
-                                          context: context,
-                                          builder: (context) {
-                                            return ContentDialog(
-                                              title: const Text(
-                                                  'Do you want to exit email announcement composition?'),
-                                              content: const Text(
-                                                  'All changes will be discarded.'),
-                                              actions: [
-                                                Button(
-                                                  child: const Text(
-                                                      'Discard email'),
-                                                  onPressed: () {
-                                                    Navigator.of(context)
-                                                        .popUntil((route) =>
-                                                            route.isFirst);
-                                                  },
-                                                ),
-                                                FilledButton(
+                            fluent.Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Column(
+                                // ignore: prefer_const_literals_to_create_immutables
+                                children: [
+                                  fluent.Row(
+                                    children: [
+                                      fluent.IconButton(
+                                        icon: const Icon(
+                                          fluent.FluentIcons.return_key,
+                                          size: 20,
+                                        ),
+                                        onPressed: () {
+                                          fluent.showDialog(
+                                            // barrierDismissible: true,
+                                            context: context,
+                                            builder: (context) {
+                                              return ContentDialog(
+                                                title: const Text(
+                                                    'Do you want to exit email announcement composition?'),
+                                                content: const Text(
+                                                    'All changes will be discarded.'),
+                                                actions: [
+                                                  Button(
                                                     child: const Text(
-                                                        'Continue Editing'),
+                                                        'Discard email'),
                                                     onPressed: () {
-                                                      Navigator.pop(context);
-                                                    }),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                    ),
-                                    const fluent.Padding(
-                                      padding: EdgeInsets.only(left: 8.0),
-                                      child: Text(
-                                        'Compose Email for Announcements',
-                                        style: fluent.TextStyle(fontSize: 18),
+                                                      Navigator.of(context)
+                                                          .popUntil((route) =>
+                                                              route.isFirst);
+                                                    },
+                                                  ),
+                                                  FilledButton(
+                                                      child: const Text(
+                                                          'Continue Editing'),
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      }),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
                                       ),
-                                    ),
-                                    const Spacer(),
-                                  ],
-                                ),
-                                const fluent.Padding(
-                                  padding:
-                                      EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
-                                ),
-                                // ignore: prefer_const_constructors
-                                TextBox(
-                                  header: 'Subject',
-                                  controller: emailSubjectAnnoucement,
-                                  headerStyle: const TextStyle(fontSize: 18),
-                                  placeholder: 'Enter your email subject here',
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                TextBox(
-                                  controller: emailContentsAnnoucement,
-                                  maxLines: 12,
-                                  header: 'Body',
-                                  headerStyle: const TextStyle(fontSize: 18),
-                                  placeholder: 'Enter your email body here',
-                                ),
-                                const fluent.SizedBox(
-                                  height: 10,
-                                ),
-                                fluent.Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Container(),
-                                    FilledButton(
-                                      onPressed: () {
-                                        fluent.showDialog(
-                                          // barrierDismissible: true,
-                                          context: context,
-                                          builder: (context) {
-                                            return ContentDialog(
-                                              title: const Text(
-                                                  'Send Announcement to all?'),
-                                              content: const Text(
-                                                  'Are you sure you want to send announcement to all?'),
-                                              actions: [
-                                                Button(
-                                                    child: const Text('Cancel'),
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    }),
-                                                FilledButton(
-                                                    child:
-                                                        const Text('Send all'),
-                                                    onPressed: () async {
-                                                      if (account.signedIn) {
-                                                        print(account.signedIn);
-                                                        if (event
-                                                            .isEventSet()) {
-                                                          List<String> emails =
-                                                              await db
-                                                                  .getAllParticipantEmail();
-                                                          for (String email
-                                                              in emails) {
-                                                            await account
-                                                                .sendAnnouncements(
-                                                                    emailSubjectAnnoucement
-                                                                        .text,
-                                                                    emailContentsAnnoucement
-                                                                        .text,
-                                                                    email);
+                                      const fluent.Padding(
+                                        padding: EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          'Compose Email for Announcements',
+                                          style: fluent.TextStyle(fontSize: 18),
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                    ],
+                                  ),
+                                  const fluent.Padding(
+                                    padding: EdgeInsets.fromLTRB(
+                                        0.0, 20.0, 0.0, 0.0),
+                                  ),
+                                  // ignore: prefer_const_constructors
+                                  TextBox(
+                                    header: 'Subject',
+                                    controller: emailSubjectAnnoucement,
+                                    headerStyle: const TextStyle(fontSize: 18),
+                                    placeholder:
+                                        'Enter your email subject here',
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  TextBox(
+                                    controller: emailContentsAnnoucement,
+                                    maxLines: 12,
+                                    header: 'Body',
+                                    headerStyle: const TextStyle(fontSize: 18),
+                                    placeholder: 'Enter your email body here',
+                                  ),
+                                  const fluent.SizedBox(
+                                    height: 10,
+                                  ),
+                                  fluent.Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Container(),
+                                      FilledButton(
+                                        onPressed: () {
+                                          fluent.showDialog(
+                                            // barrierDismissible: true,
+                                            context: context,
+                                            builder: (context) {
+                                              return ContentDialog(
+                                                title: const Text(
+                                                    'Send Announcement to all?'),
+                                                content: const Text(
+                                                    'Are you sure you want to send announcement to all?'),
+                                                actions: [
+                                                  Button(
+                                                      child:
+                                                          const Text('Cancel'),
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      }),
+                                                  FilledButton(
+                                                      child: const Text(
+                                                          'Send all'),
+                                                      onPressed: () async {
+                                                        if (account.signedIn) {
+                                                          print(
+                                                              account.signedIn);
+                                                          if (event
+                                                              .isEventSet()) {
+                                                            List<String>
+                                                                emails =
+                                                                await db
+                                                                    .getAllParticipantEmail();
+                                                            for (String email
+                                                                in emails) {
+                                                              await account
+                                                                  .sendAnnouncements(
+                                                                      emailSubjectAnnoucement
+                                                                          .text,
+                                                                      emailContentsAnnoucement
+                                                                          .text,
+                                                                      email);
+                                                            }
+                                                          } else {
+                                                            await showWarningMessage(
+                                                                context:
+                                                                    context,
+                                                                title:
+                                                                    'No Event Selected',
+                                                                message:
+                                                                    'Please selected an event first');
+                                                            Navigator.of(
+                                                                    context)
+                                                                .popUntil((route) =>
+                                                                    route
+                                                                        .isFirst);
                                                           }
                                                         } else {
                                                           await showWarningMessage(
                                                               context: context,
                                                               title:
-                                                                  'No Event Selected',
+                                                                  'Gmail Account Error',
                                                               message:
-                                                                  'Please selected an event first');
-                                                          Navigator.of(context)
-                                                              .popUntil((route) =>
-                                                                  route
-                                                                      .isFirst);
+                                                                  'You are not logged In with your gmail account');
                                                         }
-                                                      } else {
-                                                        await showWarningMessage(
-                                                            context: context,
-                                                            title:
-                                                                'Gmail Account Error',
-                                                            message:
-                                                                'You are not logged In with your gmail account');
-                                                      }
-                                                      Navigator.of(context)
-                                                          .popUntil((route) =>
-                                                              route.isFirst);
-                                                    }),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                      child: fluent.Row(
-                                        children: const [
-                                          fluent.Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 3, horizontal: 10),
-                                            child: fluent.Text(
-                                              "Send",
-                                              style: fluent.TextStyle(
-                                                  fontSize: 15),
+                                                        Navigator.of(context)
+                                                            .popUntil((route) =>
+                                                                route.isFirst);
+                                                      }),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: fluent.Row(
+                                          children: const [
+                                            fluent.Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 3, horizontal: 10),
+                                              child: fluent.Text(
+                                                "Send",
+                                                style: fluent.TextStyle(
+                                                    fontSize: 15),
+                                              ),
                                             ),
-                                          ),
-                                          fluent.SizedBox(
-                                            width: 3,
-                                          ),
-                                          fluent.Padding(
-                                            padding: EdgeInsets.all(2.0),
-                                            child: Icon(
-                                              FluentIcons.send,
-                                              size: 15,
+                                            fluent.SizedBox(
+                                              width: 3,
                                             ),
-                                          ),
-                                          fluent.SizedBox(
-                                            width: 5,
-                                          )
-                                        ],
+                                            fluent.Padding(
+                                              padding: EdgeInsets.all(2.0),
+                                              child: Icon(
+                                                FluentIcons.send,
+                                                size: 15,
+                                              ),
+                                            ),
+                                            fluent.SizedBox(
+                                              width: 5,
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ]),
-                      ),
-                    );
-                  },
-                );
-              },
-              backgroundColor: const Color.fromRGBO(99, 158, 231, 1.0),
-              child: const Icon(Icons.send),
+                          ]),
+                        ),
+                      );
+                    },
+                  );
+                },
+                backgroundColor: const Color.fromRGBO(99, 158, 231, 1.0),
+                child: fluent.Row(
+                  mainAxisAlignment: fluent.MainAxisAlignment.center,
+                  children: [
+                    fluent.Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Text("Send"),
+                    ),
+                    const Icon(Icons.send),
+                  ],
+                ),
+              ),
             ),
           ),
         ),

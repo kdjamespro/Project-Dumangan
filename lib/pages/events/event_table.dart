@@ -37,7 +37,7 @@ class _EventTableState extends State<EventTable> {
                 child: mat.Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: PaginatedDataTable2(
                     source: TableSource(eventList: eventsList),
                     header: Text(
@@ -72,7 +72,11 @@ class TableSource extends mat.DataTableSource {
       cells: [
         mat.DataCell(
           Container(
-            child: Text(event.name),
+            child: Text(
+              event.name,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
           ),
         ),
         mat.DataCell(

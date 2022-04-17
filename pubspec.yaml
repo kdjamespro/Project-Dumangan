@@ -84,10 +84,15 @@ flutter:
   uses-material-design: true
 
   assets:
-    - lib/image/certificate_template.png
-    - lib/image/choose2.svg
-    - lib/image/Login.svg
-    - lib/image/Login2.svg
+    - assets/images/certificate_template.png
+    - assets/images/banner.png
+    - assets/images/certificate.png
+    - assets/images/conference.png
+    - assets/images/certificate.svg
+    - assets/images/conference.svg
+    - assets/images/choose2.svg
+    - assets/images/sync.svg
+
 
 
 

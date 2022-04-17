@@ -141,7 +141,10 @@ class _MyHomePageState extends State<MyHomePage>
         title: MoveWindow(
           child: Align(
             alignment: Alignment.centerLeft,
-            child: Text(widget.title),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Text(widget.title),
+            ),
           ),
         ),
         actions: Row(

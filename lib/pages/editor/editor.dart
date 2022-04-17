@@ -235,7 +235,7 @@ class _EditorState extends State<Editor>
         ),
         Container(
           // color: Color.fromARGB(255, 37, 38, 39),
-          color: mat.Colors.black38,
+          color: mat.Colors.black12,
           child: SizedBox(
               width: 80,
               child: Column(
