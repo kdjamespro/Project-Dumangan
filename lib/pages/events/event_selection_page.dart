@@ -246,7 +246,7 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
             child: Container(
               padding: const EdgeInsets.only(bottom: 14, left: 12),
               child: Scrollbar(
-                isAlwaysShown: false,
+                isAlwaysShown: true,
                 controller: _firstController,
                 child: ScrollConfiguration(
                   behavior:

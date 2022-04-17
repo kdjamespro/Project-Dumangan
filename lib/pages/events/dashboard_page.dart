@@ -34,51 +34,54 @@ class _DashboardPageState extends State<DashboardPage> {
             children: [
               Align(
                 alignment: Alignment.topLeft,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        event.eventName,
-                        overflow: TextOverflow.ellipsis,
-                        style: FluentTheme.of(context).typography.titleLarge,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 20.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          event.eventName,
+                          overflow: TextOverflow.ellipsis,
+                          style: FluentTheme.of(context).typography.titleLarge,
+                        ),
                       ),
-                    ),
-                    const Spacer(),
-                    Button(
-                      child: Row(
-                        children: const [
-                          Icon(
-                            FluentIcons.generate,
-                            size: 20,
-                          ),
-                          SizedBox(width: 10),
-                          Text('Generate \nEvent Report'),
-                        ],
+                      const Spacer(),
+                      Button(
+                        child: Row(
+                          children: const [
+                            Icon(
+                              FluentIcons.generate,
+                              size: 20,
+                            ),
+                            SizedBox(width: 10),
+                            Text('Generate \nEvent Report'),
+                          ],
+                        ),
+                        onPressed: () async {
+                          List<ParticipantsTableData> absentees =
+                              await db.getAbsentees(event.eventId);
+                          await PdfGenerator.generateReport(event, absentees);
+                        },
                       ),
-                      onPressed: () async {
-                        List<ParticipantsTableData> absentees =
-                            await db.getAbsentees(event.eventId);
-                        await PdfGenerator.generateReport(event, absentees);
-                      },
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    SizedBox(
-                      child: FilledButton(
-                          child: Row(
-                            children: const [
-                              Icon(FluentIcons.cancel),
-                              SizedBox(width: 10),
-                              Text('Select/Add \nAnother Event'),
-                            ],
-                          ),
-                          onPressed: () {
-                            event.clearEvent();
-                            context.read<EventsBloc>().add(SelectEvent());
-                          }),
-                    )
-                  ],
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      SizedBox(
+                        child: FilledButton(
+                            child: Row(
+                              children: const [
+                                Icon(FluentIcons.cancel),
+                                SizedBox(width: 10),
+                                Text('Select/Add \nAnother Event'),
+                              ],
+                            ),
+                            onPressed: () {
+                              event.clearEvent();
+                              context.read<EventsBloc>().add(SelectEvent());
+                            }),
+                      )
+                    ],
+                  ),
                 ),
               ),
               Row(
