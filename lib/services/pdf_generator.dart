@@ -139,7 +139,7 @@ class PdfGenerator {
                       pw.SizedBox(height: 30),
                       pw.Text(
                         event.eventDescription.trim().isEmpty
-                            ? 'Event Description: No Data Provided'
+                            ? 'Event Description:\nNo Data Provided'
                             : 'Event Description:\n${event.eventDescription}',
                         style: const pw.TextStyle(fontSize: textFontSize),
                         textAlign: pw.TextAlign.left,
