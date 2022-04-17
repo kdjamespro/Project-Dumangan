@@ -181,13 +181,8 @@ class _EditorState extends State<Editor>
 
   final values = [
     'Thin',
-    // 'Light',
     'Regular',
-    // 'Medium',
-    // 'SemiBold',
     'Bold',
-    // 'ExtraBold',
-    // 'Black'
   ];
 
   String? comboBoxValue;
@@ -234,7 +229,6 @@ class _EditorState extends State<Editor>
           ),
         ),
         Container(
-          // color: Color.fromARGB(255, 37, 38, 39),
           color: mat.Colors.black12,
           child: SizedBox(
               width: 80,
@@ -445,9 +439,6 @@ class _EditorState extends State<Editor>
         ),
 
         SizedBox(
-          // The default width is 200.
-          // The slider does not have its own widget, so you have to add it yourself.
-          // The slider always try to be as big as possible
           width: double.infinity,
           child: SizedBox(
             child: Flyout(
@@ -713,21 +704,24 @@ class _EditorState extends State<Editor>
           flex: 1,
           child: Container(
             width: double.infinity,
-            child: Button(
-              child: const Padding(
-                padding: EdgeInsets.all(4.0),
-                child: Text('Upload Image'),
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: FilledButton(
+                child: const Padding(
+                  padding: EdgeInsets.all(4.0),
+                  child: Text('Upload Image'),
+                ),
+                onPressed: () async {
+                  final picked =
+                      await context.read<FileHandler>().openImageFile();
+                  if (picked.existsSync()) {
+                    image = picked;
+                  }
+                  setState(() {
+                    setImage(image);
+                  });
+                },
               ),
-              onPressed: () async {
-                final picked =
-                    await context.read<FileHandler>().openImageFile();
-                if (picked.existsSync()) {
-                  image = picked;
-                }
-                setState(() {
-                  setImage(image);
-                });
-              },
             ),
           ),
         ),
@@ -735,24 +729,27 @@ class _EditorState extends State<Editor>
           child: Container(
             margin: const EdgeInsets.only(top: 6, bottom: 6),
             width: double.infinity,
-            child: Button(
-              onPressed: () async {
-                if (image.existsSync()) {
-                  bool isSaved =
-                      await context.read<ArchiveList>().addImage(image);
-                } else {
-                  MotionToast.error(
-                    animationDuration: const Duration(seconds: 1),
-                    animationCurve: Curves.easeOut,
-                    toastDuration: const Duration(seconds: 2),
-                    description: const Text('No Image Found'),
-                    dismissable: true,
-                  ).show(context);
-                }
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(4.0),
-                child: Text("Save Template"),
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: FilledButton(
+                onPressed: () async {
+                  if (image.existsSync()) {
+                    bool isSaved =
+                        await context.read<ArchiveList>().addImage(image);
+                  } else {
+                    MotionToast.error(
+                      animationDuration: const Duration(seconds: 1),
+                      animationCurve: Curves.easeOut,
+                      toastDuration: const Duration(seconds: 2),
+                      description: const Text('No Image Found'),
+                      dismissable: true,
+                    ).show(context);
+                  }
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(4.0),
+                  child: Text("Save Template"),
+                ),
               ),
             ),
           ),
@@ -763,93 +760,96 @@ class _EditorState extends State<Editor>
               return Flexible(
                 child: Container(
                   width: double.infinity,
-                  child: Button(
-                    child: const Padding(
-                      padding: EdgeInsets.all(4.0),
-                      child: Text('Generate PDF'),
-                    ),
-                    onPressed: () async {
-                      SelectedEvent event = context.read<SelectedEvent>();
-                      MyDatabase db = context.read<MyDatabase>();
-                      if (event.isEventSet() &&
-                          dynamicFields.attributes.isNotEmpty) {
-                        List<ParticipantsTableData> list =
-                            await db.getAttendedParticipants(event.eventId);
-                        if (list.isNotEmpty) {
-                          String path = await context
-                              .read<FileHandler>()
-                              .selectDirectory();
-                          if (path != '') {
-                            dynamicFields.hideIndicators();
-                            dynamicFields.setDynamicFieldsData(list, event);
-                            List<CertificatesTableCompanion> certs = [];
-                            int i = 0;
-                            ProgressController loading =
-                                context.read<ProgressController>();
-                            loading.setOverall(list.length);
-                            LoadingDialog load = LoadingDialog();
-                            load.showLoadingScreen(
-                              context: context,
-                              title: 'Generating Certificate',
-                            );
-
-                            int sucessful = 0;
-                            for (; i < list.length;) {
-                              final stopwatch = Stopwatch()..start();
-                              int id = dynamicFields.updateAttributes(i);
-                              String name =
-                                  Path.join(path, id.toString() + '.pdf');
-
-                              var cert = await screenshotController.capture(
-                                pixelRatio: 5,
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: FilledButton(
+                      child: const Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Text('Generate PDF'),
+                      ),
+                      onPressed: () async {
+                        SelectedEvent event = context.read<SelectedEvent>();
+                        MyDatabase db = context.read<MyDatabase>();
+                        if (event.isEventSet() &&
+                            dynamicFields.attributes.isNotEmpty) {
+                          List<ParticipantsTableData> list =
+                              await db.getAttendedParticipants(event.eventId);
+                          if (list.isNotEmpty) {
+                            String path = await context
+                                .read<FileHandler>()
+                                .selectDirectory();
+                            if (path != '') {
+                              dynamicFields.hideIndicators();
+                              dynamicFields.setDynamicFieldsData(list, event);
+                              List<CertificatesTableCompanion> certs = [];
+                              int i = 0;
+                              ProgressController loading =
+                                  context.read<ProgressController>();
+                              loading.setOverall(list.length);
+                              LoadingDialog load = LoadingDialog();
+                              load.showLoadingScreen(
+                                context: context,
+                                title: 'Generating Certificate',
                               );
-                              if (cert != null) {
-                                try {
-                                  await PdfGenerator.generatePdf(
-                                      cert, name, canvasController.orientation);
-                                  certs.add(CertificatesTableCompanion.insert(
-                                      participantsId: id,
-                                      filename: name,
-                                      eventId: event.eventId));
-                                  sucessful += 1;
-                                } on FileSystemException catch (e) {
-                                  print(e);
-                                  await showWarningMessage(
-                                      context: context,
-                                      title: 'Cannot create pdf file',
-                                      message:
-                                          'The file $name is used by another application or process. Please close it before proceeding');
-                                  i -= 1;
-                                  loading.decrease();
+
+                              int sucessful = 0;
+                              for (; i < list.length;) {
+                                final stopwatch = Stopwatch()..start();
+                                int id = dynamicFields.updateAttributes(i);
+                                String name =
+                                    Path.join(path, id.toString() + '.pdf');
+
+                                var cert = await screenshotController.capture(
+                                  pixelRatio: 5,
+                                );
+                                if (cert != null) {
+                                  try {
+                                    await PdfGenerator.generatePdf(cert, name,
+                                        canvasController.orientation);
+                                    certs.add(CertificatesTableCompanion.insert(
+                                        participantsId: id,
+                                        filename: name,
+                                        eventId: event.eventId));
+                                    sucessful += 1;
+                                  } on FileSystemException catch (e) {
+                                    print(e);
+                                    await showWarningMessage(
+                                        context: context,
+                                        title: 'Cannot create pdf file',
+                                        message:
+                                            'The file $name is used by another application or process. Please close it before proceeding');
+                                    i -= 1;
+                                    loading.decrease();
+                                  }
                                 }
+                                i += 1;
+                                loading.increase();
+                                print(
+                                    'Whole Generation Process executed in ${stopwatch.elapsed.inSeconds}');
                               }
-                              i += 1;
-                              loading.increase();
-                              print(
-                                  'Whole Generation Process executed in ${stopwatch.elapsed.inSeconds}');
+                              await db.addCertificates(certs);
+                              await db.updateEventCertificates(
+                                  event.eventId, sucessful);
+                              event.updateCertificatesCount(sucessful);
+                              dynamicFields.showIndicators();
+                              dynamicFields.reset();
+                              load.hideLoadingScreen();
+                              loading.reset();
                             }
-                            await db.addCertificates(certs);
-                            await db.updateEventCertificates(
-                                event.eventId, sucessful);
-                            event.updateCertificatesCount(sucessful);
-                            dynamicFields.showIndicators();
-                            dynamicFields.reset();
-                            load.hideLoadingScreen();
-                            loading.reset();
+                          } else {
+                            MotionToast.error(
+                              animationDuration: const Duration(seconds: 1),
+                              animationCurve: Curves.easeOut,
+                              toastDuration: const Duration(seconds: 2),
+                              title: const Text('Certificate Generation Error'),
+                              description:
+                                  const Text('Add a participant\'s data first'),
+                              dismissable: true,
+                            ).show(context);
                           }
-                        } else {
-                          MotionToast.error(
-                            animationDuration: const Duration(seconds: 1),
-                            animationCurve: Curves.easeOut,
-                            toastDuration: const Duration(seconds: 2),
-                            title: const Text('Certificate Generation Error'),
-                            description:
-                                const Text('Add a participant\'s data first'),
-                            dismissable: true,
-                          ).show(context);
                         }
-                      }
-                    },
+                      },
+                    ),
                   ),
                 ),
               );

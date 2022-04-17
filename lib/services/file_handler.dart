@@ -74,6 +74,18 @@ class FileHandler {
     return templateImage.existsSync();
   }
 
+  Future<bool> deleteTemplate(File image) async {
+    try {
+      if (await image.exists()) {
+        await image.delete();
+        return true;
+      }
+    } catch (e) {
+      return false;
+    }
+    return false;
+  }
+
   Future<Directory> getTemplateDirectory() async {
     final root = await getApplicationDocumentsDirectory();
     final templateFolder = p.join(root.path, 'templates');
@@ -82,14 +94,5 @@ class FileHandler {
       Directory(templateFolder).createSync();
     }
     return Directory(templateFolder);
-  }
-
-  Future<List> _parsecsv(file) async {
-    final input = File(file.path).openRead();
-    final fields = await input
-        .transform(utf8.decoder)
-        .transform(const CsvToListConverter())
-        .toList();
-    return fields;
   }
 }

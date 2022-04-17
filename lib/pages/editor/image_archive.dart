@@ -39,31 +39,6 @@ class _ImageArchiveState extends State<ImageArchive> {
         child: Consumer<ArchiveList>(
           builder: (context, archive, child) {
             return GridView.builder(
-// <<<<<<< HEAD
-//                 itemCount: archive.archivedImage.length,
-//                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-//                     crossAxisCount: 2, childAspectRatio: 30 / 22),
-//                 itemBuilder: (context, index) {
-//                   return GestureDetector(
-//                     onTap: () {
-//                       widget.renderTemplate(archive.archivedImage[index]);
-//                     },
-//                     child: MouseRegion(
-//                       cursor: SystemMouseCursors.click,
-//                       child: Container(
-//                         padding: const EdgeInsets.symmetric(
-//                             horizontal: 4.0, vertical: 2.0),
-//                         margin: const EdgeInsets.symmetric(
-//                             horizontal: 4, vertical: 4),
-//                         decoration: BoxDecoration(
-//                           image: DecorationImage(
-//                               fit: BoxFit.fitWidth,
-//                               filterQuality: FilterQuality.medium,
-//                               isAntiAlias: true,
-//                               image: FileImage(
-//                                 archive.archivedImage[index],
-//                               )),
-// =======
               itemCount: archive.archivedImage.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, childAspectRatio: 30 / 23),
@@ -71,10 +46,6 @@ class _ImageArchiveState extends State<ImageArchive> {
                 return GestureDetector(
                   onTap: () {
                     widget.renderTemplate(archive.archivedImage[index]);
-                  },
-                  onLongPress: () {
-                    //archive.archivedImage.removeAt(index);
-                    print("Template Deleted");
                   },
                   child: MouseRegion(
                     cursor: SystemMouseCursors.click,
@@ -98,31 +69,27 @@ class _ImageArchiveState extends State<ImageArchive> {
                         Align(
                           alignment: Alignment.topRight,
                           child: Container(
-                            margin: EdgeInsets.only(top: 4, right: 4),
+                            margin: const EdgeInsets.only(top: 4, right: 4),
                             color: mat.Colors.blue,
                             child: fluent.IconButton(
-                                icon: Icon(
+                                icon: const Icon(
                                   FluentIcons.delete,
                                   color: mat.Colors.white,
                                   size: 15,
                                 ),
                                 onPressed: () {
-                                  print("Hello");
-                                  setState(
-                                    () {
-                                      archive.archivedImage.removeAt(index);
-                                      MotionToast.delete(
-                                              dismissable: true,
-                                              animationDuration:
-                                                  const Duration(seconds: 1),
-                                              animationCurve: Curves.easeOut,
-                                              toastDuration:
-                                                  const Duration(seconds: 3),
-                                              description: const Text(
-                                                  'Template has been deleted'))
-                                          .show(context);
-                                    },
-                                  );
+                                  archive.deleteImage(
+                                      archive.archivedImage[index]);
+                                  MotionToast.delete(
+                                          dismissable: true,
+                                          animationDuration:
+                                              const Duration(seconds: 1),
+                                          animationCurve: Curves.easeOut,
+                                          toastDuration:
+                                              const Duration(seconds: 2),
+                                          description: const Text(
+                                              'Template has been deleted'))
+                                      .show(context);
                                 }),
                           ),
                         ),

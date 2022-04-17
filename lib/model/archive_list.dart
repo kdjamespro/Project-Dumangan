@@ -31,4 +31,11 @@ class ArchiveList extends ChangeNotifier {
     notifyListeners();
     return saved;
   }
+
+  Future<bool> deleteImage(File file) async {
+    bool deleted = await handler.deleteTemplate(file);
+    _archivedImage = await handler.getSavedTemplates();
+    notifyListeners();
+    return deleted;
+  }
 }
