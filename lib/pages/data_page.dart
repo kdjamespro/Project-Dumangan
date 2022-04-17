@@ -12,6 +12,7 @@ import 'package:project_dumangan/model/selected_event.dart';
 import 'package:project_dumangan/services/pdf_generator.dart';
 import 'package:project_dumangan/services/warning_message.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 Color sendingColor = mat.Colors.red;
 
@@ -75,12 +76,25 @@ class _DataPageState extends State<DataPage>
                       }
                       return Container();
                     })
-                : const Center(
-                    child: Text(
-                      "It seems like you haven't selected an event yet.\nPlease Select an event.",
-                      textAlign: fluent.TextAlign.center,
-                      style: TextStyle(fontSize: 18),
-                    ),
+                : fluent.Column(
+                    mainAxisAlignment: fluent.MainAxisAlignment.center,
+                    children: [
+                      fluent.Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SvgPicture.asset(
+                          "lib/image/choose2.svg",
+                          height: 200,
+                          width: 200,
+                        ),
+                      ),
+                      const Center(
+                        child: Text(
+                          "It seems like you haven't selected an event yet.\nPlease Select an event.",
+                          textAlign: fluent.TextAlign.center,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ],
                   ),
             floatingActionButton: FloatingActionButton(
               shape: RoundedRectangleBorder(
