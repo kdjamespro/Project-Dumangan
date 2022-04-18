@@ -105,8 +105,8 @@ class _FileUploaderState extends State<FileUploader> {
                         filePicker2.removeFile();
                       }),
                       content: Text(_crossCheck
-                          ? 'Cross Checking Enabled'
-                          : 'Cross Checking Disabled'),
+                          ? 'Cross-Checking Enabled'
+                          : 'Cross-Checking Disabled'),
                     ),
                     BlocConsumer<CrossCheckingBloc, CrossCheckingState>(
                         builder: (context, state) {
@@ -308,13 +308,16 @@ class _PickerContainerState extends State<PickerContainer> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Container(
-                                  child: Icon(
-                                    FluentIcons.table,
-                                    color: Colors.green.lightest,
-                                    size: 90,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 100.0),
+                                    child: Icon(
+                                      FluentIcons.table,
+                                      color: Colors.green.lightest,
+                                      size: 90,
+                                    ),
                                   ),
                                 ),
-                                FileIcon(_getName(widget._file), size: 90),
+                                // FileIcon(_getName(widget._file), size: 90),
                                 Expanded(
                                   flex: 4,
                                   child: AutoSizeText(
