@@ -837,16 +837,18 @@ class _EditorState extends State<Editor>
                               loading.reset();
                             }
                           } else {
-                            MotionToast.error(
-                              animationDuration: const Duration(seconds: 1),
-                              animationCurve: Curves.easeOut,
-                              toastDuration: const Duration(seconds: 2),
-                              title: const Text('Certificate Generation Error'),
-                              description:
-                                  const Text('Add a participant\'s data first'),
-                              dismissable: true,
-                            ).show(context);
+                            showWarningMessage(
+                                context: context,
+                                title: 'No Participants Data',
+                                message:
+                                    'Please upload the participants data first before generating certificate');
                           }
+                        } else {
+                          showWarningMessage(
+                              context: context,
+                              title: 'Cannot proceed to certificate generation',
+                              message:
+                                  'You do not have selected event yet or a dynamic attribute to the editor');
                         }
                       },
                     ),
