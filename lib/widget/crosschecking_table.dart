@@ -58,8 +58,11 @@ class _CrossCheckingTableState extends State<CrossCheckingTable> {
                         .removeAll();
                   },
                 ),
+                SizedBox(
+                  width: 20,
+                ),
                 FilledButton(
-                    child: const Text('Cross Check'),
+                    child: const Text('Cross-check'),
                     onPressed: () {
                       if (Provider.of<CrossCheckMapping>(context, listen: false)
                           .requiredAttributeExists()) {
