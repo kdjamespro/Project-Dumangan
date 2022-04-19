@@ -43,7 +43,7 @@ void main() async {
   ));
   doWhenWindowReady(() {
     final win = appWindow;
-    win.minSize = Size(window.physicalSize.height, 540);
+    win.minSize = Size(window.physicalSize.height, 1000);
     win.maximize();
     win.alignment = Alignment.center;
     win.title = 'Project Dumangan';
@@ -60,7 +60,6 @@ class MyApp extends StatelessWidget {
     return FluentApp(
       theme: ThemeData(brightness: Brightness.light, accentColor: Colors.blue),
       debugShowCheckedModeBanner: false,
-      // title: 'Project Dumangan',
       home: const MyHomePage(title: 'Project Dumangan'),
     );
   }
