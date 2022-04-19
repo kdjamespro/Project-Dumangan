@@ -23,8 +23,6 @@ class FileParser {
     List headers = _getHeaders(data);
     _removeBlankRows(data);
     List index = _getDataIndex(headers);
-    // _getNeededFields(data, index);
-    // print(data);
     data.removeAt(0);
     output.add(headers);
     output.add(data);

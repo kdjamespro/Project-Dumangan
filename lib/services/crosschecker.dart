@@ -29,66 +29,101 @@ class CrossChecker {
 
     List crossNames = crossData['Full Name'] ?? [];
     List crossEmails = crossData['Email'] ?? [];
+    List crossOrg = crossData['Organization'] ?? [];
+
+    if (crossOrg.isEmpty) {
+      crossOrg = List<String>.generate(
+          min(regNames.length, regEmails.length), (index) => '');
+    }
 
     List possibleParticipants = [];
     List possibleAbsentees = [];
 
     // Convert the names to lowercase and stores it to a new list
-    List regSmallNames = regNames.map((e) => e.toLowerCase()).toList();
-    List crossSmallNames = crossNames.map((e) => e.toLowerCase()).toList();
+    List regSmallNames = regNames.map((e) => e.toLowerCase().trim()).toList();
+    List crossSmallNames =
+        crossNames.map((e) => e.toLowerCase().trim()).toList();
 
     // Iterate through the list and check if there is a matching participant
     for (int i = 0; i < min(regNames.length, regEmails.length); i++) {
-      // Use the small Names for case insensitive comparison
+      // Check if the name in registration file exists in cross checking file
       int match = crossSmallNames.indexOf(regSmallNames[i]);
       if (match >= 0) {
-        //
-        if (crossEmails[match] == regEmails[i]) {
-          // Check if the particpant name exists in the possible Participants
-          int index =
-              _containsValue(possibleParticipants, 'Full Name', regNames[i]);
-
+        // Checks if the matching name also have a matching email
+        if (crossEmails[match].trim() == regEmails[i].trim()) {
+          // Check if the participant name exists in the possible Participants
+          int index = _containsValue(
+              possibleParticipants, 'Full Name', regNames[i].trim());
           if (index >= 0) {
-            // Add the participants if the email is not the same
-            if (!(possibleParticipants[index]['Email'] == regEmails[i])) {
+            // Add the participants if there is no existing participants in that list
+            if (!(possibleParticipants[index]['Email'].trim() ==
+                regEmails[i].trim())) {
               possibleParticipants.add({
-                'Full Name': regNames[i],
-                'Email': regEmails[i],
-                'Organization': regOrg[i]
+                'Full Name': regNames[i].trim(),
+                'Email': regEmails[i].trim(),
+                'Organization': regOrg[i].trim()
               });
-            } else {
-              possibleAbsentees.add({
-                'Full Name': regNames[i],
-                'Email': regEmails[i],
-                'Organization': regOrg[i]
-              });
+              crossSmallNames.removeAt(match);
+              crossNames.removeAt(match);
+              crossEmails.removeAt(match);
+              crossOrg.removeAt(match);
+              continue;
             }
           } else {
             possibleParticipants.add({
-              'Full Name': regNames[i],
-              'Email': regEmails[i],
-              'Organization': regOrg[i]
+              'Full Name': regNames[i].trim(),
+              'Email': regEmails[i].trim(),
+              'Organization': regOrg[i].trim()
             });
+            crossSmallNames.removeAt(match);
+            crossNames.removeAt(match);
+            crossEmails.removeAt(match);
+            crossOrg.removeAt(match);
+            continue;
           }
-        } else {
+        }
+      }
+      int index = _containsValue(possibleAbsentees, 'Full Name', regNames[i]);
+      if (index >= 0) {
+        // Add the participants if there is no existing participants in that list
+        if (!(possibleAbsentees[index]['Email'] == regEmails[i])) {
           possibleAbsentees.add({
             'Full Name': regNames[i],
             'Email': regEmails[i],
             'Organization': regOrg[i]
           });
         }
-      } else {
-        possibleAbsentees.add({
-          'Full Name': regNames[i],
-          'Email': regEmails[i],
-          'Organization': regOrg[i]
-        });
+        continue;
       }
+      possibleAbsentees.add({
+        'Full Name': regNames[i],
+        'Email': regEmails[i],
+        'Organization': regOrg[i]
+      });
+    }
+
+    for (int i = 0; i < min(crossNames.length, crossEmails.length); i++) {
+      int index =
+          _containsValue(possibleParticipants, 'Full Name', crossNames[i]);
+      if (index >= 0) {
+        // Add the participants if there is no existing participants in that list
+        if (!(possibleParticipants[index]['Email'] == crossEmails[i])) {
+          possibleParticipants.add({
+            'Full Name': crossNames[i].trim(),
+            'Email': crossEmails[i].trim(),
+            'Organization': crossOrg[i].trim()
+          });
+          continue;
+        }
+      }
+      possibleParticipants.add({
+        'Full Name': crossNames[i].trim(),
+        'Email': crossEmails[i].trim(),
+        'Organization': crossOrg[i].trim()
+      });
     }
     _addParticipants(possibleParticipants);
     _addAbsentees(possibleAbsentees);
-
-    // print(possibleAbsentees);
   }
 
   int _containsValue(List listMap, String attribute, String value) {

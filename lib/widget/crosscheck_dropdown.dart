@@ -17,7 +17,7 @@ class _CrossCheckDropDownState extends State<CrossCheckDropDown> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> choices = ['Full Name', 'Email', 'Deselect'];
+    List<String> choices = ['Full Name', 'Email', 'Organization', 'Deselect'];
     return Combobox<String>(
       placeholder: const Text('Select Column Mapping'),
       items: choices.map((e) {
