@@ -44,13 +44,36 @@ class CrossCheckingBloc extends Bloc<CrossCheckingEvent, CrossCheckingState> {
 
   Future<void> _parseFile(CrossChekingStart start, Emitter emit) async {
     await loading(emit);
-    var regData = await parser.parseFile(start.files[0]);
+    Map<String, List> regData = {};
+    try {
+      regData = await parser.parseFile(start.files[0]);
+    } on FormatException catch (_) {
+      emit(const CrossCheckingError(
+          message:
+              'The registration csv file is not in utf8-format. Please save it again using a utf8-format'));
+      return;
+    }
+
     if (regData.keys.isEmpty || regData.keys.length > 100) {
-      emit(const CrossCheckingError());
+      emit(const CrossCheckingError(
+          message:
+              'The registration file you uploaded is empty or it exceeded the maximum column count of 100'));
+      return;
     } else if (start.crossCheck) {
-      var crossData = await parser.parseFile(start.files[1]);
+      Map<String, List> crossData = {};
+      try {
+        crossData = await parser.parseFile(start.files[1]);
+      } on FormatException catch (_) {
+        emit(const CrossCheckingError(
+            message:
+                'The attendance csv file is not in utf8-format. Please save it again using a utf8-format'));
+        return;
+      }
       if (crossData.keys.isEmpty || crossData.keys.length > 100) {
-        emit(const CrossCheckingError());
+        emit(const CrossCheckingError(
+            message:
+                'The attendance file you uploaded is empty or it exceeded the maximum column count of 100'));
+        return;
       }
       emit((CrossCheckingAttribute(
           data: regData,

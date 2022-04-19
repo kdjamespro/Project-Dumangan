@@ -69,8 +69,7 @@ class CertPage extends StatelessWidget {
                     builder: (context) {
                       return ContentDialog(
                         title: const Text('File Uploading Error'),
-                        content: const Text(
-                            'The file you uploaded is empty or it exceeded the maximum column count of 100'),
+                        content: Text(state.message),
                         actions: [
                           SizedBox(
                             width: 100,

@@ -22,7 +22,8 @@ class CrossCheckingLoading extends CrossCheckingState {
 }
 
 class CrossCheckingError extends CrossCheckingState {
-  const CrossCheckingError() : super();
+  final String message;
+  const CrossCheckingError({required this.message}) : super();
 }
 
 class CrossCheckingAttribute extends CrossCheckingState {
