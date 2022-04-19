@@ -15,7 +15,7 @@ class FileHandler {
     final result = await platform.pickFiles(
         dialogTitle: 'Please select a File:',
         type: FileType.custom,
-        allowedExtensions: ['csv', 'xlsx']);
+        allowedExtensions: ['csv']);
     if (result == null) {
       print('No Files Picked');
       return File('');

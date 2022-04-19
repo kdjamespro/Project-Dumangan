@@ -252,7 +252,7 @@ class _PickerContainerState extends State<PickerContainer> {
                   break;
                 }
                 String extension = p.extension(droppedFile.path);
-                if (extension == '.xlsx' || extension == '.csv') {
+                if (extension == '.csv') {
                   widget._file = File(droppedFile.path);
                 } else {
                   showWarningMessage(

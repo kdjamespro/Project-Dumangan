@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:csv/csv.dart';
-// ignore: import_of_legacy_library_into_null_safe
+
 import 'package:path/path.dart' as p;
 
 class FileParser {
@@ -41,10 +41,6 @@ class FileParser {
 
   bool _isCsv(File file) {
     return p.extension(file.path) == ".csv";
-  }
-
-  bool _isXlsx(File file) {
-    return p.extension(file.path) == ".xlsx";
   }
 
   List _getHeaders(List data) {

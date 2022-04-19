@@ -202,6 +202,7 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                   String title = eventsTitleController.text;
                                   String desc = eventsDescController.text;
                                   String setDate = dateController.text;
+                                  String location = locationController.text;
                                   DateTime eventDate = df.parse(setDate);
                                   print(eventDate);
                                   await db.addEvent(EventsTableCompanion(
@@ -209,6 +210,7 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                     description: drift.Value(desc),
                                     date: drift.Value(eventDate),
                                     absentees: const drift.Value(0),
+                                    location: drift.Value(location),
                                     participants: const drift.Value(0),
                                   ));
                                   clearController();
