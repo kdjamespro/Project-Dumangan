@@ -70,8 +70,3 @@ class FileParser {
         header.contains(RegExp(r'last name', caseSensitive: false));
   }
 }
-
-
-// get the headers
-// get the index of the columns needed for the data
-// 

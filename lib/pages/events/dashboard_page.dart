@@ -3,6 +3,8 @@ import 'package:flutter/material.dart' as mat;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_dumangan/bloc/bloc/events_bloc.dart';
 import 'package:project_dumangan/database/database.dart';
+import 'package:project_dumangan/model/attribute_mapping.dart';
+import 'package:project_dumangan/model/crosscheck_mapping.dart';
 import 'package:project_dumangan/model/selected_event.dart';
 import 'package:project_dumangan/pages/events/event_countdown.dart';
 import 'package:project_dumangan/services/pdf_generator.dart';
@@ -76,6 +78,8 @@ class _DashboardPageState extends State<DashboardPage> {
                               ],
                             ),
                             onPressed: () {
+                              context.read<AttributeMapping>().removeAll();
+                              context.read<CrossCheckMapping>().removeAll();
                               event.clearEvent();
                               context.read<EventsBloc>().add(SelectEvent());
                             }),
