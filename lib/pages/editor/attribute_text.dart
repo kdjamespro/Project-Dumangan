@@ -17,6 +17,7 @@ class AttributeText extends ChangeNotifier {
   Map<String, List<String>> dynamicFieldData;
   int size = 0;
   List<int> _participantIds;
+  String eventName = '';
 
   AttributeText()
       : attributes = {},
@@ -73,17 +74,21 @@ class AttributeText extends ChangeNotifier {
     _setEventsData(event, attr);
   }
 
-  int updateAttributes(int index) {
+  List updateAttributes(int index) {
+    List info = [];
     if (index < size) {
       for (String field in dynamicFieldData.keys) {
         attributes[field]?.style.controller.text =
             dynamicFieldData[field]?.elementAt(index) ?? '';
       }
-      int participantsId = _participantIds[index];
+      String fileName = dynamicFieldData['Full Name']?.elementAt(index) ?? '';
+      fileName = (eventName + '_' + fileName)
+          .replaceAll(RegExp(r'[~"#%&*:<>?/\\{|}]+'), '');
+      info.add(fileName);
       notifyListeners();
-      return participantsId;
+      info.add(_participantIds[index]);
     }
-    return -1;
+    return info;
   }
 
   void _setParticipantsData(List<ParticipantsTableData> participantsInfo,
@@ -109,6 +114,7 @@ class AttributeText extends ChangeNotifier {
   }
 
   void _setEventsData(SelectedEvent event, List<String> attr) {
+    eventName = event.eventName;
     for (String eventAttribute in attr) {
       if (eventAttribute == 'Event Name') {
         attributes[eventAttribute]?.style.controller.text = event.eventName;

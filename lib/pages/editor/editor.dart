@@ -795,9 +795,8 @@ class _EditorState extends State<Editor>
                               int sucessful = 0;
                               for (; i < list.length;) {
                                 final stopwatch = Stopwatch()..start();
-                                int id = dynamicFields.updateAttributes(i);
-                                String name =
-                                    Path.join(path, id.toString() + '.pdf');
+                                List info = dynamicFields.updateAttributes(i);
+                                String name = Path.join(path, info[0] + '.pdf');
 
                                 var cert = await screenshotController.capture(
                                   pixelRatio: 5,
@@ -807,7 +806,7 @@ class _EditorState extends State<Editor>
                                     await PdfGenerator.generatePdf(cert, name,
                                         canvasController.orientation);
                                     certs.add(CertificatesTableCompanion.insert(
-                                        participantsId: id,
+                                        participantsId: info[1],
                                         filename: name,
                                         eventId: event.eventId));
                                     sucessful += 1;
