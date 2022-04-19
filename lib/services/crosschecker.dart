@@ -86,35 +86,37 @@ class CrossChecker {
       int index = _containsValue(possibleAbsentees, 'Full Name', regNames[i]);
       if (index >= 0) {
         // Add the participants if there is no existing participants in that list
-        if (!(possibleAbsentees[index]['Email'] == regEmails[i])) {
+        if (!(possibleAbsentees[index]['Email'].trim() ==
+            regEmails[i].trim())) {
           possibleAbsentees.add({
-            'Full Name': regNames[i],
-            'Email': regEmails[i],
-            'Organization': regOrg[i]
+            'Full Name': regNames[i].trim(),
+            'Email': regEmails[i].trim(),
+            'Organization': regOrg[i].trim()
           });
         }
         continue;
       }
       possibleAbsentees.add({
-        'Full Name': regNames[i],
-        'Email': regEmails[i],
-        'Organization': regOrg[i]
+        'Full Name': regNames[i].trim(),
+        'Email': regEmails[i].trim(),
+        'Organization': regOrg[i].trim()
       });
     }
 
     for (int i = 0; i < min(crossNames.length, crossEmails.length); i++) {
-      int index =
-          _containsValue(possibleParticipants, 'Full Name', crossNames[i]);
+      int index = _containsValue(
+          possibleParticipants, 'Full Name', crossNames[i].trim());
       if (index >= 0) {
         // Add the participants if there is no existing participants in that list
-        if (!(possibleParticipants[index]['Email'] == crossEmails[i])) {
+        if (!(possibleParticipants[index]['Email'].trim() ==
+            crossEmails[i].trim())) {
           possibleParticipants.add({
             'Full Name': crossNames[i].trim(),
             'Email': crossEmails[i].trim(),
             'Organization': crossOrg[i].trim()
           });
-          continue;
         }
+        continue;
       }
       possibleParticipants.add({
         'Full Name': crossNames[i].trim(),
