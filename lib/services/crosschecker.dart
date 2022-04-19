@@ -33,7 +33,7 @@ class CrossChecker {
 
     if (crossOrg.isEmpty) {
       crossOrg = List<String>.generate(
-          min(regNames.length, regEmails.length), (index) => '');
+          min(crossNames.length, crossEmails.length), (index) => '');
     }
 
     List possibleParticipants = [];
