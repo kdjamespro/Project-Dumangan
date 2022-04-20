@@ -9,6 +9,7 @@ import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/attribute_mapping.dart';
 import 'package:project_dumangan/model/participant.dart';
 import 'package:project_dumangan/model/selected_event.dart';
+import 'package:project_dumangan/services/cipher.dart';
 import 'package:project_dumangan/widget/columns_table.dart';
 import 'package:project_dumangan/widget/crosschecking_table.dart';
 import 'package:provider/provider.dart';
@@ -132,13 +133,13 @@ class _TableState extends State<Table> {
     organizationController.clear();
   }
 
-  void getData(List data) {
+  void getData(List<ParticipantsTableData> data) {
     List participantsList = [];
     for (var row in data) {
       participantsList.add(Participant(
         id: row.id,
-        fullName: row.fullName,
-        email: row.email,
+        fullName: Cipher.decryptAES(row.fullName),
+        email: Cipher.decryptAES(row.email),
         attended: row.attended,
         organization: row.organization ?? '',
       ));
@@ -253,13 +254,17 @@ class _TableState extends State<Table> {
                                     child: const Text('Add New Participants'),
                                     onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
+                                        String encryptedName =
+                                            Cipher.encryptAES(
+                                                fullNameController.text);
+                                        String encryptedEmail =
+                                            Cipher.encryptAES(
+                                                emailController.text);
                                         await db.addParticipant(
                                             ParticipantsTableCompanion(
                                           eventsId: drift.Value(event.eventId),
-                                          fullName: drift.Value(
-                                              fullNameController.text),
-                                          email:
-                                              drift.Value(emailController.text),
+                                          fullName: drift.Value(encryptedName),
+                                          email: drift.Value(encryptedEmail),
                                           organization: drift.Value(
                                               organizationController.text),
                                           attended: const drift.Value(true),

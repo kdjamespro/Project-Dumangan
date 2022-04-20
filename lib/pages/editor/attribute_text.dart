@@ -3,6 +3,7 @@ import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/fontstyle_controller.dart';
 import 'package:project_dumangan/model/selected_event.dart';
 import 'package:project_dumangan/pages/editor/draggable_text.dart';
+import 'package:project_dumangan/services/cipher.dart';
 
 class AttributeText extends ChangeNotifier {
   final List<String> attributeNames = [
@@ -99,9 +100,9 @@ class AttributeText extends ChangeNotifier {
       _participantIds.add(participants.id);
       for (int i = 0; i < participantsAttr.length; i++) {
         if (participantsAttr[i] == 'Full Name') {
-          data[i].add(participants.fullName);
+          data[i].add(Cipher.decryptAES(participants.fullName));
         } else if (participantsAttr[i] == 'Email') {
-          data[i].add(participants.email);
+          data[i].add(Cipher.decryptAES(participants.email));
         } else if (participantsAttr[i] == 'Organization') {
           data[i].add(participants.organization ?? '');
         }

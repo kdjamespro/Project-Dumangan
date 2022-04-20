@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:drift/drift.dart';
 import 'package:project_dumangan/database/database.dart';
+import 'package:project_dumangan/services/cipher.dart';
 
 class CrossChecker {
   Map regData;
@@ -143,8 +144,8 @@ class CrossChecker {
     for (var participant in map) {
       _participants.add(ParticipantsTableCompanion.insert(
         eventsId: eventId,
-        fullName: participant['Full Name'],
-        email: participant['Email'],
+        fullName: Cipher.encryptAES(participant['Full Name']),
+        email: Cipher.encryptAES(participant['Email']),
         organization: Value(participant['Organization']),
         attended: const Value(true),
       ));
@@ -156,8 +157,8 @@ class CrossChecker {
       _absentees.add(
         ParticipantsTableCompanion.insert(
           eventsId: eventId,
-          fullName: absent['Full Name'],
-          email: absent['Email'],
+          fullName: Cipher.encryptAES(absent['Full Name']),
+          email: Cipher.encryptAES(absent['Email']),
           organization: Value(absent['Organization']),
           attended: const Value(false),
         ),

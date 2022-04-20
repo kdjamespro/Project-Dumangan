@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:drift/drift.dart';
 import 'package:project_dumangan/database/database.dart';
+import 'package:project_dumangan/services/cipher.dart';
 
 class MapParticipants {
   Map regData;
@@ -37,8 +38,8 @@ class MapParticipants {
     for (var participant in map) {
       _participants.add(ParticipantsTableCompanion.insert(
         eventsId: eventId,
-        fullName: participant['Full Name'],
-        email: participant['Email'],
+        fullName: Cipher.encryptAES(participant['Full Name']),
+        email: Cipher.encryptAES(participant['Email']),
         organization: Value(participant['Organization']),
         attended: const Value(true),
       ));

@@ -4,7 +4,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:file_icon/file_icon.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -124,10 +123,10 @@ class _FileUploaderState extends State<FileUploader> {
                         },
                         listener: (context, state) {}),
                     FilledButton(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 16),
-                          child: const Text('Upload Data'),
+                        child: const Padding(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          child: Text('Upload Data'),
                         ),
                         onPressed: () {
                           int eventId = context.read<SelectedEvent>().eventId;

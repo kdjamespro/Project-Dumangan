@@ -12,6 +12,7 @@ import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/canvas_controller.dart';
 import 'package:printing/printing.dart';
 import 'package:project_dumangan/model/selected_event.dart';
+import 'package:project_dumangan/services/cipher.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PdfGenerator {
@@ -218,7 +219,9 @@ class PdfGenerator {
       'Email',
     ];
 
-    List absents = absentees.map((e) => [e.fullName, e.email]).toList();
+    List absents = absentees
+        .map((e) => [Cipher.decryptAES(e.fullName), Cipher.decryptAES(e.email)])
+        .toList();
     const PdfColor baseColor = PdfColors.blue800;
     const PdfColor accentColor = PdfColors.blueGrey900;
     return pw.Container(
