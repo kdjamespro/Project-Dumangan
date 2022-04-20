@@ -1,12 +1,9 @@
-import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server/gmail.dart';
 import 'dart:io';
 
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:google_sign_in_dartio/google_sign_in_dartio.dart';
-import 'package:motion_toast/motion_toast.dart';
-import 'package:project_dumangan/pages/data_page.dart';
 
 class GmailAccount {
   GoogleSignInAccount? account;
@@ -86,10 +83,8 @@ class GmailAccount {
     try {
       await send(message, smtpServer);
       successful = true;
-      print('Email Sent');
     } on MailerException catch (e) {
       successful = false;
-      print(e);
     }
     return successful;
   }
@@ -113,10 +108,9 @@ class GmailAccount {
     try {
       await send(message, smtpServer);
       successful = true;
-      print('Email Sent');
     } on MailerException catch (e) {
-      successful = false;
       print(e);
+      successful = false;
     }
     return successful;
   }

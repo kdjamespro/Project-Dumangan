@@ -4,8 +4,6 @@ import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as mat;
-import 'package:mailer/mailer.dart';
-import 'package:motion_toast/motion_toast.dart';
 import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/gmail_account.dart';
 import 'package:project_dumangan/model/selected_event.dart';
@@ -539,12 +537,12 @@ class _DataPageState extends State<DataPage>
                 backgroundColor: const Color.fromRGBO(99, 158, 231, 1.0),
                 child: fluent.Row(
                   mainAxisAlignment: fluent.MainAxisAlignment.center,
-                  children: [
+                  children: const [
                     fluent.Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
+                      padding: EdgeInsets.only(right: 8.0),
                       child: Text("Send"),
                     ),
-                    const Icon(Icons.send),
+                    Icon(Icons.send),
                   ],
                 ),
               ),

@@ -48,7 +48,7 @@ class EventCountdown extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             const Icon(FluentIcons.timer),
-                            SizedBox(
+                            const SizedBox(
                               width: 15,
                             ),
                             Text(

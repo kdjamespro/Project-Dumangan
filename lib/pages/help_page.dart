@@ -19,7 +19,7 @@ class _HelpPageState extends State<HelpPage> {
       home: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Container(
-          margin: EdgeInsets.only(right: 10),
+          margin: const EdgeInsets.only(right: 10),
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: Padding(
@@ -28,16 +28,16 @@ class _HelpPageState extends State<HelpPage> {
                 // ignore: prefer_const_literals_to_create_immutables
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: Expander(
-                      header: Text('What is Project Dumangan?'),
+                      header: const Text('What is Project Dumangan?'),
                       content: RichText(
                         textAlign: TextAlign.justify,
-                        text: TextSpan(
+                        text: const TextSpan(
                           text: '               This application, codenamed ',
                           style: TextStyle(
                               fontSize: 14, color: mat.Colors.black, height: 2),
-                          children: const <TextSpan>[
+                          children: <TextSpan>[
                             TextSpan(
                                 text: 'Project Dumangan',
                                 style: TextStyle(fontWeight: FontWeight.bold)),
@@ -74,16 +74,16 @@ class _HelpPageState extends State<HelpPage> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: Expander(
-                      header:
-                          Text('How do you use the cross checking feature?'),
+                      header: const Text(
+                          'How do you use the cross checking feature?'),
                       content: RichText(
                         textAlign: TextAlign.justify,
-                        text: TextSpan(
+                        text: const TextSpan(
                           style: TextStyle(
                               fontSize: 14, color: mat.Colors.black, height: 2),
-                          children: const <TextSpan>[
+                          children: <TextSpan>[
                             TextSpan(
                                 text: 'Step 1: Select an event\n',
                                 style: TextStyle(fontWeight: FontWeight.bold)),

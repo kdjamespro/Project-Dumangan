@@ -343,8 +343,6 @@ class _TableState extends State<Table> {
                                       deletedAbsentees += 1;
                                     }
                                   }
-                                  print(deletedParticipants);
-                                  print(deletedAbsentees);
                                   event.updateAttendance(
                                       event.eventParticipants -
                                           deletedParticipants,
@@ -461,7 +459,7 @@ class _TableState extends State<Table> {
                   DataColumn2(label: Text('Organization')),
                   DataColumn2(label: Text('Attended')),
                 ],
-                rows: [],
+                rows: const [],
               );
           }
         });
@@ -490,37 +488,27 @@ class TableSource extends mat.DataTableSource {
       index: index,
       cells: [
         mat.DataCell(
-          Container(
-            child: Text(dataList[index].id.toString()),
-          ),
+          Text(dataList[index].id.toString()),
         ),
         mat.DataCell(
-          Container(
-            child: Text(dataList[index].fullName),
-          ),
+          Text(dataList[index].fullName),
         ),
         mat.DataCell(
-          Container(
-            child: Text(dataList[index].email),
-          ),
+          Text(dataList[index].email),
         ),
         mat.DataCell(
-          Container(
-            child: Text(dataList[index].organization),
-          ),
+          Text(dataList[index].organization),
         ),
         mat.DataCell(
-          Container(
-            child: dataList[index].attended
-                ? Text(
-                    'Present',
-                    style: TextStyle(color: Colors.green),
-                  )
-                : Text(
-                    'Absent',
-                    style: TextStyle(color: Colors.red),
-                  ),
-          ),
+          dataList[index].attended
+              ? Text(
+                  'Present',
+                  style: TextStyle(color: Colors.green),
+                )
+              : Text(
+                  'Absent',
+                  style: TextStyle(color: Colors.red),
+                ),
         ),
       ],
     );

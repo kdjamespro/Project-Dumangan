@@ -12,8 +12,6 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '/model/selected_event.dart';
-import 'event_info.dart';
-// import 'package:flutter_datetime_picker/flutter_datetime_picker.dart' as picker;
 
 class EventSelectionPage extends StatefulWidget {
   const EventSelectionPage({Key? key}) : super(key: key);

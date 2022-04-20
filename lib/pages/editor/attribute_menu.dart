@@ -43,7 +43,7 @@ class _AttributeMenuState extends State<AttributeMenu> {
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Row(
                 children: [
-                  Container(child: Text(attributes[index])),
+                  Text(attributes[index]),
                   const Spacer(),
                   ToggleButton(
                     child: Text(buttonText[index]),
