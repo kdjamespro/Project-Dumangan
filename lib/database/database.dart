@@ -110,9 +110,10 @@ class MyDatabase extends _$MyDatabase {
     return Cipher.decryptAES(email);
   }
 
-  Future<List<String>> getAllParticipantEmail() async {
+  Future<List<String>> getAllParticipantEmail(int eventId) async {
     return await customSelect(
-      'SELECT email FROM participants_table',
+      'SELECT email FROM participants_table WHERE events_id = ?',
+      variables: [Variable.withInt(eventId)],
       readsFrom: {participantsTable},
     ).map((row) => row.read<String>('email')).get();
   }

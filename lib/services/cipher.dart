@@ -5,7 +5,6 @@ class Cipher {
 
   static String encryptAES(plainText) {
     var key = 'r4u7x!A%D*G-KaPdSgVkYp3s6v8y/B?E';
-
     var encrypted = Encryptor.encrypt(key, plainText);
     return encrypted;
   }

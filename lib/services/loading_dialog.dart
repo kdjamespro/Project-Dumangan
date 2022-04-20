@@ -11,6 +11,7 @@ class LoadingDialog {
   void showLoadingScreen({
     required BuildContext context,
     required String title,
+    required String label,
   }) {
     ProgressController loader = context.read<ProgressController>();
     showDialog(
@@ -29,8 +30,7 @@ class LoadingDialog {
                 children: [
                   ProgressBar(
                       value: (loading.progress / loading.overall) * 100),
-                  Text(
-                      'Cetificates Generated: ${loading.progress} / ${loading.overall}'),
+                  Text('$label: ${loading.progress} / ${loading.overall}'),
                 ],
               );
             }),
@@ -45,11 +45,4 @@ class LoadingDialog {
       Navigator.pop(dialogContext);
     }
   }
-  
-
-  //   return Column(
-  //   children: [
-  //     ProgressBar(value: value.progress / value.overall),
-  //   ],
-  // );
 }

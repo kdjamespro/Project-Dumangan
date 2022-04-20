@@ -8,6 +8,7 @@ import 'package:flutter_window_close/flutter_window_close.dart';
 import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/attribute_mapping.dart';
 import 'package:project_dumangan/model/gmail_account.dart';
+import 'package:project_dumangan/model/progress_controller.dart';
 import 'package:project_dumangan/pages/editor/editor_page.dart';
 import 'package:project_dumangan/pages/help_page.dart';
 import 'package:project_dumangan/services/file_handler.dart';
@@ -223,7 +224,11 @@ class _MyHomePageState extends State<MyHomePage>
           const EventPage(),
           const CertPage(),
           const EditorPage(),
-          const DataPage(),
+          ChangeNotifierProvider(
+              create: (context) => ProgressController(),
+              builder: (context, snapshot) {
+                return const DataPage();
+              }),
           const HelpPage(),
           LoginPage(setInfo: setUserProfile),
         ],

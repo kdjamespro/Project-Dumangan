@@ -790,6 +790,7 @@ class _EditorState extends State<Editor>
                               load.showLoadingScreen(
                                 context: context,
                                 title: 'Generating Certificate',
+                                label: 'Cetificates Generated',
                               );
 
                               int sucessful = 0;

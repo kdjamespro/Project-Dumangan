@@ -68,7 +68,6 @@ class GmailAccount {
     final email = account!.email;
     final auth = await account!.authentication;
     final token = auth.accessToken!;
-    print(token);
     final smtpServer = gmailSaslXoauth2(email, token);
 
     final message = Message()
@@ -107,6 +106,7 @@ class GmailAccount {
 
     try {
       await send(message, smtpServer);
+      print('sent');
       successful = true;
     } on MailerException catch (e) {
       print(e);

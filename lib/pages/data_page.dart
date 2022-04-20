@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/gmail_account.dart';
+import 'package:project_dumangan/model/progress_controller.dart';
 import 'package:project_dumangan/model/selected_event.dart';
 import 'package:project_dumangan/services/cipher.dart';
+import 'package:project_dumangan/services/loading_dialog.dart';
 import 'package:project_dumangan/services/pdf_generator.dart';
 import 'package:project_dumangan/services/warning_message.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +39,7 @@ class _DataPageState extends State<DataPage>
   Widget build(BuildContext context) {
     MyDatabase db = context.read<MyDatabase>();
     SelectedEvent event = context.read<SelectedEvent>();
+    ProgressController progress = context.read<ProgressController>();
     return FluentApp(
       debugShowCheckedModeBanner: false,
       home: Padding(
@@ -223,85 +226,119 @@ class _DataPageState extends State<DataPage>
                                             // barrierDismissible: true,
                                             context: context,
                                             builder: (context) {
-                                              return ContentDialog(
-                                                title: const Text(
-                                                    'Send certificates to all?'),
-                                                content: const Text(
-                                                    'Are you sure you want to send all the certificates?'),
-                                                actions: [
-                                                  Button(
-                                                      child:
-                                                          const Text('Cancel'),
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      }),
-                                                  FilledButton(
-                                                      child: const Text(
-                                                          'Send All'),
-                                                      onPressed: () async {
-                                                        print(account.signedIn);
-                                                        if (account.signedIn) {
-                                                          if (event
-                                                              .isEventSet()) {
-                                                            List<CertificatesTableData>
-                                                                certs =
-                                                                await db.getCertificates(
-                                                                    event
-                                                                        .eventId);
-                                                            for (CertificatesTableData cert
-                                                                in certs) {
-                                                              String email = await db
-                                                                  .getParticipantEmail(
-                                                                      cert.participantsId);
-                                                              File certificate =
-                                                                  File(cert
-                                                                      .filename);
-                                                              if (certificate
-                                                                  .existsSync()) {
-                                                                if (!cert
-                                                                    .sended) {
-                                                                  bool successful = await account.sendEmail(
-                                                                      emailSubject
-                                                                          .text,
-                                                                      emailContents
-                                                                          .text,
-                                                                      email,
-                                                                      certificate);
-                                                                  if (successful) {
-                                                                    await db.updateCertStatus(
-                                                                        cert.id);
+                                              return ChangeNotifierProvider(
+                                                  create: (context) => progress,
+                                                  builder: (context, snapshot) {
+                                                    return ContentDialog(
+                                                      title: const Text(
+                                                          'Send certificates to all?'),
+                                                      content: const Text(
+                                                          'Are you sure you want to send all the certificates?'),
+                                                      actions: [
+                                                        Button(
+                                                            child: const Text(
+                                                                'Cancel'),
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            }),
+                                                        FilledButton(
+                                                            child: const Text(
+                                                                'Send All'),
+                                                            onPressed:
+                                                                () async {
+                                                              print(account
+                                                                  .signedIn);
+                                                              if (account
+                                                                  .signedIn) {
+                                                                if (event
+                                                                    .isEventSet()) {
+                                                                  List<CertificatesTableData>
+                                                                      certs =
+                                                                      await db.getCertificates(
+                                                                          event
+                                                                              .eventId);
+                                                                  ProgressController
+                                                                      loading =
+                                                                      context.read<
+                                                                          ProgressController>();
+                                                                  loading.setOverall(
+                                                                      certs
+                                                                          .length);
+                                                                  LoadingDialog
+                                                                      load =
+                                                                      LoadingDialog();
+                                                                  load.showLoadingScreen(
+                                                                      context:
+                                                                          context,
+                                                                      title:
+                                                                          'Sending Certificates',
+                                                                      label:
+                                                                          'Email Sent');
+                                                                  for (CertificatesTableData cert
+                                                                      in certs) {
+                                                                    String
+                                                                        email =
+                                                                        await db
+                                                                            .getParticipantEmail(cert.participantsId);
+                                                                    File
+                                                                        certificate =
+                                                                        File(cert
+                                                                            .filename);
+                                                                    if (certificate
+                                                                        .existsSync()) {
+                                                                      if (!cert
+                                                                          .sended) {
+                                                                        bool successful = await account.sendEmail(
+                                                                            emailSubject.text,
+                                                                            emailContents.text,
+                                                                            email,
+                                                                            certificate);
+                                                                        if (successful) {
+                                                                          await db
+                                                                              .updateCertStatus(cert.id);
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                    loading
+                                                                        .increase();
                                                                   }
+                                                                  load.hideLoadingScreen();
+                                                                  loading
+                                                                      .reset();
+                                                                } else {
+                                                                  await showWarningMessage(
+                                                                      context:
+                                                                          context,
+                                                                      title:
+                                                                          'No Event Selected',
+                                                                      message:
+                                                                          'Please selected an event first');
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .popUntil(
+                                                                          (route) =>
+                                                                              route.isFirst);
                                                                 }
+                                                              } else {
+                                                                await showWarningMessage(
+                                                                    context:
+                                                                        context,
+                                                                    title:
+                                                                        'Gmail Account Error',
+                                                                    message:
+                                                                        'You are not logged In with your gmail account');
                                                               }
-                                                            }
-                                                          } else {
-                                                            await showWarningMessage(
-                                                                context:
-                                                                    context,
-                                                                title:
-                                                                    'No Event Selected',
-                                                                message:
-                                                                    'Please selected an event first');
-                                                            Navigator.of(
-                                                                    context)
-                                                                .popUntil((route) =>
-                                                                    route
-                                                                        .isFirst);
-                                                          }
-                                                        } else {
-                                                          await showWarningMessage(
-                                                              context: context,
-                                                              title:
-                                                                  'Gmail Account Error',
-                                                              message:
-                                                                  'You are not logged In with your gmail account');
-                                                        }
-                                                        Navigator.of(context)
-                                                            .popUntil((route) =>
-                                                                route.isFirst);
-                                                      })
-                                                ],
-                                              );
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .popUntil(
+                                                                      (route) =>
+                                                                          route
+                                                                              .isFirst);
+                                                            })
+                                                      ],
+                                                    );
+                                                  });
                                             },
                                           );
                                         },
@@ -426,73 +463,103 @@ class _DataPageState extends State<DataPage>
                                             // barrierDismissible: true,
                                             context: context,
                                             builder: (context) {
-                                              return ContentDialog(
-                                                title: const Text(
-                                                    'Send Announcement to all?'),
-                                                content: const Text(
-                                                    'Are you sure you want to send announcement to all?'),
-                                                actions: [
-                                                  Button(
-                                                      child:
-                                                          const Text('Cancel'),
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      }),
-                                                  FilledButton(
-                                                      child: const Text(
-                                                          'Send all'),
-                                                      onPressed: () async {
-                                                        if (account.signedIn) {
-                                                          print(
-                                                              account.signedIn);
-                                                          if (event
-                                                              .isEventSet()) {
-                                                            List<String>
-                                                                emails =
-                                                                await db
-                                                                    .getAllParticipantEmail();
-                                                            for (String email
-                                                                in emails) {
-                                                              String
-                                                                  decryptedEmail =
-                                                                  Cipher
-                                                                      .decryptAES(
-                                                                          email);
-                                                              await account.sendAnnouncements(
-                                                                  emailSubjectAnnoucement
-                                                                      .text,
-                                                                  emailContentsAnnoucement
-                                                                      .text,
-                                                                  decryptedEmail);
-                                                            }
-                                                          } else {
-                                                            await showWarningMessage(
-                                                                context:
-                                                                    context,
-                                                                title:
-                                                                    'No Event Selected',
-                                                                message:
-                                                                    'Please selected an event first');
-                                                            Navigator.of(
-                                                                    context)
-                                                                .popUntil((route) =>
-                                                                    route
-                                                                        .isFirst);
-                                                          }
-                                                        } else {
-                                                          await showWarningMessage(
-                                                              context: context,
-                                                              title:
-                                                                  'Gmail Account Error',
-                                                              message:
-                                                                  'You are not logged In with your gmail account');
-                                                        }
-                                                        Navigator.of(context)
-                                                            .popUntil((route) =>
-                                                                route.isFirst);
-                                                      }),
-                                                ],
-                                              );
+                                              return ChangeNotifierProvider(
+                                                  create: (context) => progress,
+                                                  builder: (context, snapshot) {
+                                                    return ContentDialog(
+                                                      title: const Text(
+                                                          'Send Announcement to all?'),
+                                                      content: const Text(
+                                                          'Are you sure you want to send announcement to all?'),
+                                                      actions: [
+                                                        Button(
+                                                            child: const Text(
+                                                                'Cancel'),
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            }),
+                                                        FilledButton(
+                                                            child: const Text(
+                                                                'Send all'),
+                                                            onPressed:
+                                                                () async {
+                                                              if (account
+                                                                  .signedIn) {
+                                                                print(account
+                                                                    .signedIn);
+                                                                if (event
+                                                                    .isEventSet()) {
+                                                                  List<String>
+                                                                      emails =
+                                                                      await db.getAllParticipantEmail(
+                                                                          event
+                                                                              .eventId);
+                                                                  ProgressController
+                                                                      loading =
+                                                                      context.read<
+                                                                          ProgressController>();
+                                                                  loading.setOverall(
+                                                                      emails
+                                                                          .length);
+                                                                  LoadingDialog
+                                                                      load =
+                                                                      LoadingDialog();
+                                                                  load.showLoadingScreen(
+                                                                      context:
+                                                                          context,
+                                                                      title:
+                                                                          'Sending annoucement',
+                                                                      label:
+                                                                          'Email Sent');
+                                                                  for (String email
+                                                                      in emails) {
+                                                                    String
+                                                                        decryptedEmail =
+                                                                        Cipher.decryptAES(
+                                                                            email);
+                                                                    await account.sendAnnouncements(
+                                                                        emailSubjectAnnoucement
+                                                                            .text,
+                                                                        emailContentsAnnoucement
+                                                                            .text,
+                                                                        decryptedEmail);
+                                                                    loading
+                                                                        .increase();
+                                                                  }
+                                                                } else {
+                                                                  await showWarningMessage(
+                                                                      context:
+                                                                          context,
+                                                                      title:
+                                                                          'No Event Selected',
+                                                                      message:
+                                                                          'Please selected an event first');
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .popUntil(
+                                                                          (route) =>
+                                                                              route.isFirst);
+                                                                }
+                                                              } else {
+                                                                await showWarningMessage(
+                                                                    context:
+                                                                        context,
+                                                                    title:
+                                                                        'Gmail Account Error',
+                                                                    message:
+                                                                        'You are not logged In with your gmail account');
+                                                              }
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .popUntil(
+                                                                      (route) =>
+                                                                          route
+                                                                              .isFirst);
+                                                            }),
+                                                      ],
+                                                    );
+                                                  });
                                             },
                                           );
                                         },

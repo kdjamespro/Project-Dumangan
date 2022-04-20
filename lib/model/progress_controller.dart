@@ -20,7 +20,7 @@ class ProgressController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void reset(){
+  void reset() {
     progress = 0;
   }
 }
