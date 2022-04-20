@@ -93,37 +93,6 @@ class _ImageArchiveState extends State<ImageArchive> {
                                 }),
                           ),
                         ),
-//                         Padding(
-//                           padding: const EdgeInsets.only(left: 25),
-//                           child: RawMaterialButton(
-//                             onPressed: () {
-//                               setState(
-//                                 () {
-//                                   archive.archivedImage.removeAt(index);
-//                                 },
-//                               );
-//                               //bool rem = images.remove(index);
-//                             },
-//                             elevation: 2.0,
-//                             child: const Icon(
-//                               Icons.close,
-//                               size: 15.0,
-//                             ),
-//                           ),
-// // >>>>>>> e6525fa895a686c6ba3648c66e0ad97c0a974da2
-//                         ),
-                        // Container(
-                        //   alignment: Alignment.bottomCenter,
-                        //   child: Button(
-                        //     child: Text("Delete"),
-                        //     onPressed: () {
-                        //       setState(() {
-                        //         archive.archivedImage.removeAt(index);
-                        //       });
-                        //       //archive.archivedImage.removeAt(index);
-                        //     },
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),

@@ -84,7 +84,7 @@ class FileHandler {
 
   Future<Directory> getTemplateDirectory() async {
     final root = await getApplicationDocumentsDirectory();
-    final templateFolder = p.join(root.path, 'templates');
+    final templateFolder = p.join(root.path, 'project_dumangan', 'templates');
     bool tempFolderExists = Directory(templateFolder).existsSync();
     if (!tempFolderExists) {
       Directory(templateFolder).createSync();
