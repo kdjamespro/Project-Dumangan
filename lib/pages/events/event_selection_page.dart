@@ -390,9 +390,10 @@ class _EventSelectionPageState extends State<EventSelectionPage> {
                                     message:
                                         'Do you really want to delete the selected event?');
                                 if (proceed) {
-                                  await context
-                                      .read<MyDatabase>()
-                                      .deleteEvent(event.id);
+                                  MyDatabase db = context.read<MyDatabase>();
+                                  await db.deleteEvent(event.id);
+                                  await db.deleteParticipants(event.id);
+                                  await db.deleteCertificates(event.id);
                                   MotionToast.delete(
                                           animationDuration:
                                               const Duration(seconds: 1),

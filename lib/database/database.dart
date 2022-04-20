@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:project_dumangan/services/cipher.dart';
 
 part 'database.g.dart';
 
@@ -101,11 +102,12 @@ class MyDatabase extends _$MyDatabase {
   }
 
   Future<String> getParticipantEmail(int participantId) async {
-    return await customSelect(
+    String email = await customSelect(
       'SELECT email FROM participants_table WHERE id = ?',
       variables: [Variable.withInt(participantId)],
       readsFrom: {participantsTable},
     ).map((row) => row.read<String>('email')).getSingle();
+    return Cipher.decryptAES(email);
   }
 
   Future<List<String>> getAllParticipantEmail() async {
@@ -206,6 +208,11 @@ class MyDatabase extends _$MyDatabase {
             ..where((tbl) => tbl.id.equals(participantId)))
           .go();
     }
+  }
+
+  Future deleteCertificates(int id) {
+    return (delete(certificatesTable)..where((tbl) => tbl.eventId.equals(id)))
+        .go();
   }
 
   Future deleteEvent(int eventId) {

@@ -9,6 +9,7 @@ import 'package:motion_toast/motion_toast.dart';
 import 'package:project_dumangan/database/database.dart';
 import 'package:project_dumangan/model/gmail_account.dart';
 import 'package:project_dumangan/model/selected_event.dart';
+import 'package:project_dumangan/services/cipher.dart';
 import 'package:project_dumangan/services/pdf_generator.dart';
 import 'package:project_dumangan/services/warning_message.dart';
 import 'package:provider/provider.dart';
@@ -454,13 +455,17 @@ class _DataPageState extends State<DataPage>
                                                                     .getAllParticipantEmail();
                                                             for (String email
                                                                 in emails) {
-                                                              await account
-                                                                  .sendAnnouncements(
-                                                                      emailSubjectAnnoucement
-                                                                          .text,
-                                                                      emailContentsAnnoucement
-                                                                          .text,
-                                                                      email);
+                                                              String
+                                                                  decryptedEmail =
+                                                                  Cipher
+                                                                      .decryptAES(
+                                                                          email);
+                                                              await account.sendAnnouncements(
+                                                                  emailSubjectAnnoucement
+                                                                      .text,
+                                                                  emailContentsAnnoucement
+                                                                      .text,
+                                                                  decryptedEmail);
                                                             }
                                                           } else {
                                                             await showWarningMessage(
