@@ -182,17 +182,10 @@ class _MyHomePageState extends State<MyHomePage>
               icon: const Icon(FluentIcons.edit),
               title: const Text('Edit & Generate'),
             ),
-
             PaneItem(
               icon: const Icon(FluentIcons.send),
               title: const Text('Send'),
             ),
-
-            // PaneItem(
-            //   icon: const Icon(FluentIcons.settings),
-            //   title: const Text('Settings'),
-            // ),
-
             PaneItem(
               icon: const Icon(FluentIcons.help),
               title: const Text('Help'),
