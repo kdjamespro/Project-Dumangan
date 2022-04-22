@@ -66,26 +66,23 @@ class _DraggableTextState extends State<DraggableText>
       drag: widget.drag,
       indicatorController: widget.indicatorController,
       focusNode: _focusNode,
-      child: Center(
-        child: Align(
-          //Here
-          alignment: Alignment.center,
-          child: EditableText(
-            readOnly: true,
-            backgroundCursorColor: Colors.black,
-            onEditingComplete: (() {}),
-            cursorRadius: const Radius.circular(1.0),
-            textInputAction: TextInputAction.done,
-            scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
-            scrollPhysics: const NeverScrollableScrollPhysics(),
-            scrollController: null,
-            controller: _controller,
-            focusNode: _focusNode,
-            maxLines: null,
-            cursorColor: Colors.black,
-            textAlign: alignment,
-            style: style,
-          ),
+      child: Align(
+        alignment: Alignment.center,
+        child: EditableText(
+          readOnly: true,
+          backgroundCursorColor: Colors.black,
+          onEditingComplete: (() {}),
+          cursorRadius: const Radius.circular(1.0),
+          textInputAction: TextInputAction.done,
+          scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
+          scrollPhysics: const NeverScrollableScrollPhysics(),
+          scrollController: null,
+          controller: _controller,
+          focusNode: _focusNode,
+          maxLines: null,
+          cursorColor: Colors.black,
+          textAlign: alignment,
+          style: style,
         ),
       ),
     );

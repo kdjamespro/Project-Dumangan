@@ -113,7 +113,7 @@ AttributeText dynamicFields = AttributeText();
 class _EditorState extends State<Editor>
     with AutomaticKeepAliveClientMixin<Editor> {
   ScreenshotController screenshotController = ScreenshotController();
-  late FontStyleController styleController;
+  late FontStyleController? styleController;
   late FlyoutController fontSelection;
   late TextEditingController fontValue;
   late TextEditingController fontFamily;
@@ -122,6 +122,7 @@ class _EditorState extends State<Editor>
 
   @override
   void initState() {
+    styleController = null;
     fontValue = TextEditingController(text: '');
     fontFamily = TextEditingController(text: '');
     fontSelection = FlyoutController();
@@ -133,14 +134,14 @@ class _EditorState extends State<Editor>
 
   changeFontController(FontStyleController controller) {
     styleController = controller;
-    Color selectedColor = styleController.textStyle.color ?? pickerColor;
+    Color selectedColor = styleController!.textStyle.color ?? pickerColor;
     setState(() {
       changeColor(selectedColor);
       fontColorPicker = selectedColor;
-      _styleFontSize = styleController.textStyle.fontSize ?? _styleFontSize;
+      _styleFontSize = styleController!.textStyle.fontSize ?? _styleFontSize;
       fontValue.text = '${_styleFontSize.toInt()}';
-      _selectedFont = styleController.textStyle.fontFamily ?? _selectedFont;
-      fontFamily.text = styleController.fontFamily;
+      _selectedFont = styleController!.textStyle.fontFamily ?? _selectedFont;
+      fontFamily.text = styleController!.fontFamily;
     });
   }
 
@@ -197,30 +198,36 @@ class _EditorState extends State<Editor>
               Expanded(
                 child: Container(
                   margin: const EdgeInsets.all(8.0),
-                  child: Screenshot(
-                    controller: screenshotController,
-                    child: AspectRatio(
-                      aspectRatio: aspectRatio,
-                      child: Stack(
-                        alignment: AlignmentDirectional.center,
-                        children: [
-                          Positioned.fill(
-                            child: AspectRatio(
-                              aspectRatio: aspectRatio,
-                              child: Container(
-                                color: Colors.white,
-                                child: image.existsSync()
-                                    ? Image.file(
-                                        image,
-                                        fit: BoxFit.fill,
-                                      )
-                                    : Container(),
+                  child: AspectRatio(
+                    aspectRatio: aspectRatio,
+                    child: Stack(
+                      alignment: AlignmentDirectional.center,
+                      children: [
+                        Positioned(
+                          child: AspectRatio(
+                            aspectRatio: aspectRatio,
+                            child: Screenshot(
+                              controller: screenshotController,
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: Container(
+                                      color: Colors.white,
+                                      child: image.existsSync()
+                                          ? Image.file(
+                                              image,
+                                              fit: BoxFit.fill,
+                                            )
+                                          : Container(),
+                                    ),
+                                  ),
+                                  ...stackContents,
+                                ],
                               ),
                             ),
                           ),
-                          ...stackContents,
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -374,11 +381,19 @@ class _EditorState extends State<Editor>
   }
 
   void changeFontSize(double size) {
-    setState(() {
-      _styleFontSize = size;
-      styleController.changeFontSize(size);
-      fontValue.text = '${size.toInt()}';
-    });
+    if (styleController != null) {
+      setState(() {
+        _styleFontSize = size;
+        styleController!.changeFontSize(size);
+        fontValue.text = '${size.toInt()}';
+      });
+    } else {
+      showWarningMessage(
+          context: context,
+          title: 'Font Editing Error',
+          message:
+              'Please select first an attribute that you want to edit. Click on the desired attribute you want to edit');
+    }
   }
 
   Widget fontsMenu() {
@@ -408,23 +423,31 @@ class _EditorState extends State<Editor>
             Button(
                 child: const Text('Open Font picker'),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    mat.MaterialPageRoute(
-                        builder: (context) => FontPicker(
-                            recentsCount: 2,
-                            onFontChanged: (font) {
-                              setState(() {
-                                font.fontStyle;
-                                selectedFont = font.fontFamily;
-                                styleController.changeFontStyle(
-                                    selectedFont, font.toTextStyle());
-                                _selectedFont = font.fontFamily;
-                                fontFamily.text = _selectedFont;
-                              });
-                            },
-                            googleFonts: _myGoogleFonts)),
-                  );
+                  if (styleController != null) {
+                    Navigator.push(
+                      context,
+                      mat.MaterialPageRoute(
+                          builder: (context) => FontPicker(
+                              recentsCount: 2,
+                              onFontChanged: (font) {
+                                setState(() {
+                                  font.fontStyle;
+                                  selectedFont = font.fontFamily;
+                                  styleController!.changeFontStyle(
+                                      selectedFont, font.toTextStyle());
+                                  _selectedFont = font.fontFamily;
+                                  fontFamily.text = _selectedFont;
+                                });
+                              },
+                              googleFonts: _myGoogleFonts)),
+                    );
+                  } else {
+                    showWarningMessage(
+                        context: context,
+                        title: 'Font Editing Error',
+                        message:
+                            'Please select first an attribute that you want to edit. Click on the desired attribute you want to edit');
+                  }
                 }),
           ],
         ),
@@ -445,27 +468,34 @@ class _EditorState extends State<Editor>
               contentWidth: 100,
               controller: fontSelection,
               child: TextBox(
-                placeholder: "Enter Font size",
-                enableSuggestions: true,
-                controller: fontValue,
-                suffix: IconButton(
-                  icon: const Icon(FluentIcons.chevron_down),
-                  onPressed: () {
-                    fontSelection.open = true;
-                  },
-                ),
-                onSubmitted: (text) {
-                  if (isNumeric(text)) {
-                    changeFontSize(double.parse(text));
-                  } else {
-                    showWarningMessage(
-                        context: context,
-                        title: 'Not a number',
-                        message: 'The input is not a valid number');
-                    fontValue.text = '${_styleFontSize.toInt()}';
-                  }
-                },
-              ),
+                  placeholder: "Enter Font size",
+                  enableSuggestions: true,
+                  controller: fontValue,
+                  suffix: IconButton(
+                    icon: const Icon(FluentIcons.chevron_down),
+                    onPressed: () {
+                      fontSelection.open = true;
+                    },
+                  ),
+                  onSubmitted: (text) {
+                    if (styleController != null) {
+                      if (isNumeric(text)) {
+                        changeFontSize(double.parse(text));
+                      } else {
+                        showWarningMessage(
+                            context: context,
+                            title: 'Not a number',
+                            message: 'The input is not a valid number');
+                        fontValue.text = '${_styleFontSize.toInt()}';
+                      }
+                    } else {
+                      showWarningMessage(
+                          context: context,
+                          title: 'Font Editing Error',
+                          message:
+                              'Please select first an attribute that you want to edit. Click on the desired attribute you want to edit');
+                    }
+                  }),
               content: SizedBox(
                 height: 200,
                 width: 50,
@@ -601,7 +631,15 @@ class _EditorState extends State<Editor>
                 width: 45,
               ),
               onTap: () {
-                pickColor(context);
+                if (styleController != null) {
+                  pickColor(context);
+                } else {
+                  showWarningMessage(
+                      context: context,
+                      title: 'Font Editing Error',
+                      message:
+                          'Please select first an attribute that you want to edit. Click on the desired attribute you want to edit');
+                }
               },
             ),
             Button(
@@ -611,7 +649,15 @@ class _EditorState extends State<Editor>
                 ),
                 // Set onPressed to null to disable the button
                 onPressed: () {
-                  pickColor(context);
+                  if (styleController != null) {
+                    pickColor(context);
+                  } else {
+                    showWarningMessage(
+                        context: context,
+                        title: 'Font Editing Error',
+                        message:
+                            'Please select first an attribute that you want to edit. Click on the desired attribute you want to edit');
+                  }
                 })
           ],
         ),
@@ -635,11 +681,19 @@ class _EditorState extends State<Editor>
                 .toList(),
             value: comboBoxValue,
             onChanged: (value) {
-              if (value != null) {
-                setState(() {
-                  comboBoxValue = value;
-                  styleController.changeFontWeight(value);
-                });
+              if (styleController != null) {
+                if (value != null) {
+                  setState(() {
+                    comboBoxValue = value;
+                    styleController!.changeFontWeight(value);
+                  });
+                }
+              } else {
+                showWarningMessage(
+                    context: context,
+                    title: 'Font Editing Error',
+                    message:
+                        'Please select first an attribute that you want to edit. Click on the desired attribute you want to edit');
               }
             },
           ),
@@ -660,26 +714,36 @@ class _EditorState extends State<Editor>
               title: const Text('Alignment'),
               items: [
                 DropDownButtonItem(
-                  title: const Text('Left'),
-                  leading: const Icon(FluentIcons.align_left),
-                  onTap: () => setState(() {
-                    styleController.changeFontAlignment(TextAlign.left);
-                  }),
-                ),
+                    title: const Text('Left'),
+                    leading: const Icon(FluentIcons.align_left),
+                    onTap: () {
+                      if (styleController != null) {
+                        setState(() {
+                          styleController!.changeFontAlignment(TextAlign.left);
+                        });
+                      }
+                    }),
                 DropDownButtonItem(
-                  title: const Text('Center'),
-                  leading: const Icon(FluentIcons.align_center),
-                  onTap: () => setState(() {
-                    styleController.changeFontAlignment(TextAlign.center);
-                  }),
-                ),
+                    title: const Text('Center'),
+                    leading: const Icon(FluentIcons.align_center),
+                    onTap: () {
+                      if (styleController != null) {
+                        setState(() {
+                          styleController!
+                              .changeFontAlignment(TextAlign.center);
+                        });
+                      }
+                    }),
                 DropDownButtonItem(
-                  title: const Text('Right'),
-                  leading: const Icon(FluentIcons.align_right),
-                  onTap: () => setState(() {
-                    styleController.changeFontAlignment(TextAlign.right);
-                  }),
-                ),
+                    title: const Text('Right'),
+                    leading: const Icon(FluentIcons.align_right),
+                    onTap: () {
+                      if (styleController != null) {
+                        setState(() {
+                          styleController!.changeFontAlignment(TextAlign.left);
+                        });
+                      }
+                    }),
               ],
             ),
           ),
@@ -903,7 +967,7 @@ class _EditorState extends State<Editor>
                     Navigator.of(context).pop();
                     setState(() {
                       fontColorPicker = color;
-                      styleController.changeFontColor(color);
+                      styleController!.changeFontColor(color);
                     });
                   }),
             ],

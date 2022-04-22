@@ -45,7 +45,7 @@ void main() async {
   doWhenWindowReady(() {
     final win = appWindow;
     win.maximize();
-    win.minSize = win.size;
+    win.minSize = const Size(1000, 800);
     win.alignment = Alignment.center;
     win.title = 'Project Dumangan';
     win.show();
@@ -269,7 +269,7 @@ class WindowButtons extends StatelessWidget {
               }
               return MaximizeIcon(color: context.iconColor);
             },
-            onPressed: () {}),
+            onPressed: appWindow.maximizeOrRestore),
       ),
       Tooltip(
         message: FluentLocalizations.of(context).closeWindowTooltip,

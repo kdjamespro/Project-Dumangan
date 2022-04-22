@@ -73,57 +73,40 @@ class _ResizableWidgetState extends State<ResizableWidget>
     super.build(context);
     return Focus(
       child: Builder(builder: (BuildContext context) {
-        final FocusNode focusNode = Focus.of(context);
-        _isFocused = focusNode.hasFocus;
         return GestureDetector(
-          // onTap: () {
-          //   if (_isFocused) {
-          //     focusNode.unfocus();
-          //   } else {
-          //     focusNode.requestFocus();
-          //   }
-          //   // setState(() {
-          //   //   _isFocused = focusNode.hasFocus;
-          //   // });
-          // },
-          // onPanStart: _handleDrag,
-          // onPanUpdate: (details) {
-          //   var dx = details.globalPosition.dx - initX;
-          //   var dy = details.globalPosition.dy - initY;
-          //   initX = details.globalPosition.dx;
-          //   initY = details.globalPosition.dy;
-          //   setState(() {
-          //     top = top + dy;
-          //     left = left + dx;
-          //     widget.drag.top = top;
-          //     widget.drag.left = left;
-          //   });
-          // },
+          onTap: () {
+            widget.focusNode.requestFocus();
+          },
           child: Stack(
             alignment: const Alignment(0, 0),
             children: <Widget>[
               Positioned(
                 top: top + ballDiameter / 2,
                 left: left + ballDiameter / 2,
-                child: GestureDetector(
-                  onPanStart: _handleDrag,
-                  onPanUpdate: (details) {
-                    var dx = details.globalPosition.dx - initX;
-                    var dy = details.globalPosition.dy - initY;
-                    initX = details.globalPosition.dx;
-                    initY = details.globalPosition.dy;
-                    setState(() {
-                      top = top + dy;
-                      left = left + dx;
-                      widget.drag.top = top;
-                      widget.drag.left = left;
-                    });
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    height: height + ballDiameter / 2,
-                    width: width + ballDiameter / 2,
-                    child: widget.child,
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.move,
+                  child: GestureDetector(
+                    onPanStart: _handleDrag,
+                    onPanUpdate: (details) {
+                      var dx = details.globalPosition.dx - initX;
+                      var dy = details.globalPosition.dy - initY;
+                      initX = details.globalPosition.dx;
+                      initY = details.globalPosition.dy;
+                      setState(() {
+                        top = top + dy;
+                        left = left + dx;
+                        widget.drag.top = top;
+                        widget.drag.left = left;
+                      });
+                    },
+                    child: AbsorbPointer(
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        height: height + ballDiameter / 2,
+                        width: width + ballDiameter / 2,
+                        child: widget.child,
+                      ),
+                    ),
                   ),
                 ),
               ),
