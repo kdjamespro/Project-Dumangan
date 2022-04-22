@@ -10,7 +10,7 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{9C449133-B6D6-41E0-8F13-336F59F43523}
+AppId={{F1CA0639-FF26-41C0-98DD-861525240872}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -23,7 +23,7 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=D:\Documents\Project-Dumangan\installers
-OutputBaseFilename=project_dumangan_installer
+OutputBaseFilename=project_dumangan_setup
 SetupIconFile=D:\Downloads\app_icon_jRo_icon.ico
 Compression=lzma
 SolidCompression=yes
