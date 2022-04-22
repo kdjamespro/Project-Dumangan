@@ -44,7 +44,7 @@ void main() async {
   ));
   doWhenWindowReady(() {
     final win = appWindow;
-    win.minSize = Size(window.physicalSize.height, 1000);
+    win.minSize = Size(window.physicalSize.height, 400);
     win.maximize();
     win.alignment = Alignment.center;
     win.title = 'Project Dumangan';
