@@ -204,7 +204,7 @@ class _EditorState extends State<Editor>
                       child: Stack(
                         alignment: AlignmentDirectional.center,
                         children: [
-                          Positioned(
+                          Positioned.fill(
                             child: AspectRatio(
                               aspectRatio: aspectRatio,
                               child: Container(

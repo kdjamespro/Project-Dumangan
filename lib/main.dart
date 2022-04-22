@@ -44,8 +44,8 @@ void main() async {
   ));
   doWhenWindowReady(() {
     final win = appWindow;
-    win.minSize = Size(window.physicalSize.height, 400);
     win.maximize();
+    win.minSize = win.size;
     win.alignment = Alignment.center;
     win.title = 'Project Dumangan';
     win.show();
@@ -262,15 +262,14 @@ class WindowButtons extends StatelessWidget {
       Tooltip(
         message: FluentLocalizations.of(context).restoreWindowTooltip,
         child: WindowButton(
-          colors: buttonColors,
-          iconBuilder: (context) {
-            if (appWindow.isMaximized) {
-              return RestoreIcon(color: context.iconColor);
-            }
-            return MaximizeIcon(color: context.iconColor);
-          },
-          onPressed: appWindow.maximizeOrRestore,
-        ),
+            colors: buttonColors,
+            iconBuilder: (context) {
+              if (appWindow.isMaximized) {
+                return RestoreIcon(color: context.iconColor);
+              }
+              return MaximizeIcon(color: context.iconColor);
+            },
+            onPressed: () {}),
       ),
       Tooltip(
         message: FluentLocalizations.of(context).closeWindowTooltip,
