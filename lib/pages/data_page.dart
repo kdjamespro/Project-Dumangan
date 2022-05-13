@@ -28,6 +28,7 @@ class _DataPageState extends State<DataPage>
   late TabController _controller;
   TextEditingController emailSubjectAnnoucement = TextEditingController();
   TextEditingController emailContentsAnnoucement = TextEditingController();
+  late ProgressController progress;
 
   @override
   void initState() {
@@ -227,7 +228,9 @@ class _DataPageState extends State<DataPage>
                                             context: context,
                                             builder: (context) {
                                               return ChangeNotifierProvider(
-                                                  create: (context) => progress,
+                                                  create: (context) =>
+                                                      context.read<
+                                                          ProgressController>(),
                                                   builder: (context, snapshot) {
                                                     return ContentDialog(
                                                       title: const Text(
@@ -297,6 +300,12 @@ class _DataPageState extends State<DataPage>
                                                                         if (successful) {
                                                                           await db
                                                                               .updateCertStatus(cert.id);
+                                                                        } else {
+                                                                          showWarningMessage(
+                                                                              context: context,
+                                                                              title: 'Email Sending Error',
+                                                                              message: 'A problem was encountered in sending the email. Please try again later!');
+                                                                          break;
                                                                         }
                                                                       }
                                                                     }
@@ -464,8 +473,10 @@ class _DataPageState extends State<DataPage>
                                             context: context,
                                             builder: (context) {
                                               return ChangeNotifierProvider(
-                                                  create: (context) => progress,
-                                                  builder: (context, snapshot) {
+                                                  create: (context) =>
+                                                      context.read<
+                                                          ProgressController>(),
+                                                  builder: (_, snapshot) {
                                                     return ContentDialog(
                                                       title: const Text(
                                                           'Send Announcement to all?'),
@@ -518,15 +529,28 @@ class _DataPageState extends State<DataPage>
                                                                         decryptedEmail =
                                                                         Cipher.decryptAES(
                                                                             email);
-                                                                    await account.sendAnnouncements(
+                                                                    bool successful = await account.sendAnnouncements(
                                                                         emailSubjectAnnoucement
                                                                             .text,
                                                                         emailContentsAnnoucement
                                                                             .text,
                                                                         decryptedEmail);
+                                                                    if (!successful) {
+                                                                      showWarningMessage(
+                                                                          context:
+                                                                              context,
+                                                                          title:
+                                                                              'Email Sending Error',
+                                                                          message:
+                                                                              'A problem was encountered in sending the email. Please try again later!');
+                                                                      break;
+                                                                    }
                                                                     loading
                                                                         .increase();
                                                                   }
+                                                                  load.hideLoadingScreen();
+                                                                  loading
+                                                                      .reset();
                                                                 } else {
                                                                   await showWarningMessage(
                                                                       context:

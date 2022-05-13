@@ -120,7 +120,8 @@ class MyDatabase extends _$MyDatabase {
 
   Future<List<CertificatesTableData>> getCertificates(int eventsId) async {
     return await (select(certificatesTable)
-          ..where((row) => row.eventId.equals(eventsId)))
+          ..where(
+              (row) => row.eventId.equals(eventsId) & row.sended.equals(false)))
         .get();
   }
 

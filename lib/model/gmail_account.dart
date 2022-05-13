@@ -84,11 +84,13 @@ class GmailAccount {
       successful = true;
     } on MailerException catch (e) {
       successful = false;
+    } on Exception catch (e) {
+      successful = false;
     }
     return successful;
   }
 
-  Future sendAnnouncements(
+  Future<bool> sendAnnouncements(
       String subject, String userMessage, String participantEmail) async {
     bool successful = false;
     final email = account!.email;
@@ -110,6 +112,8 @@ class GmailAccount {
       successful = true;
     } on MailerException catch (e) {
       print(e);
+      successful = false;
+    } on Exception catch (e) {
       successful = false;
     }
     return successful;

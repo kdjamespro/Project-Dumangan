@@ -39,6 +39,9 @@ void main() async {
         create: (context) => MyDatabase(),
         dispose: (context, db) => db.close(),
       ),
+      ChangeNotifierProvider(
+        create: (context) => ProgressController(),
+      ),
     ],
     child: const MyApp(),
   ));
@@ -216,11 +219,7 @@ class _MyHomePageState extends State<MyHomePage>
           const EventPage(),
           const CertPage(),
           const EditorPage(),
-          ChangeNotifierProvider(
-              create: (context) => ProgressController(),
-              builder: (context, snapshot) {
-                return const DataPage();
-              }),
+          const DataPage(),
           const HelpPage(),
           LoginPage(setInfo: setUserProfile),
         ],
