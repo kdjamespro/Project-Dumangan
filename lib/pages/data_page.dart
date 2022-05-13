@@ -11,6 +11,7 @@ import 'package:project_dumangan/model/selected_event.dart';
 import 'package:project_dumangan/services/cipher.dart';
 import 'package:project_dumangan/services/loading_dialog.dart';
 import 'package:project_dumangan/services/pdf_generator.dart';
+import 'package:project_dumangan/services/verify_message.dart';
 import 'package:project_dumangan/services/warning_message.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -231,7 +232,7 @@ class _DataPageState extends State<DataPage>
                                                   create: (context) =>
                                                       context.read<
                                                           ProgressController>(),
-                                                  builder: (context, snapshot) {
+                                                  builder: (_, snapshot) {
                                                     return ContentDialog(
                                                       title: const Text(
                                                           'Send certificates to all?'),
@@ -256,11 +257,25 @@ class _DataPageState extends State<DataPage>
                                                                   .signedIn) {
                                                                 if (event
                                                                     .isEventSet()) {
+                                                                  bool resend = await showVerificationMessage(
+                                                                      context:
+                                                                          context,
+                                                                      title:
+                                                                          'Resending confirmation',
+                                                                      message:
+                                                                          'Do you want to resend the certificates to all participants that already receive their certificates?');
                                                                   List<CertificatesTableData>
                                                                       certs =
-                                                                      await db.getCertificates(
-                                                                          event
-                                                                              .eventId);
+                                                                      [];
+                                                                  if (resend) {
+                                                                    certs = await db
+                                                                        .getCertificates(
+                                                                            event.eventId);
+                                                                  } else {
+                                                                    certs = await db
+                                                                        .getNotSendedCertificates(
+                                                                            event.eventId);
+                                                                  }
                                                                   ProgressController
                                                                       loading =
                                                                       context.read<
@@ -290,23 +305,25 @@ class _DataPageState extends State<DataPage>
                                                                             .filename);
                                                                     if (certificate
                                                                         .existsSync()) {
-                                                                      if (!cert
-                                                                          .sended) {
-                                                                        bool successful = await account.sendEmail(
-                                                                            emailSubject.text,
-                                                                            emailContents.text,
-                                                                            email,
-                                                                            certificate);
-                                                                        if (successful) {
-                                                                          await db
-                                                                              .updateCertStatus(cert.id);
-                                                                        } else {
-                                                                          showWarningMessage(
-                                                                              context: context,
-                                                                              title: 'Email Sending Error',
-                                                                              message: 'A problem was encountered in sending the email. Please try again later!');
-                                                                          break;
-                                                                        }
+                                                                      bool successful = await account.sendEmail(
+                                                                          emailSubject
+                                                                              .text,
+                                                                          emailContents
+                                                                              .text,
+                                                                          email,
+                                                                          certificate);
+                                                                      if (successful) {
+                                                                        await db
+                                                                            .updateCertStatus(cert.id);
+                                                                      } else {
+                                                                        showWarningMessage(
+                                                                            context:
+                                                                                context,
+                                                                            title:
+                                                                                'Email Sending Error',
+                                                                            message:
+                                                                                'A problem was encountered in sending the email. Please try again later!');
+                                                                        break;
                                                                       }
                                                                     }
                                                                     loading

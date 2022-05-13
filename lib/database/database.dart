@@ -118,10 +118,17 @@ class MyDatabase extends _$MyDatabase {
     ).map((row) => row.read<String>('email')).get();
   }
 
-  Future<List<CertificatesTableData>> getCertificates(int eventsId) async {
+  Future<List<CertificatesTableData>> getNotSendedCertificates(
+      int eventsId) async {
     return await (select(certificatesTable)
           ..where(
               (row) => row.eventId.equals(eventsId) & row.sended.equals(false)))
+        .get();
+  }
+
+  Future<List<CertificatesTableData>> getCertificates(int eventsId) async {
+    return await (select(certificatesTable)
+          ..where((row) => row.eventId.equals(eventsId)))
         .get();
   }
 
