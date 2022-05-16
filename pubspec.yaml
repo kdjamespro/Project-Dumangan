@@ -77,6 +77,7 @@ dev_dependencies:
   flutter_lints: ^1.0.0
   drift_dev: ^1.4.0
   build_runner: ^2.1.7
+  msix: ^3.6.2
 
 flutter:
   uses-material-design: true
@@ -108,3 +109,13 @@ flutter:
     - family: SweetChild
       fonts:
         - asset: lib/fonts/sweetChild.ttf
+
+msix_config:
+  display_name: Project Dumangan
+  publisher_display_name: Unitek
+  identity_name: none
+  msix_version: 1.0.0.0
+  logo_path: C:\Users\Kenneth\Downloads\app_logo.png
+  capabilities: "internetClient"
+  certificate_path: C:\Users\Kenneth\Documents\unitek.pfx
+  certificate_password: test

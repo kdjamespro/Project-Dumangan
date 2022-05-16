@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:project_dumangan/services/warning_message.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HelpPage extends StatefulWidget {
   const HelpPage({Key? key}) : super(key: key);
@@ -316,8 +318,18 @@ class _HelpPageState extends State<HelpPage> {
                                         ),
                                       ],
                                     ),
-                                    onPressed: () {
-                                      print("sfsdfds");
+                                    onPressed: () async {
+                                      String docuUrl =
+                                          'https://docs.google.com/document/d/1DzG9lUjqhI7S_2r4RNClD6TS9O8E2OxaOmI2lpotPME/edit?usp=sharing';
+                                      if (await canLaunch(docuUrl)) {
+                                        await launch(docuUrl);
+                                      } else {
+                                        showWarningMessage(
+                                            context: context,
+                                            title: 'Document Launching Error',
+                                            message:
+                                                'The system encountered an error in launching the document');
+                                      }
                                     }),
                                 Container(
                                   child: SvgPicture.asset(
