@@ -108,7 +108,7 @@ class _DataPageState extends State<DataPage>
                 onPressed: () {
                   GmailAccount account = context.read<GmailAccount>();
                   fluent.showDialog(
-                    barrierDismissible: true,
+                    barrierDismissible: false,
                     context: context,
                     builder: (context) {
                       TextEditingController emailSubject =
@@ -153,10 +153,11 @@ class _DataPageState extends State<DataPage>
                                         ),
                                         onPressed: () {
                                           fluent.showDialog(
-                                            // barrierDismissible: true,
+                                            barrierDismissible: false,
                                             context: context,
                                             builder: (context) {
                                               return ContentDialog(
+                                                backgroundDismiss: false,
                                                 title: const Text(
                                                     'Do you want to exit email composition?'),
                                                 content: const Text(
@@ -209,7 +210,7 @@ class _DataPageState extends State<DataPage>
                                     height: 20,
                                   ),
                                   TextBox(
-                                    maxLines: null,
+                                    maxLines: 12,
                                     header: 'Body',
                                     headerStyle: const TextStyle(fontSize: 18),
                                     placeholder: 'Enter your email body here',
@@ -225,7 +226,7 @@ class _DataPageState extends State<DataPage>
                                       FilledButton(
                                         onPressed: () {
                                           fluent.showDialog(
-                                            // barrierDismissible: true,
+                                            barrierDismissible: false,
                                             context: context,
                                             builder: (context) {
                                               return ChangeNotifierProvider(

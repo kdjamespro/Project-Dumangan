@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_svg/svg.dart';
 
 class HelpPage extends StatefulWidget {
   const HelpPage({Key? key}) : super(key: key);
@@ -259,6 +260,74 @@ class _HelpPageState extends State<HelpPage> {
                             TextSpan(
                                 text:
                                     'The application requires the user to sign in with their valid UST email address. Our application is only approved by google using the organizational email addresses within UST. \n'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: mat.Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color.fromRGBO(203, 202, 202, 1.0)
+                                .withOpacity(0.4),
+                            spreadRadius: 2,
+                            blurRadius: 3,
+                            offset: const Offset(
+                                2, 1), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      width: double.infinity,
+                      height: 220,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: Text(
+                                "For more detailed instructions",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                FilledButton(
+                                    child: Row(
+                                      children: const [
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 8.0),
+                                          child: Icon(
+                                              FluentIcons.download_document),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Text('Download User Manual'),
+                                        ),
+                                      ],
+                                    ),
+                                    onPressed: () {
+                                      print("sfsdfds");
+                                    }),
+                                Container(
+                                  child: SvgPicture.asset(
+                                    "assets/images/file_download.svg",
+                                    height: 150,
+                                    width: 150,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),

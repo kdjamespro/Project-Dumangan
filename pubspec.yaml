@@ -90,6 +90,7 @@ flutter:
     - assets/images/conference.svg
     - assets/images/choose2.svg
     - assets/images/sync.svg
+    - assets/images/file_download.svg
 
   fonts:
     - family: Baskerville
